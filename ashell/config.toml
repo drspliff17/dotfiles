@@ -27,6 +27,11 @@ warn_threshold = 60
 alert_threshold = 80
 sensor = "acpitz temp1"
 
+[workspaces]
+group_by_monitor = true
+enable_workspace_filling = true
+max_workspaces = 10
+
 [[CustomModule]]
 name = "GPU_Info"
 type = "Button"
