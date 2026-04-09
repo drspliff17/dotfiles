@@ -1,6 +1,7 @@
 [tempo]
 weather_location = { City = "Derby" }
-weather_indicator = "Icon"
+formats = [ "%H:%M", "%v %H:%M" ]
+weather_indicator = "IconAndTemperature"
 
 [settings]
 battery_format = "Icon"
@@ -27,13 +28,14 @@ alert_threshold = 80
 sensor = "acpitz temp1"
 
 [[CustomModule]]
-name = "MyClock"
-type = "Text"
-listen_cmd = "sh -c 'while true; do echo \"{\\\"text\\\": \\\"$(date +\"%H:%M\")\\\", \\\"alt\\\": \\\"\\\"}\"; sleep 1; done'"
+name = "GPU_Info"
+type = "Button"
+command = "kitty nvtop"
+listen_cmd = "fish -c 'while true; gpu_status; sleep 5; end'"
 
 [modules]
 left = [ "Workspaces" ]
-center = [ "MyClock" ]
-right = [ [ "WindowTitle", "MediaPlayer", "SystemInfo", "Settings", "Tempo"] ]
+center = [ "Tempo" ]
+right = [ [ "WindowTitle", "MediaPlayer", "GPU_Info", "SystemInfo", "Settings"] ]
 
 

@@ -31,6 +31,5 @@ kitty.conf.bak
 #
 !systemd/*
 #
-!waypaper/*
-waypaper/config.ini
+!waypaper/keybindings.ini
 
