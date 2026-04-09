@@ -1,0 +1,6 @@
+[Unit]
+Description=Set random wallpaper with waypaper
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/waypaper --random

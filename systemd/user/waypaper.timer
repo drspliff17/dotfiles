@@ -1,0 +1,10 @@
+[Unit]
+Description="Run waypaper at set interval"
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=30min
+Persistent=false
+
+[Install]
+WantedBy=timers.target
