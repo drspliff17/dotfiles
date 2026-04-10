@@ -52,17 +52,6 @@ type = "Button"
 command = "fish -c 'waypaper --wallpaper /home/drspliff/Pictures/random/pepe_has_no_ram.gif; sleep 5; waypaper --random'"
 listen_cmd = "fish -c 'while true; ram_status; sleep 5; end'"
 
-[appearance]
-background = "#152331"
-foreground = "#c4c8cb"
-
-primary = "#65B4AD"
-secondary = "#B1E49D"
-accent = "#9DE8E8"
-
-success = "#175091"
-warning = "#1B99A7"
-error = "#074E98"
 
 [modules]
 left = [ "Tempo", "WindowTitle" ]

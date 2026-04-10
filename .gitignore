@@ -29,7 +29,7 @@ kitty.conf.bak
 #
 !nvim/lua/**
 #
-!systemd/*
+!systemd/**
 #
 !waypaper/keybindings.ini
 
