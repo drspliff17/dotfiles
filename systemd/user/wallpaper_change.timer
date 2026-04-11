@@ -2,6 +2,7 @@
 Description="Run waypaper at set interval"
 
 [Timer]
+OnBootSec=30min
 OnUnitActiveSec=30min
 Persistent=false
 
