@@ -1,0 +1,31 @@
+# Other
+alias nvim="n"
+alias sw="swap_wallpaper >/dev/null"
+alias b="bash -lc"
+alias nfrc="n ~/.config/fish/config.fish"
+alias nbrc="n ~/.bashrc"
+alias nas="n ~/.config/fish/conf.d/aliases.fish"
+
+# Builtin Shorthands
+alias Q="exit"
+alias q="exit"
+alias a="alias"
+alias c="clear"
+alias cls="clear && ls"
+alias ..="cd .."
+alias cdh="cd ~"
+alias cdt="cd -"
+alias sof="source ~/.config/fish/config.fish"
+alias sob="source ~/.bashrc"
+alias hl="rg --passthru"
+alias ls='ls -F --color=auto --show-control-chars'
+alias bat="bat --color=always"
+
+# Git / GH
+alias gs="git status"
+alias gb="git branch"
+alias gc="git checkout"
+alias gr="git remote -v"
+alias ghl="gh repo list"
+
+alias lg="lazygit"

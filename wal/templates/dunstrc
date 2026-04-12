@@ -1,0 +1,19 @@
+[global]
+    monitor = 1
+    follow = none
+    corner_radius = 10
+
+    frame_color = "{color3}"
+    separator_color = "{color1}"
+
+[urgency_low]
+    background = "{color1}"
+    foreground = "{color7}"
+
+[urgency_normal]
+    background = "{color1}"
+    foreground = "{color7}"
+
+[urgency_critical]
+    background = "{color2}"
+    foreground = "{color15}"
