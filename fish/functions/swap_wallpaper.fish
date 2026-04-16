@@ -22,13 +22,12 @@ function swap_wallpaper
 
     # Discord
     pywal-discord -t mywal
+
     # Cmus
     cp ~/.cache/wal/cmus.theme ~/.config/cmus/pywal.theme
-    if pgrep cmus
-        set tmp (mktemp)
-        set input "/home/drspliff/.config/cmus/pywal.theme"
-
-        awk '
+    set tmp (mktemp)
+    set input "/home/drspliff/.config/cmus/pywal.theme"
+    awk '
   function hex2dec(h) {
     return strtonum("0x" h)
     }
@@ -80,9 +79,8 @@ function swap_wallpaper
           }
           ' "$input" >"$tmp"
 
-        mv "$tmp" "$input"
-        cmus-remote -C "source $input"
-    end
+    mv "$tmp" "$input"
+    cmus-remote -C "source $input"
 
     #BTOP
     cp ~/.cache/wal/btop.theme ~/.config/btop/themes/pywal.theme

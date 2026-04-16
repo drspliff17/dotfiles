@@ -20,6 +20,7 @@ local force_prefixes = {
   "^FzfLua",
   "^MiniFiles",
   "^LazyButton",
+  "^WhichKey",
 }
 
 local function matches_any(name, patterns)
