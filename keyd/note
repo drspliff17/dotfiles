@@ -1,0 +1,4 @@
+Linked to /etc/keyd/default.conf
+Run:
+  sudo systemctl restart keyd
+after updating file

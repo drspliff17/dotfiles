@@ -1,0 +1,199 @@
+@import "/home/drspliff/.cache/wal/colors-waybar.css";
+
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+    font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    border: none;
+    box-shadow: none;
+}
+
+/* =========================
+   WAYBAR BACKGROUND (GLASS)
+========================= */
+
+window#waybar {
+    background: rgba(0, 0, 0, 0); /* fallback */
+    background-color: alpha(@color4, 0);
+
+    border-bottom: 1px solid alpha(@foreground, 0);
+
+    color: @foreground;
+
+
+    transition: all 0.3s ease;
+}
+
+/* optional hidden state */
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/* =========================
+   MODULE CONTAINER (CENTER PILL)
+========================= */
+
+.modules-center {
+    background: alpha(@color0, 0.4);
+
+    border-radius: 14px;
+    padding: 2px 10px;
+    margin: 4px 0;
+
+    border: 1px solid alpha(@foreground, 0.12);
+}
+
+/* =========================
+   UNIFIED MODULE STYLE
+========================= */
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#power-profiles-daemon,
+#mpd,
+#window,
+#custom-gpu
+#workspaces {
+    background: transparent;
+    color: @foreground;
+
+    padding: 0 10px;
+}
+
+/* spacing between modules */
+#workspaces {
+    margin: 0 4px;
+}
+
+
+/* =========================
+  MPRIS Music Module (Standalone so it can vanish when stopped)
+========================= */
+#mpris {
+  background: alpha(@color0, 0.4);
+  border-radius: 14px;
+  padding: 2px 10px;
+  margin: 4px 0;
+  border: 1px solid alpha(@foreground, 0.12);
+}
+
+/* =========================
+   WORKSPACES (GLASS PILLS)
+========================= */
+
+#workspaces button {
+    background: transparent;
+    color: @foreground;
+    padding: 0 6px;
+    border-radius: 10px;
+}
+
+#workspaces button:hover {
+    background: alpha(@foreground, 0.08);
+}
+
+#workspaces button.active,
+#workspaces button.focused {
+    background: alpha(@foreground, 0.15);
+    border: 1px solid alpha(@foreground, 0.2);
+}
+
+#workspaces button.urgent {
+    background: alpha(@color1, 0.4);
+}
+
+/* =========================
+   HOVER EFFECT (GLASS LIFT)
+========================= */
+
+button:hover {
+    background: alpha(@foreground, 0.06);
+    border-radius: 10px;
+}
+
+/* =========================
+   BATTERY
+========================= */
+
+#battery.charging {
+    color: @foreground;
+}
+
+#battery.critical:not(.charging) {
+    background: alpha(@color1, 0.4);
+    animation: blink 0.6s infinite alternate;
+}
+
+@keyframes blink {
+    to {
+        background: alpha(@foreground, 0.15);
+        color: @background;
+    }
+}
+
+/* =========================
+   STATES
+========================= */
+
+#network.disconnected {
+    background: alpha(@color1, 0.25);
+}
+
+#pulseaudio.muted {
+    background: alpha(@foreground, 0.1);
+}
+
+#power-profiles-daemon.performance {
+    background: alpha(@color1, 0.25);
+}
+
+#power-profiles-daemon.balanced {
+    background: alpha(@color4, 0.25);
+}
+
+#power-profiles-daemon.power-saver {
+    background: alpha(@color2, 0.25);
+}
+
+/* =========================
+   MEDIA / TRAY
+========================= */
+
+#tray {
+    background: transparent;
+}
+
+#custom-media {
+    min-width: 120px;
+}
+
+/* =========================
+   CLEANUP (NO SOLID BLOCKS)
+========================= */
+
+#cpu,
+#memory,
+#disk,
+#network,
+#pulseaudio,
+#battery,
+#clock,
+#temperature {
+    border-radius: 10px;
+}
