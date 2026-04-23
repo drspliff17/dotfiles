@@ -6,6 +6,7 @@
       "mpris"
     ],
     "modules-center": [
+      "hyprland/submap",
       "clock",
       "tray",
       "idle_inhibitor",
@@ -15,7 +16,8 @@
       "cpu",
       "memory"
     ],
-    "modules-right": [],
+    "modules-right": [
+    ],
 
     //Modules configuration
     "idle_inhibitor": {
@@ -52,6 +54,9 @@
     "persistent-workspaces": {
       "*": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
     }
+  },
+  "hyprland/submap": {
+    "format": "{} 󰔡 ",
   },
   "cpu": {
         "format": "{usage}% ",
