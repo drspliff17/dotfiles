@@ -3,15 +3,20 @@
     follow = none
     corner_radius = 10
 
+    origin = top-center
     frame_color = "{color3}"
     separator_color = "{color1}"
+
+[center_text]
+    appname = "center-text"
+    alignment = center
 
 [urgency_low]
     background = "{color1}"
     foreground = "{color7}"
 
 [urgency_normal]
-    background = "{color1}"
+    background = "{color2}"
     foreground = "{color7}"
 
 [urgency_critical]
