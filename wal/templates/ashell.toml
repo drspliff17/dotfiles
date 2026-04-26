@@ -1,0 +1,11 @@
+[appearance]
+background = "{background}"
+foreground = "{foreground}"
+
+primary = "{color4}"
+secondary = "{color5}"
+accent = "{color6}"
+
+success = "{color2}"
+warning = "{color3}"
+error = "{color1}"

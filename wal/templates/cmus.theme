@@ -1,7 +1,7 @@
 set color_cmdline_bg=default
 set color_cmdline_fg={foreground}
-set color_error={color1}
-set color_info={background}
+set color_error={color3}
+set color_info={color2}
 set color_separator={color6}
 set color_statusline_bg=default
 set color_statusline_fg={color6}
