@@ -35,22 +35,6 @@ _updateMusicSelectorCache() {
   done
 }
 
-# # Generate dmenu using $cacheFile (Set selectedFile)
-# _menuFromCache() {
-#   cacheFile="$HOME/.cache/dmenu_music_selector"
-#   [[ -f "$cacheFile" ]] || _updateMusicSelectorCache
-#   local selection fullpath
-#
-#   selection="$(cut -d'|' -f1 "$cacheFile" | sed 's/_/ /g' | dmenu -c -l $lineCount)" || exit 1
-#   selectedName="$selection"
-#   selection="$(echo $selection | sed 's/ /_/g')"
-#
-#   fullpath="$(awk -F'|' -v sel="$selection" '$1 == sel {print $2; exit}' "$cacheFile")"
-#
-#   [[ -n "$fullpath" ]] || exit 1
-#   selectedFile="$fullpath"
-# }
-
 # Generate dmenu using $cacheFile (Set selectedFile)
 _menuFromCache() {
   cacheFile="$HOME/.cache/dmenu_music_selector"
@@ -105,9 +89,12 @@ _menuArtistSelection() {
 # Generate dmu from $musicPath/$selectedArtist (Set selectedFile)
 _menuArtistFileSelection() {
   [[ -z "$selectedArtist" ]] && exit 1
-  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | dmenu -c -l $lineCount)"
-  selectedName="$selectedFile"
-  selectedFile="$(echo $selectedFile | sed 's/ /_/g')"
+  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | dmenu -c -l $lineCount)"
+  selectedArtist="$(echo "$selectedArtist" | sed 's/_/ /g')"
+  selectedName="$selectedArtist - $selectedFile"
+
+  selectedArtist="$(echo "$selectedArtist" | sed 's/ /_/g')"
+  selectedFile="$(echo $selectedFile | sed 's/ /_/g').mp3"
 }
 
 # Main
