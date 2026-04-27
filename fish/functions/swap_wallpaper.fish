@@ -5,12 +5,21 @@ function swap_wallpaper
     set wallpaper (cat ~/.config/waypaper/config.ini | grep "wallpaper =" | cut -d ' ' -f 3 | string sub -s 3 --)
     /usr/bin/wal -i "$HOME/$wallpaper" >/dev/null 2>&1
 
+    # Kitty Sockets (specifically needed for tab bar pywal update)
+    for paw in /tmp/kitty-*
+        test -S $paw; or continue
+        kitty @ --to "unix:$paw" set-colors --all --configured ~/.cache/wal/colors-kitty.conf
+    end
+
     # Neovim
     for sock in /tmp/nvim-*
         if test -S $sock
             nvim --server $sock --remote-expr "execute ('colorscheme pywal')"
         end
     end
+
+    # Waypaper
+    cp ~/.cache/wal/waypaper.css ~/.config/waypaper/style.css
 
     # Dunst
     cp ~/.cache/wal/dunstrc ~/.config/dunst/dunstrc
@@ -83,6 +92,6 @@ function swap_wallpaper
     cmus-remote -C "source $input"
 
     #BTOP
-    cp ~/.cache/wal/btop.theme ~/.config/btop/themes/pywal.theme
+    # cp ~/.cache/wal/btop.theme ~/.config/btop/themes/pywal.theme
 
 end
