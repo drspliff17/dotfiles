@@ -1,24 +1,47 @@
 #!/usr/bin/env bash
 
+# NOTE: System breakdown
+# If cmus is not running, launch cmus
+# Else, based on $mode, generates dmenu instance that populated by either:
+#   - Contents of $cacheFile, if $mode == 'files'
+#   - Results from ls command, in $musicPath -> $musicPath/$selectedArtist, if $mode == 'artist'
+# If $mode == 'update', then the contents of $cacheFile, are updated to match $musicPath/**
+
+# TODO: Refine _notify, to be more flexible (low priority)
+#       Implement grid, once patched into dmenu (low priority)
+
+#
+# Main switch statement control
 mode="$1"
 [[ -z "$mode" ]] && mode="files"
+
+# Root of search, when not using $cacheFile
 musicPath="$HOME/Music/Songs"
+
+# Populated with new-line entries: FileName|FullFilePath
+cacheFile="$HOME/.cache/dmenu_music_selector"
+
+# Dynamically assigned from dmenu
 selectedArtist=""
 selectedFile=""
 selectedName=""
-lineCount=20
-cacheFile="$HOME/.cache/dmenu_music_selector"
 
-# Wrapper for notify-send
+# Passed to dmenu, for -c
+lineCount=20
+
+# Simple Wrapper for shortening notify-send, args: appname  urgency  head  body  doDie("true"/"")
 _notify() {
-  appname="$1"
-  urg="$2"
-  head="$3"
-  body="$4"
-  notify-send -u "$urg" -t 2000 -a "$appname" "$head" "$body" && exit 0
+  local appname="$1"
+  local urg="$2"
+  local head="$3"
+  local body="$4"
+  local dodie="$5"
+  notify-send -u "$urg" -t 2000 -a "$appname" "$head" "$body"
+  [[ "$dodie" = "true" ]] && exit 0
+  return 0
 }
 
-# Updates $cacheFile (/creates)
+# Updates $cacheFile with new-line entries
 _updateMusicSelectorCache() {
   [[ -f "$cacheFile" ]] && rm "$cacheFile"
   : >"$cacheFile"
@@ -35,7 +58,7 @@ _updateMusicSelectorCache() {
   done
 }
 
-# Generate dmenu using $cacheFile (Set selectedFile)
+# Generate dmenu using $cacheFile (Sets selectedFile)
 _menuFromCache() {
   cacheFile="$HOME/.cache/dmenu_music_selector"
   [[ -f "$cacheFile" ]] || _updateMusicSelectorCache
@@ -54,7 +77,7 @@ _menuFromCache() {
     gsub("_"," ",artist)
 
     printf "%s - %s\n", artist, title
-  }' "$cacheFile" | dmenu -c -l $lineCount
+  }' "$cacheFile" | dmenu -c -vi -l $lineCount
   )" || exit 1
 
   selectedName="$selection"
@@ -76,25 +99,33 @@ _menuFromCache() {
   }' "$cacheFile"
   )"
 
-  [[ -n "$fullpath" ]] || exit 1
+  [[ -z "$fullpath" ]] && return 1
   selectedFile="$fullpath"
+  return 0
 }
 
 # Generate dmenu from $musicPath (Set selectedArtist)
 _menuArtistSelection() {
-  selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | dmenu -c -l $lineCount)"
+  selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | dmenu -c -vi -l $lineCount)"
+  [[ -z "$selectedArtist" ]] && exit 1
   selectedArtist="$(echo $selectedArtist | sed 's/ /_/g')"
+
+  [[ ! -d "$musicPath/$selectedArtist" ]] && return 1
+  return 0
 }
 
-# Generate dmu from $musicPath/$selectedArtist (Set selectedFile)
+# Generate dmenu from $musicPath/$selectedArtist (Sets selectedFile)
 _menuArtistFileSelection() {
   [[ -z "$selectedArtist" ]] && exit 1
-  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | dmenu -c -l $lineCount)"
+  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | dmenu -c -vi -l $lineCount)"
+  [[ -z "$selectedFile" ]] && exit 1
   selectedArtist="$(echo "$selectedArtist" | sed 's/_/ /g')"
   selectedName="$selectedArtist - $selectedFile"
 
   selectedArtist="$(echo "$selectedArtist" | sed 's/ /_/g')"
   selectedFile="$(echo $selectedFile | sed 's/ /_/g').mp3"
+  [[ ! -f "$musicPath/$selectedArtist/$selectedFile" ]] && return 1
+  return 0
 }
 
 # Main
@@ -104,24 +135,25 @@ fi
 
 case "$mode" in
 artist)
-  _menuArtistSelection || exit 1
-  _menuArtistFileSelection || exit 1
+  _menuArtistSelection || _notify center-text normal "Invalid Artist" "" "true"
+  _menuArtistFileSelection || _notify center-text normal "Invalid Song" "" "true"
   cmus-remote -f "$musicPath/$selectedArtist/$selectedFile" && _notify center-text low "Now Playing: $selectedName"
   exit 0
   ;;
 
 files)
-  _menuFromCache || exit 1
+  _menuFromCache || _notify center-text normal "Invalid Selection" "" "true"
   cmus-remote -f "$selectedFile" && _notify center-text low "Now Playing: $selectedName"
   exit 0
   ;;
 
 update)
-  _updateMusicSelectorCache && echo "[INFO] Music Selector Cache updated: $cacheFile"
+  _notify center-text low "Starting Cache Update..." && _updateMusicSelectorCache && _notify center-text low "Cache Updated: $cacheFile"
   exit 0
   ;;
 
 *)
+  _notify center-text urgent "[ERROR] dmenu_music_selector.sh" " Invalid mode! Valid = [ artist files update ] | Got: $mode "
   exit 1
   ;;
 esac
