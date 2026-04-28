@@ -3,12 +3,13 @@
 # NOTE: System breakdown
 # If cmus is not running, launch cmus
 # Else, based on $mode, generates dmenu instance that populated by either:
-#   - Contents of $cacheFile, if $mode == 'files'
-#   - Results from ls command, in $musicPath -> $musicPath/$selectedArtist, if $mode == 'artist'
+# - Contents of $cacheFile, if $mode == 'files'
+# - Results from ls command, in $musicPath -> $musicPath/$selectedArtist, if $mode == 'artist'
 # If $mode == 'update', then the contents of $cacheFile, are updated to match $musicPath/**
 
 # TODO: Refine _notify, to be more flexible (low priority)
 #       Implement grid, once patched into dmenu (low priority)
+#       Add trapped exit to killall this script (HIGH PRIORITY)
 
 #
 # Main switch statement control
@@ -148,6 +149,10 @@ files)
   ;;
 
 update)
+  if pgrep cmus; then
+    cmus-remote -C 'add Music'
+    cmus-remote -C 'update-cache'
+  fi
   _notify center-text low "Starting Cache Update..." && _updateMusicSelectorCache && _notify center-text low "Cache Updated: $cacheFile"
   exit 0
   ;;
