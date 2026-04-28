@@ -130,9 +130,13 @@ _menuArtistFileSelection() {
 }
 
 # Main
-if ! pgrep cmus; then
-  kitty fish -c cmus && exit 0
-fi
+case "$mode" in
+artist | files)
+  if ! pgrep cmus; then
+    kitty fish -c cmus && exit 0
+  fi
+  ;;
+esac
 
 case "$mode" in
 artist)
