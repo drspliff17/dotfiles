@@ -9,7 +9,6 @@
 
 # TODO: Refine _notify, to be more flexible (low priority)
 #       Implement grid, once patched into dmenu (low priority)
-#       Add trapped exit to killall this script (HIGH PRIORITY)
 
 #
 # Main switch statement control
@@ -29,6 +28,7 @@ selectedName=""
 
 # Passed to dmenu, for -c
 lineCount=20
+borderWidth=3
 
 # Simple Wrapper for shortening notify-send, args: appname  urgency  head  body  doDie("true"/"")
 _notify() {
@@ -78,7 +78,7 @@ _menuFromCache() {
     gsub("_"," ",artist)
 
     printf "%s - %s\n", artist, title
-  }' "$cacheFile" | dmenu -c -vi -l $lineCount
+  }' "$cacheFile" | dmenu -bw $borderWidth -c -vi -l $lineCount
   )" || exit 1
 
   selectedName="$selection"
@@ -107,7 +107,7 @@ _menuFromCache() {
 
 # Generate dmenu from $musicPath (Set selectedArtist)
 _menuArtistSelection() {
-  selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | dmenu -c -vi -l $lineCount)"
+  selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | dmenu -bw $borderWidth -c -vi -l $lineCount)"
   [[ -z "$selectedArtist" ]] && exit 1
   selectedArtist="$(echo $selectedArtist | sed 's/ /_/g')"
 
@@ -118,7 +118,7 @@ _menuArtistSelection() {
 # Generate dmenu from $musicPath/$selectedArtist (Sets selectedFile)
 _menuArtistFileSelection() {
   [[ -z "$selectedArtist" ]] && exit 1
-  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | dmenu -c -vi -l $lineCount)"
+  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | dmenu -bw $borderWidth -c -vi -l $lineCount)"
   [[ -z "$selectedFile" ]] && exit 1
   selectedArtist="$(echo "$selectedArtist" | sed 's/_/ /g')"
   selectedName="$selectedArtist - $selectedFile"
@@ -130,10 +130,15 @@ _menuArtistFileSelection() {
 }
 
 # Main
+
+exec 200>"/tmp/dmenu_music_selector.lock"
+flock -n 200 || exit 1
+
 case "$mode" in
 artist | files)
   if ! pgrep cmus; then
-    kitty fish -c cmus && exit 0
+    kitty fish -c cmus &
+    exit 0
   fi
   ;;
 esac
