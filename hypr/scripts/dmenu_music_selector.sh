@@ -10,6 +10,11 @@
 # TODO: Refine _notify, to be more flexible (low priority)
 #       Implement grid, once patched into dmenu (low priority)
 
+lockfile="/tmp/dmenu_music_selector.lock"
+
+exec 9>"$lockfile"
+flock -n 9 || exit 1
+
 #
 # Main switch statement control
 mode="$1"
@@ -130,9 +135,6 @@ _menuArtistFileSelection() {
 }
 
 # Main
-
-exec 200>"/tmp/dmenu_music_selector.lock"
-flock -n 200 || exit 1
 
 case "$mode" in
 artist | files)
