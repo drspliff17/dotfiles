@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
 
-root="$HOME/doc"
+proot="$HOME/doc"
+root="$proot"
 selectionIsFile=false
 selection="$(ls "$root" | dmenu -c -vi -l 30)"
 [[ -z "$selection" ]] && exit 1
 [[ -f "$root/$selection" ]] && selectionIsFile=true || root="$root/$selection"
 
-[[ "$root" = "$HOME/doc/hyprland-wiki" ]] && root="$HOME/doc/hyprland-wiki/content"
-
 while ! $selectionIsFile; do
   if [[ -d "$root" ]]; then
+
+    # Exceptions
+    case "$root" in
+    "$proot/hyprland-wiki")
+      root="$root/content"
+      ;;
+    esac
+
     selection="$(ls "$root" | dmenu -c -vi -l 30)"
     [[ -z "$selection" ]] && exit 1
     root="$root/$selection"
