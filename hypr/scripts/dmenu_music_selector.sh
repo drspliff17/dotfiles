@@ -8,12 +8,6 @@
 # If $mode == 'update', then the contents of $cacheFile, are updated to match $musicPath/**
 
 # TODO: Refine _notify, to be more flexible (low priority)
-#       Implement grid, once patched into dmenu (low priority)
-
-lockfile="/tmp/dmenu_music_selector.lock"
-
-exec 9>"$lockfile"
-flock -n 9 || exit 1
 
 #
 # Main switch statement control
