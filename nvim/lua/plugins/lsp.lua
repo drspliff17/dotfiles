@@ -11,6 +11,20 @@ return {
         capabilities = capabilities,
         settings = {},
       },
+
+      lua_ls = {
+        capabilities = capabilities,
+        settings = {
+          Lua = {
+            workspace = {
+              library = {
+                vim.fn.expand("~/.local/share/hyprland-meta/hl.meta.lua"),
+              },
+              checkThirdParty = false,
+            },
+          },
+        },
+      },
     },
   },
 }
