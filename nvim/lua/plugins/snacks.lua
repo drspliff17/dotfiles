@@ -15,7 +15,7 @@ return {
     opts.dashboard.preset.keys = {
       { icon = "󰞦  ", key = "s", desc = "Restore Session", section = "session" },
       { icon = "󰞦  ", key = "l", desc = "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil },
-      { icon = "󰞦  ", key = "q", desc = "Quit", action = ":qa" },
+      { icon = "󰞦  ", key = "q", desc = "Quit", action = ":qa" },
     }
 
     opts.scratch = opts.scratch or {}
