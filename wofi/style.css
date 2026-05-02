@@ -1,0 +1,29 @@
+@import "/home/drspliff/.cache/wal/colors-waybar.css";
+
+window {
+  background-color: @background;
+  border: 1px solid @color1;
+  border-radius: 10px;
+  color: @color4;
+}
+
+#entry:selected {
+  background-color: @color1;
+  color: @color4;
+}
+
+#text:selected {
+  background-color: @color4;
+  color: @color7;
+}
+
+#input {
+  border: 1px solid @color1;
+  border-bottom: none;
+  background-color: @background;
+  color: @color7;
+}
+
+#input:focus {
+  box-shadow: none;
+}
