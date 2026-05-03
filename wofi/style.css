@@ -9,7 +9,7 @@ window {
 
 #entry:selected {
   background-color: @color1;
-  color: @color4;
+  color: @color3;
 }
 
 #text:selected {

@@ -24,16 +24,30 @@ selectedName=""
 w_prompt=""
 w_width="25%"
 w_height="50%"
+w_columns=""
+w_lines=""
 
-# Simple Wrapper for shortening notify-send, args: appname  urgency  head  body  doDie("true"/"")
+w_args=()
+
+# Build wofi arguments (w_args) from w_* variables
+_constructArgs() {
+  w_args=()
+
+  w_args+=("--prompt" "$w_prompt")
+  w_args+=("--width" "$w_width")
+  w_args+=("--height" "$w_height")
+
+  [[ -n $w_columns ]] && w_args+=("--columns" "$w_columns")
+  [[ -n $w_lines ]] && w_args+=("--lines" "$w_lines")
+}
+
+# Simple Wrapper for shortening notify-send, args: appname  urgency  head  body
 _notify() {
   local appname="$1"
   local urg="$2"
   local head="$3"
   local body="$4"
-  local dodie="$5"
   notify-send -u "$urg" -t 2000 -a "$appname" "$head" "$body"
-  [[ "$dodie" = "true" ]] && exit 0
   return 0
 }
 
@@ -61,6 +75,7 @@ _menuFromCache() {
   local selection fullpath
 
   w_prompt="Cached Music"
+  _constructArgs
   selection="$(
     awk -F'|' -v base="$musicPath" '{
     title=$1
@@ -74,7 +89,7 @@ _menuFromCache() {
     gsub("_"," ",artist)
 
     printf "%s - %s\n", artist, title
-    }' "$cacheFile" | wofi --show dmenu -p "$w_prompt" -W "$w_width" -H "$w_height"
+    }' "$cacheFile" | wofi -d "${w_args[@]}"
   )" || exit 1
 
   selectedName="$selection"
@@ -96,7 +111,7 @@ _menuFromCache() {
   }' "$cacheFile"
   )"
 
-  [[ -z "$fullpath" ]] && return 1
+  [[ -z "$fullpath" ]] && _notify center-text normal "Invalid Selection" && exit 1
   selectedFile="$fullpath"
   return 0
 }
@@ -104,26 +119,28 @@ _menuFromCache() {
 # Generate wofi from $musicPath (Set selectedArtist)
 _menuArtistSelection() {
   w_prompt="Select Artist"
-  selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | wofi --show dmenu -p "$w_prompt" -W "$w_width" -H "$w_height")"
-  [[ -z "$selectedArtist" ]] && exit 1
+  _constructArgs
+  selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | wofi -d "${w_args[@]}")"
+  [[ -z "$selectedArtist" ]] && return 1
   w_prompt="$selectedArtist"
   selectedArtist="$(echo $selectedArtist | sed 's/ /_/g')"
 
-  [[ ! -d "$musicPath/$selectedArtist" ]] && return 1
+  [[ ! -d "$musicPath/$selectedArtist" ]] && _notify center-text normal "Invalid Artist" && exit 1
   return 0
 }
 
 # Generate wofi from $musicPath/$selectedArtist (Sets selectedFile)
 _menuArtistFileSelection() {
-  [[ -z "$selectedArtist" ]] && exit 1
-  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | wofi --show dmenu -p "$w_prompt" -W "$w_width" -H "$w_height")"
+  [[ -z "$selectedArtist" ]] && return 1
+  _constructArgs
+  selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | wofi -d "${w_args[@]}")"
   [[ -z "$selectedFile" ]] && exit 1
   selectedArtist="$(echo "$selectedArtist" | sed 's/_/ /g')"
   selectedName="$selectedArtist - $selectedFile"
 
   selectedArtist="$(echo "$selectedArtist" | sed 's/ /_/g')"
   selectedFile="$(echo $selectedFile | sed 's/ /_/g').mp3"
-  [[ ! -f "$musicPath/$selectedArtist/$selectedFile" ]] && return 1
+  [[ ! -f "$musicPath/$selectedArtist/$selectedFile" ]] && _notify center-text normal "Invalid Song" && exit 1
   return 0
 }
 
@@ -140,14 +157,16 @@ esac
 
 case "$mode" in
 artist)
-  _menuArtistSelection || _notify center-text normal "Invalid Artist" "" "true"
-  _menuArtistFileSelection || _notify center-text normal "Invalid Song" "" "true"
+  _menuArtistSelection
+  _menuArtistFileSelection
+  [[ -z "$selectedArtist" || -z "$selectedFile" ]] && exit 1
   cmus-remote -f "$musicPath/$selectedArtist/$selectedFile" && _notify center-text low "Now Playing: $selectedName"
   exit 0
   ;;
 
 files)
-  _menuFromCache || _notify center-text normal "Invalid Selection" "" "true"
+  _menuFromCache
+  [[ -z "$selectedFile" ]] && exit 1
   cmus-remote -f "$selectedFile" && _notify center-text low "Now Playing: $selectedName"
   exit 0
   ;;
