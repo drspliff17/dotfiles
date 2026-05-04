@@ -58,4 +58,3 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
     vim.opt_local.cursorline = false
   end,
 })
-

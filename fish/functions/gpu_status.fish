@@ -5,5 +5,5 @@ function gpu_status
     set usage (nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits)
     set usage_fmt (printf "%02d" $usage)
 
-    echo "{\"text\":\"󰊗  $usage_fmt% ($temp°C)\",\"alt\": \"\"}"
+    echo "$usage_fmt% ($temp)" | jq -R -c '{text: .}'
 end

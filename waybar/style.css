@@ -23,7 +23,6 @@ window#waybar {
 
     color: @foreground;
 
-
     transition: all 0.3s ease;
 }
 
@@ -80,7 +79,6 @@ window#waybar.hidden {
 #workspaces {
     margin: 0 4px;
 }
-
 
 /* =========================
   MPRIS Music Module (Standalone so it can vanish when stopped)
