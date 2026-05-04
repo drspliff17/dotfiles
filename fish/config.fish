@@ -13,3 +13,7 @@ set -gx FZF_DEFAULT_OPTS "
 cat ~/.cache/wal/sequences
 function fish_greeting
 end
+
+set -x EDITOR "fish -c n"
+
+zoxide init fish | source
