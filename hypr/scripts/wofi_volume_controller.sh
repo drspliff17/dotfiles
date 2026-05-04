@@ -8,6 +8,7 @@ w_prompt=""
 w_width="25%"
 w_height="35%"
 w_sort="default"
+w_config=""
 w_columns=""
 w_lines=""
 
@@ -27,7 +28,8 @@ _constructArgs() {
   w_args+=("--prompt" "$w_prompt")
   w_args+=("--width" "$w_width")
   w_args+=("--height" "$w_height")
-  w_args+=("-O" "$w_sort")
+  [[ -n "$w_sort" ]] && w_args+=("-O" "$w_sort")
+  [[ -n "$w_config" ]] && w_args+=("--conf" "$w_config")
   [[ -n $w_columns ]] && w_args+=("--columns" "$w_columns")
   [[ -n $w_lines ]] && w_args+=("--lines" "$w_lines")
 }
