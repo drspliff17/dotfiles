@@ -9,6 +9,7 @@
 # you can get started by copying this config to ~/.config/hypr/hyprlock.conf
 #
 
+#test
 $font = Monospace
 
 general {
