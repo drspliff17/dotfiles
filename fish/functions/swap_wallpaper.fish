@@ -28,8 +28,6 @@ function swap_wallpaper
     # Dunst
     cp ~/.cache/wal/dunstrc ~/.config/dunst/dunstrc
     dunstctl reload
-    # pgrep dunst && pkill dunst
-    # dunst &
 
     # Firefox
     pywalfox update
