@@ -1,0 +1,5 @@
+[mgr]
+show_hidden = true
+
+[opener]
+edit = [{ run = "fish -c n %s", block = true, for = "unix" }]
