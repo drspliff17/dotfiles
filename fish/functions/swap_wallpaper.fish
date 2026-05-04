@@ -5,6 +5,10 @@ function swap_wallpaper
     set wallpaper (cat ~/.config/waypaper/config.ini | grep "wallpaper =" | cut -d ' ' -f 3 | string sub -s 3 --)
     /usr/bin/wal -i "$HOME/$wallpaper" >/dev/null 2>&1
 
+    if test -f "$HOME/.cache/wal/hyprlock-color.conf"
+        cp "$HOME/.cache/wal/hyprlock-color.conf" "$HOME/.config/hypr/hyprlock.conf"
+    end
+
     # Kitty Sockets (specifically needed for tab bar pywal update)
     for paw in /tmp/kitty-*
         test -S $paw; or continue
