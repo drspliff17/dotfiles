@@ -8,6 +8,7 @@ key_pgdn=Ctrl-d
 key_copy=Ctrl-y
 key_hide_search=Ctrl-s
 
+normal_window=true
 matching=fuzzy
 insensitive=true
 use_search_box=false
