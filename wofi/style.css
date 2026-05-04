@@ -1,25 +1,45 @@
 @import "/home/drspliff/.cache/wal/colors-waybar.css";
 
+* {
+  border: none;
+  background: none;
+}
+
+#inner-box {
+}
+
+#outer-box {
+  background: none;
+  margin: 10px;
+  padding: 10px
+}
+
 window {
+  padding: 10px;
   background-color: @background;
-  border: 1px solid @color1;
+  border: 2px solid @color1;
   border-radius: 10px;
-  color: @color4;
+  /* color: @color4; */
+}
+
+#text {
+  color: @color3;
 }
 
 #entry:selected {
   background-color: @color1;
-  color: @color3;
 }
 
 #text:selected {
-  background-color: @color4;
+  /* background-color: @color4; */
   color: @color7;
 }
 
 #input {
-  border: 1px solid @color1;
-  border-bottom: none;
+  box-shadow: none;
+  padding: 5px 20px;
+  border-radius: 20px;
+  margin-bottom: 20px;
   background-color: @background;
   color: @color7;
 }

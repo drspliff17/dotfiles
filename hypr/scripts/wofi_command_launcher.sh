@@ -1,19 +1,31 @@
 #!/usr/bin/env bash
 
-declare -A cmd_map
+#TODO: Add comments & cleanup
+
 wofi_command_line_data="$HOME/stuff/wofi_command_line.yml"
 [[ ! -f "$wofi_command_line_data" ]] && notify-send -u normal -t 2000 -a center-text "Missing Expected File: $wofi_command_line_data" && exit 1
 
-# Passed to wofi, for -c
 w_prompt=""
-w_width="25%"
+w_width="10%"
 w_height="50%"
+w_conf="$HOME/.config/wofi/center-align-config"
 w_columns=""
 w_lines=""
-
 w_args=()
 
-# Build wofi arguments (w_args) from w_* variables
+menu_stack=()
+
+_update_prompt() {
+  if [[ ${#menu_stack[@]} -eq 0 ]]; then
+    w_prompt="Select Command"
+  else
+    w_prompt="$(
+      IFS=' › '
+      echo "${menu_stack[*]}"
+    )"
+  fi
+}
+
 _constructArgs() {
   w_args=()
 
@@ -23,16 +35,70 @@ _constructArgs() {
 
   [[ -n $w_columns ]] && w_args+=("--columns" "$w_columns")
   [[ -n $w_lines ]] && w_args+=("--lines" "$w_lines")
+  [[ -n $w_conf ]] && w_args+=("--conf" "$w_conf")
 }
 
-while IFS=$'\t' read -r name command; do
-  cmd_map["$name"]="$command"
-done < <(
-  yq -r '.Commands[] | .[] | [.Name, .Command] | @tsv' "$wofi_command_line_data"
-)
+show_menu() {
+  local path="$1"
+  local is_root="$2"
 
-w_prompt="Select Command" && _constructArgs
-choice="$(printf "%s\n" "${!cmd_map[@]}" | sort | wofi -d "${w_args[@]}")"
-[[ -z "$choice" ]] && exit 1
-eval "${cmd_map["$choice"]}"
+  while true; do
+    local count choice selection item_path
+    declare -A item_map=()
+
+    count="$(yq "$path | length" "$wofi_command_line_data")"
+    [[ "$count" -eq 0 ]] && return 1
+
+    _update_prompt
+    _constructArgs
+
+    while IFS=$'\t' read -r name index; do
+      item_map["$name"]="$index"
+    done < <(
+      yq -r "$path | to_entries[] | [.value.Name, .key] | @tsv" \
+        "$wofi_command_line_data"
+    )
+
+    local options=("${!item_map[@]}")
+
+    if [[ "$is_root" != "true" ]]; then
+      options=("← Back" "${options[@]}")
+    fi
+
+    options+=("✕ Exit")
+
+    w_lines="${#options[@]}"
+    _constructArgs
+    choice="$(printf "%s\n" "${options[@]}" | wofi -d "${w_args[@]}")"
+    [[ -z "$choice" ]] && return 1
+
+    case "$choice" in
+    "✕ Exit")
+      exit 0
+      ;;
+    "← Back")
+      return 0
+      ;;
+    esac
+
+    selection="${item_map[$choice]}"
+    item_path="$path[$selection]"
+
+    # Execute command
+    if yq -e "$item_path | has(\"Command\")" "$wofi_command_line_data" >/dev/null; then
+      eval "$(yq -r "$item_path.Command" "$wofi_command_line_data")"
+      return 0
+    fi
+
+    # Enter submenu
+    if yq -e "$item_path | has(\"Items\")" "$wofi_command_line_data" >/dev/null; then
+      menu_stack+=("$choice")
+      show_menu "$item_path.Items" false
+      menu_stack=("${menu_stack[@]::${#menu_stack[@]}-1}")
+    fi
+  done
+}
+
+# Main Loop
+show_menu '.Commands' true
 exit 0
