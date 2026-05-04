@@ -60,26 +60,13 @@ show_menu() {
     )
 
     local options=("${!item_map[@]}")
-
-    if [[ "$is_root" != "true" ]]; then
-      options=("← Back" "${options[@]}")
-    fi
-
     options+=("✕ Exit")
 
     w_lines="${#options[@]}"
     _constructArgs
     choice="$(printf "%s\n" "${options[@]}" | wofi -d "${w_args[@]}")"
     [[ -z "$choice" ]] && return 1
-
-    case "$choice" in
-    "✕ Exit")
-      exit 0
-      ;;
-    "← Back")
-      return 0
-      ;;
-    esac
+    [[ "$choice" = "✕ Exit" ]] && pkill -f $HOME/.config/hypr/scripts/wofi_command_launcher.sh
 
     selection="${item_map[$choice]}"
     item_path="$path[$selection]"
