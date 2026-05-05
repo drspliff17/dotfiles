@@ -2,7 +2,7 @@
 
 #TODO: Add comments & cleanup
 
-wofi_command_line_data="$HOME/stuff/wofi_command_line.yml"
+wofi_command_line_data="$HOME/dev/data/wofi_command_line.yml"
 [[ ! -f "$wofi_command_line_data" ]] && notify-send -u normal -t 2000 -a center-text "Missing Expected File: $wofi_command_line_data" && exit 1
 
 w_prompt=""
