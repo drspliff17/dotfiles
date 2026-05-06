@@ -28,3 +28,5 @@ alias gr="git remote -v"
 alias ghl="gh repo list"
 
 alias lg="lazygit"
+
+alias getmusic="$HOME/.config/bash/scripts/automatic_ytdlp.sh"
