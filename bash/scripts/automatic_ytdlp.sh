@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
-givenURL="$1"
+scr_fixFilename="$HOME/.config/bash/scripts/fixYoutubeMusic_Files.sh"
+scr_fixMp3="$HOME/.config/bash/scripts/fmp3.sh"
 
+[[ ! -f "$scr_fixFilename" || ! -f "$scr_fixMp3" ]] && {
+  echo -e "[ERROR] Missing script dependancy. Expected:\n$scr_fixFilename\n$scr_fixMp3" >&2
+  exit 1
+}
+
+givenURL="$1"
+assumeArtist="$2"
 if [[ -z "$givenURL" ]]; then
   read -rp "[INIT] Please enter URL:  " ytdlp_url
 else
@@ -16,7 +24,8 @@ read -rp "[INIT] Please enter target directory (or leave blank for CWD):  " ytdl
 [[ -z "$ytdlp_targdir" ]] && ytdlp_targdir="$PWD"
 [[ ! -d "$ytdlp_targdir" ]] && echo "[ERROR] Directory does not exist" >&2 && exit 1
 
-read -rp "[INIT] Please enter Artist Name:  " ytdlp_artistName
+ytdlp_artistName=""
+[[ -z "$assumeArtist" ]] && read -rp "[INIT] Please enter Artist Name:  " ytdlp_artistName || ytdlp_artistName="$(echo "$(basename $PWD)" | sed 's/_/ /g')"
 [[ -z "$ytdlp_artistName" ]] && echo "[ERROR] Artist Name must be provided" >&2 && exit 1
 
 read -rp "[INIT] Please enter Album Name:  " ytdlp_albumName
