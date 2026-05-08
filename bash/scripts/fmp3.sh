@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-# Wrapper for eyeD3 for correcting .mp3 metadata
+# Script port of my fixMP3_Meta.sh function
 
-#####################################
 # HELP
-#####################################
 if [[ $# -eq 0 ]]; then
   cat <<'HELP'
 MP3 Meta Data Correction
@@ -29,9 +27,7 @@ HELP
   exit 1
 fi
 
-#####################################
 # HELPERS
-#####################################
 _changeFileDataD3() {
   local file="$1"
 
@@ -67,9 +63,7 @@ _retrieveFileDataD3() {
   esac
 }
 
-#####################################
 # DEFAULTS
-#####################################
 mode=""
 artistName=""
 albumName=""
@@ -80,9 +74,7 @@ quietMode=1
 specifiedFiles=()
 eyeArguments=()
 
-#####################################
 # PARSE ARGS
-#####################################
 while [[ $# -gt 0 ]]; do
   case "$1" in
   -a | --artist)
@@ -155,9 +147,7 @@ done
 
 [[ -z "$mode" ]] && mode="default"
 
-#####################################
 # EXECUTION
-#####################################
 case "$mode" in
 
 default)

@@ -79,7 +79,7 @@ _performTransfer() {
         fname="$(basename "$file")"
         remote_file="$remote_dir/$fname"
 
-        adb shell "[ -f \"$remote_file\" ]" >/dev/null 2>&1 && continue
+        adb shell "[ -f \"$remote_file\" ]" >/dev/null 2>&1 && _log "Skipped $file: Already exists" && continue
 
         adb push "$file" "$remote_file" >/dev/null
         _log "Pushed $file -> $remote_file"
@@ -131,8 +131,11 @@ while [[ $# -gt 0 ]]; do
     MODE="WIPE"
     shift
     ;;
+  -*)
+    echo "[ERROR] Unknown Option" >&2 && exit 1
+    ;;
   *)
-    shift
+    echo "[ERROR] Unknown Value" >&2 && exit 1
     ;;
   esac
 done

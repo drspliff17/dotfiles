@@ -4,11 +4,6 @@ targDir="$1"
 [[ -z "$targDir" ]] && targDir="$PWD"
 [[ ! -d "$targDir" ]] && echo "[ERROR] Invaliid directory: $targDir" >&2 && exit 1
 
-#TODO:
-# Strip punctuation (core)
-# Look for brackets, peren, then square
-# Sed space to _
-
 _getCleanedName() {
   local file="$(basename "$1")"
   local base clean

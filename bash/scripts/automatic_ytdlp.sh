@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#NOTE: FOR PUB: will need to bake in dependancies, ideally including the external executables (yt/eye)
+
+#NOTE: This will be removed when public branch is developed.
 scr_fixFilename="$HOME/.config/bash/scripts/fixYoutubeMusic_Files.sh"
 scr_fixMp3="$HOME/.config/bash/scripts/fmp3.sh"
 
@@ -8,6 +11,7 @@ scr_fixMp3="$HOME/.config/bash/scripts/fmp3.sh"
   exit 1
 }
 
+#NOTE: assumeArtist will be replaced with proper arg parsing when i can be bothered
 givenURL="$1"
 assumeArtist="$2"
 if [[ -z "$givenURL" ]]; then
