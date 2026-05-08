@@ -74,6 +74,9 @@ show_menu() {
     # Execute command
     if yq -e "$item_path | has(\"Command\")" "$wofi_command_line_data" >/dev/null; then
       eval "$(yq -r "$item_path.Command" "$wofi_command_line_data")"
+      if yq -e "$item_path.Exit == true" "$wofi_command_line_data" >/dev/null; then
+        exit 0
+      fi
       return 0
     fi
 
