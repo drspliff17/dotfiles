@@ -7,9 +7,9 @@ hl.config({
 		border_size = 2,
 
 		col = {
-			-- active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
-			active_border = "color1",
-			inactive_border = "background",
+			active_border = { colors = { "rgba(33ccffee)", "rgba(00ff99ee)" }, angle = 45 },
+			--active_border = "color1",
+			--inactive_border = "background",
 		},
 
 		-- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -82,12 +82,12 @@ hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "a
 hl.animation({ leaf = "zoomFactor", enabled = true, speed = 7, bezier = "quick" })
 
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
-hl.config({
-	dwindle = {
-		psuedotile = true,
-		preserve_split = true, -- You probably want this
-	},
-})
+-- hl.config({
+-- 	dwindle = {
+-- 		psuedotile = true,
+-- 		preserve_split = true, -- You probably want this
+-- 	},
+-- })
 
 -- See https://wiki.hypr.land/Configuring/Layouts/Master-Layout/ for more
 hl.config({

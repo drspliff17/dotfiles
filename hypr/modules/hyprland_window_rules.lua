@@ -4,12 +4,12 @@
 -- local someRule = hl.window_rule({ ... })
 -- someRule:set_enabled(false)
 
-hl.window_rule({
-	name = "surpress-maximize-events",
-	match = { class = ".*" },
-
-	surpress_event = "maximize",
-})
+-- hl.window_rule({
+-- 	name = "surpress-maximize-events",
+-- 	match = { class = ".*" },
+--
+-- 	surpress_event = "maximize",
+-- })
 
 hl.window_rule({
 	name = "fix-xwayland-drags",
@@ -37,7 +37,7 @@ hl.window_rule({
 	match = { pin = true },
 	rounding = 0,
 	border_size = 3,
-	border_color = "color4 color1",
+	-- border_color = "color4 color1",
 	opacity = "0.9 override 0.4 override 1.0",
 })
 
