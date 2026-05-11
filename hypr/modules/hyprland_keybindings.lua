@@ -7,13 +7,18 @@ local mainMod = "SUPER"
 local terminal = "kitty"
 local fileManager = "yazi"
 local menu = "wofi --show drun"
+local status = "waybar"
 
 -- My Scripts
+local scr_toggleProgram = "~/.config/hypr/scripts/toggle_program.sh"
 local scr_volumeController = "~/.config/hypr/scripts/wofi_volume_controller.sh"
 local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
 local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
 local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
 local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
+local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
+local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
+local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 
 -- Core Binds
 hl.bind(
@@ -36,7 +41,7 @@ hl.bind(mainMod .. " + TAB", hl.dsp.window.cycle_next({ next = true }), { submap
 hl.bind(mainMod .. " + SHIFT + TAB", hl.dsp.window.cycle_next({ next = false }), { submap_universal = true })
 hl.bind(mainMod .. " + CTRL + TAB", hl.dsp.window.cycle_next({ floating = true }), { submap_universal = true })
 
-hl.bind(mainMod .. " + c", hl.dsp.window.kill(), { submap_universal = true })
+hl.bind(mainMod .. " + c", hl.dsp.window.close(), { submap_universal = true })
 hl.bind(mainMod .. " + f", hl.dsp.window.float(), { submap_universal = true })
 hl.bind(mainMod .. " + p", hl.dsp.window.pin(), { submap_universal = true })
 
@@ -69,9 +74,9 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- My Scripts
-hl.bind(mainMod .. " + w", hl.dsp.exec_raw("fish -c swap_wallpaper"))
+hl.bind(mainMod .. " + w", hl.dsp.exec_cmd(scr_swapWallpaper))
 hl.bind(mainMod .. " + q", hl.dsp.exec_raw("kitty fish -c cursor_swap"))
-hl.bind(mainMod .. " + z", hl.dsp.exec_cmd("killall waybar; waybar &"))
+hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
 
 -- Wofi Music Selector
 hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("timeout 30 " .. scr_musicSelector .. " artist"))
@@ -85,8 +90,7 @@ hl.bind(mainMod .. " + CTRL + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeCon
 hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher))
 hl.bind(mainMod .. " + F2", hl.dsp.exec_cmd("timeout 120 " .. scr_docctl))
 
---bind = $mainMod, F11, exec, hyprlock
--- -- FN F* Binds
+-- -- DEFAULT FN F* Binds
 hl.bind(
 	"XF86AudioRaiseVolume",
 	hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
@@ -164,45 +168,29 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
 
--- Cursor Mode --NOTE: NEEDS UPDATING TO NEW HL.DSP
+-- Cursor Mode
 
--- hl.bind(mainMod .. " + g", hl.dsp.submap("Cursor"))
--- hl.define_submap("Cursor", function()
--- 	hl.bind("SHIFT + 1", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/change_cursor_speed.sh -s 5"))
--- 	hl.bind("SHIFT + 2", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/change_cursor_speed.sh -s 10"))
--- 	hl.bind("SHIFT + 3", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/change_cursor_speed.sh -s 20"))
--- 	for i = 1, 10 do
--- 		local key = i % 10 -- 10 maps to key 0
--- 		local speed = key * 100
--- 		if key == 0 then
--- 			speed = 1000
--- 		end
--- 		hl.bind("CTRL + " .. key, hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/change_cursor_speed.sh -s " .. speed))
--- 	end
--- 	hl.bind(
--- 		"SHIFT + j",
--- 		hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/change_cursor_speed.sh -d 10"),
--- 		{ repeating = true }
--- 	)
--- 	hl.bind(
--- 		"SHIFT + k",
--- 		hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/change_cursor_speed.sh -i 10"),
--- 		{ repeating = true }
--- 	)
--- 	hl.bind("g", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/notify_cursor_speed.sh"))
--- 	hl.bind("SHIFT + h", hl.dsp.exec_cmd("wlrctl pointer click left"))
--- 	hl.bind("SHIFT + l", hl.dsp.exec_cmd("wlrctl pointer click right"))
--- 	hl.bind("SHIFT + m", hl.dsp.exec_cmd("wlrctl pointer click middle"))
---
--- 	hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/wlkbptr.sh"))
---
--- 	hl.bind("h", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/move_cursor.sh -1 0"), { repeating = true })
--- 	hl.bind("j", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/move_cursor.sh 0 -1"), { repeating = true })
--- 	hl.bind("k", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/move_cursor.sh 0 -1"), { repeating = true })
--- 	hl.bind("l", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/move_cursor.sh 1 0"), { repeating = true })
---
--- 	hl.bind("SPACE", hl.dsp.submap("reset"))
--- end)
+hl.bind(mainMod .. " + g", hl.dsp.submap("Cursor"))
+hl.define_submap("Cursor", function()
+	hl.bind("SHIFT + 1", hl.dsp.exec_cmd(scr_spdCursor .. " -s 5"))
+	hl.bind("SHIFT + 2", hl.dsp.exec_cmd(scr_spdCursor .. " -s 10"))
+	hl.bind("SHIFT + 3", hl.dsp.exec_cmd(scr_spdCursor .. " -s 20"))
+	hl.bind("SHIFT + j", hl.dsp.exec_cmd(scr_spdCursor .. " -d 10"), { repeating = true })
+	hl.bind("SHIFT + k", hl.dsp.exec_cmd(scr_spdCursor .. " -i 10"), { repeating = true })
+	hl.bind("g", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/notify_cursor_speed.sh"))
+	hl.bind("SHIFT + h", hl.dsp.exec_cmd("wlrctl pointer click left"))
+	hl.bind("SHIFT + l", hl.dsp.exec_cmd("wlrctl pointer click right"))
+	hl.bind("SHIFT + m", hl.dsp.exec_cmd("wlrctl pointer click middle"))
+
+	hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/wlkbptr.sh"))
+
+	hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true })
+	hl.bind("j", hl.dsp.exec_cmd(scr_moveCursor .. " 0 1"), { repeating = true })
+	hl.bind("k", hl.dsp.exec_cmd(scr_moveCursor .. " 0 -1"), { repeating = true })
+	hl.bind("l", hl.dsp.exec_cmd(scr_moveCursor .. " 1 0"), { repeating = true })
+
+	hl.bind("SPACE", hl.dsp.submap("reset"))
+end)
 
 -- Notification Mode
 hl.bind(mainMod .. " + n", hl.dsp.submap("Notification"))
