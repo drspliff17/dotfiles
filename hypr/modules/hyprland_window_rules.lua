@@ -37,7 +37,7 @@ hl.window_rule({
 	match = { pin = true },
 	rounding = 0,
 	border_size = 3,
-	-- border_color = "color4 color1",
+	border_color = { colors = { color4 } },
 	opacity = "0.9 override 0.4 override 1.0",
 })
 

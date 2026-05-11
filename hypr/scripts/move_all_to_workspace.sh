@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
 target_ws="$1"
+source_ws=$(hyprctl activeworkspace -j | jq -r '.id')
 
-current_ws=$(hyprctl activeworkspace -j | jq -r '.id')
+hyprctl clients -j | jq -r "
+  .[]
+  | select(.workspace.id == $source_ws)
+  | .address
+" | while read -r addr; do
 
-mapfile -t addrs < <(
-  hyprctl clients -j | jq -r ".[] | select(.workspace.id == $current_ws) | .address"
-)
+  hyprctl dispatch "hl.dsp.window.move({
+    workspace = \"$target_ws\",
+    window = \"address:$addr\",
+    follow = false
+  })"
 
-cmd=""
-for addr in "${addrs[@]}"; do
-  cmd+="dispatch movetoworkspacesilent $target_ws,address:$addr;"
 done
-
-cmd+="dispatch workspace $target_ws"
-
-hyprctl --batch "$cmd"

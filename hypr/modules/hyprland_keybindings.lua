@@ -9,15 +9,11 @@ local fileManager = "yazi"
 local menu = "wofi --show drun"
 
 -- My Scripts
-local scr_volctl = "~/.config/hypr/scripts/wofi_volume_controller.sh"
+local scr_volumeController = "~/.config/hypr/scripts/wofi_volume_controller.sh"
 local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
-local scr_comctl = "~/.config/hypr/scripts/wofi_command_launcher.sh"
-local scr_foxctl = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
+local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
+local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
 local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
-
-local status = "waybar"
-local notifier = "dunst"
-local music = "cmus"
 
 -- Core Binds
 hl.bind(
@@ -46,7 +42,7 @@ hl.bind(mainMod .. " + p", hl.dsp.window.pin(), { submap_universal = true })
 
 -- Global Window Binds
 hl.bind(mainMod .. " + SPACE", hl.dsp.window.center())
-hl.bind(mainMod .. " + i", hl.dsp.layout("togglesplit")) --FIX:
+hl.bind(mainMod .. " + i", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + SHIFT + s", hl.dsp.layout("movetoroot"))
 hl.bind(mainMod .. " + s", hl.dsp.layout("swapsplit"))
 hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen())
@@ -58,7 +54,7 @@ for i = 1, 10 do
 	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 	hl.bind(
 		mainMod .. " + SHIFT + CTRL + " .. key,
-		hl.dsp.exec_cmd("/home/drspliff/.config/hypr/scripts/move_all_to_workspace.sh" .. key) --FIX:
+		hl.dsp.exec_cmd("~/.config/hypr/scripts/move_all_to_workspace.sh " .. key)
 	)
 end
 
@@ -83,11 +79,11 @@ hl.bind(mainMod .. " + SHIFT + F1", hl.dsp.exec_cmd("timeout 30 " .. scr_musicSe
 hl.bind(mainMod .. " + CTRL + F1", hl.dsp.exec_cmd(scr_musicSelector .. " update"))
 
 -- Wofi Volume Controller
-hl.bind(mainMod .. " + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volctl .. " player"))
-hl.bind(mainMod .. " + SHIFT + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volctl))
-hl.bind(mainMod .. " + CTRL + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volctl .. " player"))
-hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120" .. scr_comctl))
-hl.bind(mainMod .. " + F2", hl.dsp.exec_cmd("timeout 120" .. scr_docctl))
+hl.bind(mainMod .. " + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " player"))
+hl.bind(mainMod .. " + SHIFT + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController))
+hl.bind(mainMod .. " + CTRL + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " player"))
+hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher))
+hl.bind(mainMod .. " + F2", hl.dsp.exec_cmd("timeout 120 " .. scr_docctl))
 
 --bind = $mainMod, F11, exec, hyprlock
 -- -- FN F* Binds
@@ -160,8 +156,8 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("b", hl.dsp.exec_cmd("firefox"))
 	hl.bind("w", hl.dsp.exec_cmd("waypaper"))
 	hl.bind("s", hl.dsp.exec_cmd("steam"))
-	hl.bind("f", hl.dsp.exec_cmd(scr_foxctl .. " window"))
-	hl.bind("f", hl.dsp.exec_cmd(scr_foxctl .. " tab"))
+	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"))
+	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
 	hl.bind("m", hl.dsp.exec_cmd("kitty fish -c cmus"))
 	hl.bind("v", hl.dsp.exec_cmd("vlc"))
 
