@@ -20,4 +20,5 @@ cy="$(echo "$cy" | xargs)"
 nx=$((cx + posX))
 ny=$((cy + posY))
 
-hyprctl dispatch movecursor "$nx" "$ny" >/dev/null && exit 0 || exit 1
+#hyprctl dispatch movecursor "$nx" "$ny" >/dev/null && exit 0 || exit 1
+hyprctl dispatch "hl.dsp.cursor.move({ x = "$nx", y = "$ny"})" >/dev/null && exit 0 || exit 1
