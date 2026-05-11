@@ -5,6 +5,8 @@ function swap_wallpaper
     set wallpaper (cat ~/.config/waypaper/config.ini | grep "wallpaper =" | cut -d ' ' -f 3 | string sub -s 3 --)
     /usr/bin/wal -i "$HOME/$wallpaper" >/dev/null 2>&1
 
+    cp ~/.cache/wal/hyprland_colors ~/.config/hypr/modules/hyprland_colors.lua
+
     if test -f "$HOME/.cache/wal/hyprlock.conf"
         cp "$HOME/.cache/wal/hyprlock.conf" "$HOME/.config/hypr/hyprlock.conf"
     end
