@@ -14,6 +14,7 @@ local scr_toggleProgram = "~/.config/hypr/scripts/toggle_program.sh"
 local scr_volumeController = "~/.config/hypr/scripts/wofi_volume_controller.sh"
 local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
 local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
+local scr_keybindLauncher = "~/.config/hypr/scripts/wofi_keybind_launcher.sh"
 local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
 local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
@@ -88,6 +89,7 @@ hl.bind(mainMod .. " + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController
 hl.bind(mainMod .. " + SHIFT + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController))
 hl.bind(mainMod .. " + CTRL + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " player"))
 hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher))
+hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("timeout 180 " .. scr_keybindLauncher))
 hl.bind(mainMod .. " + F2", hl.dsp.exec_cmd("timeout 120 " .. scr_docctl))
 
 -- -- DEFAULT FN F* Binds
