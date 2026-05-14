@@ -163,7 +163,7 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("w", hl.dsp.exec_cmd("waypaper"))
 	hl.bind("s", hl.dsp.exec_cmd("steam"))
 	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"))
-	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
+	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
 	hl.bind("m", hl.dsp.exec_cmd("kitty fish -c cmus"))
 	hl.bind("v", hl.dsp.exec_cmd("vlc"))
 
