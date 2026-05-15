@@ -55,6 +55,7 @@ _menuFromCache() {
   local selection fullpath
 
   WOFI_PROMPT="Cached Music"
+  WOFI_CONFIG="$HOME/.config/wofi/config"
   _construct w_args
   selection="$(
     awk -F'|' -v base="$musicPath" '{
@@ -99,6 +100,7 @@ _menuFromCache() {
 # Generate wofi from $musicPath (Set selectedArtist)
 _menuArtistSelection() {
   WOFI_PROMPT="Select Artist"
+  WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
   _construct w_args
   selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | wofi -d "${w_args[@]}")"
   [[ -z "$selectedArtist" ]] && return 1

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 WOFI_PROMPT=""
-WOFI_WIDTH="40%"
-WOFI_HEIGHT="30%"
-WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+WOFI_WIDTH=""
+WOFI_HEIGHT=""
+WOFI_CONFIG=""
 WOFI_LINES=""
 WOFI_COLUMNS=""
 
