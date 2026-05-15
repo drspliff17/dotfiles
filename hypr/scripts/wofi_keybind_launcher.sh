@@ -30,10 +30,9 @@ _update_args() {
     WOFI_PROMPT="Select Submap"
     WOFI_WIDTH="20%"
   else
-    IFS=' › '
+    local IFS=' › '
     WOFI_PROMPT="${menu_stack[*]}"
     WOFI_WIDTH="50%"
-    unset IFS
   fi
 }
 
@@ -74,7 +73,7 @@ show_submap() {
     cmd="${choice#* :: }"
 
     if [[ "$cmd" == submap:* ]]; then
-      next="${cmd#submap:}"
+      local next="${cmd#submap:}"
       menu_stack+=("$next")
       show_submap "$next"
       menu_stack=("${menu_stack[@]::${#menu_stack[@]}-1}")
