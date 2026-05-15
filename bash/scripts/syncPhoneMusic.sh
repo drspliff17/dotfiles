@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+#TODO: Add help message
+
 set -u
 
 SOURCE_PATH="$HOME/Music/Songs"
@@ -6,6 +9,8 @@ DESTINATION="/sdcard/Music/Songs"
 
 MODE=""
 VERBOSE=0
+
+SPECIFIED_DIRECTORIES=()
 
 # Helpers
 
@@ -16,12 +21,45 @@ _log() {
 adb_check() {
   adb get-state >/dev/null 2>&1 || {
     echo "[ERROR] No ADB device connected" >&2
+    [[ ! -t 1 ]] && notify-send -u normal -t 1500 -a center-text "Error" "No ADB device connected"
     exit 1
   }
 }
 
 adb_mkdir() {
   adb shell "mkdir -p \"$1\"" >/dev/null 2>&1
+}
+
+_push_directory() {
+  local directory="$1"
+  local dname remote_dir
+  local file fname remote_file
+
+  [[ ! -d "$directory" ]] && {
+    echo "[WARNING] Directory does not exist: $directory"
+    return
+  }
+
+  dname="$(basename "$directory")"
+  remote_dir="$DESTINATION/$dname"
+
+  adb_mkdir "$remote_dir"
+
+  shopt -s nullglob
+
+  for file in "$directory"/*.mp3; do
+    [[ ! -f "$file" ]] && continue
+
+    fname="$(basename "$file")"
+    remote_file="$remote_dir/$fname"
+
+    adb shell "[ -f \"$remote_file\" ]" >/dev/null 2>&1 &&
+      _log "Skipped $fname (already exists)" &&
+      continue
+
+    adb push "$file" "$remote_file" >/dev/null
+    _log "Pushed $fname -> $remote_dir"
+  done
 }
 
 _performTransfer() {
@@ -79,7 +117,9 @@ _performTransfer() {
         fname="$(basename "$file")"
         remote_file="$remote_dir/$fname"
 
-        adb shell "[ -f \"$remote_file\" ]" >/dev/null 2>&1 && _log "Skipped $file: Already exists" && continue
+        adb shell "[ -f \"$remote_file\" ]" >/dev/null 2>&1 &&
+          _log "Skipped $file: Already exists" &&
+          continue
 
         adb push "$file" "$remote_file" >/dev/null
         _log "Pushed $file -> $remote_file"
@@ -100,11 +140,26 @@ _performTransfer() {
     adb_mkdir "$DESTINATION"
 
     shopt -s nullglob
+
     for file in "$SOURCE_PATH"/*; do
       [[ -f "$file" ]] || continue
       adb push "$file" "$DESTINATION/" >/dev/null
       _log "Pushed $(basename "$file")"
     done
+    ;;
+
+  "SPECIFIED")
+
+    [[ ${#SPECIFIED_DIRECTORIES[@]} -eq 0 ]] && {
+      echo "[ERROR] No directories specified" >&2
+      exit 1
+    }
+
+    for dname in "${SPECIFIED_DIRECTORIES[@]}"; do
+      directory="$SOURCE_PATH/$dname"
+      _push_directory "$directory"
+    done
+
     ;;
 
   esac
@@ -123,19 +178,35 @@ while [[ $# -gt 0 ]]; do
     VERBOSE=1
     shift
     ;;
+
   -q | --quick)
     MODE="QUICK"
     shift
     ;;
+
   -w | --wipe)
     MODE="WIPE"
     shift
     ;;
-  -*)
-    echo "[ERROR] Unknown Option" >&2 && exit 1
+
+  -s | --specific)
+    MODE="SPECIFIED"
+    shift
+
+    while [[ $# -gt 0 && ! "$1" =~ ^- ]]; do
+      SPECIFIED_DIRECTORIES+=("$1")
+      shift
+    done
     ;;
+
+  -*)
+    echo "[ERROR] Unknown Option: $1" >&2
+    exit 1
+    ;;
+
   *)
-    echo "[ERROR] Unknown Value" >&2 && exit 1
+    echo "[ERROR] Unexpected Value: $1" >&2
+    exit 1
     ;;
   esac
 done
@@ -146,5 +217,7 @@ done
 adb_check
 
 echo "[MODE = $MODE] Beginning ADB operation..."
+[[ ! -t 1 ]] && notify-send -u low -t 1500 -a center-text "[MODE = $MODE] Beginning ADB operation..."
 _performTransfer
 echo "[FINISHED]"
+[[ ! -t 1 ]] && notify-send -u low -t 1500 -a center-text "[FINISHED]"
