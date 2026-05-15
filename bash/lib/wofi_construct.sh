@@ -3,6 +3,7 @@
 WOFI_PROMPT=""
 WOFI_WIDTH=""
 WOFI_HEIGHT=""
+WOFI_SORT=""
 WOFI_CONFIG=""
 WOFI_LINES=""
 WOFI_COLUMNS=""
@@ -15,6 +16,7 @@ _construct() {
   local lines="${WOFI_LINES:-}"
   local columns="${WOFI_COLUMNS:-}"
   local config="${WOFI_CONFIG:-}"
+  local sort="${WOFI_SORT:-}"
 
   _out=()
   [[ -n $WOFI_PROMPT ]] && _out+=("--prompt" "$WOFI_PROMPT")
@@ -22,5 +24,6 @@ _construct() {
   [[ -n $WOFI_HEIGHT ]] && _out+=("--height" "$WOFI_HEIGHT")
   [[ -n $WOFI_COLUMNS ]] && _out+=("--columns" "$WOFI_COLUMNS")
   [[ -n $WOFI_LINES ]] && _out+=("--lines" "$WOFI_LINES")
+  [[ -n $WOFI_SORT ]] && _out+=("-O" "$WOFI_SORT")
   [[ -n $WOFI_CONFIG ]] && _out+=("--conf" "$WOFI_CONFIG")
 }
