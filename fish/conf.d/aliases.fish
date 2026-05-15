@@ -5,6 +5,7 @@ alias b="bash -lc"
 alias nfrc="n ~/.config/fish/config.fish"
 alias nbrc="n ~/.bashrc"
 alias nas="n ~/.config/fish/conf.d/aliases.fish"
+alias ssd="df -h | head -n 1; df -h | rg home; df -h | rg storage"
 
 # Builtin Shorthands
 alias Q="exit"
