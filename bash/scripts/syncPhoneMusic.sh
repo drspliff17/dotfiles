@@ -129,6 +129,7 @@ _performTransfer() {
 
     [[ "$MODE" == "DRY" ]] && {
       echo "[Transfer Info] Missing Directories: $dmissing | Missing Files: $fmissing"
+      [[ ! -t 1 ]] && notify-send -u low -t 2000 -a center-text "[Transfer Info] Missing Directories: $dmissing | Missing Files: $fmissing"
     }
 
     ;;
