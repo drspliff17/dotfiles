@@ -2,40 +2,37 @@
 
 #TODO: Add comments & cleanup
 
+LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
+source "$LIB_NOTIFY" || {
+  notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
+  exit 1
+}
+
+LIB_WOFI="$HOME/.config/bash/lib/wofi_construct.sh"
+source "$LIB_WOFI" || {
+  _notify -a ct -e -u normal "Could not source required lib: $LIB_WOFI"
+  exit 1
+}
+
 wofi_command_line_data="$HOME/dev/data/wofi_command_line.yml"
-[[ ! -f "$wofi_command_line_data" ]] && notify-send -u normal -t 2000 -a center-text "Missing Expected File: $wofi_command_line_data" && exit 1
+[[ ! -f "$wofi_command_line_data" ]] && _notify -u normal -t 2000 -a ct "Missing Expected File: $wofi_command_line_data" && exit 1
 
-w_prompt=""
-w_width="10%"
-w_height="50%"
-w_conf="$HOME/.config/wofi/center-align-config"
-w_columns=""
-w_lines=""
+WOFI_WIDTH="10%"
+WOFI_HEIGHT="50%"
+WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+
 w_args=()
-
 menu_stack=()
 
 _update_prompt() {
   if [[ ${#menu_stack[@]} -eq 0 ]]; then
-    w_prompt="Select Command"
+    WOFI_PROMPT="Select Command"
   else
-    w_prompt="$(
-      IFS=' › '
+    WOFI_PROMPT="$(
+      local IFS=' › '
       echo "${menu_stack[*]}"
     )"
   fi
-}
-
-_constructArgs() {
-  w_args=()
-
-  w_args+=("--prompt" "$w_prompt")
-  w_args+=("--width" "$w_width")
-  w_args+=("--height" "$w_height")
-
-  [[ -n $w_columns ]] && w_args+=("--columns" "$w_columns")
-  [[ -n $w_lines ]] && w_args+=("--lines" "$w_lines")
-  [[ -n $w_conf ]] && w_args+=("--conf" "$w_conf")
 }
 
 show_menu() {
@@ -50,7 +47,7 @@ show_menu() {
     [[ "$count" -eq 0 ]] && return 1
 
     _update_prompt
-    _constructArgs
+    _construct w_args
 
     while IFS=$'\t' read -r name index; do
       item_map["$name"]="$index"
@@ -62,8 +59,8 @@ show_menu() {
     local options=("${!item_map[@]}")
     options+=("✕ Exit")
 
-    w_lines="${#options[@]}"
-    _constructArgs
+    WOFI_LINES="${#options[@]}"
+    _construct w_args
     choice="$(printf "%s\n" "${options[@]}" | wofi -d "${w_args[@]}")"
     [[ -z "$choice" ]] && return 1
     [[ "$choice" = "✕ Exit" ]] && pkill -f $HOME/.config/hypr/scripts/wofi_command_launcher.sh
