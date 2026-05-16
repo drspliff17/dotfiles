@@ -6,9 +6,12 @@ alias nfrc="n ~/.config/fish/config.fish"
 alias nbrc="n ~/.bashrc"
 alias nas="n ~/.config/fish/conf.d/aliases.fish"
 alias ssd="df -h | head -n 1; df -h | rg home; df -h | rg storage"
+
+#Music stuff because am lazy ja
 alias fm="$HOME/.config/bash/scripts/fmp3.sh"
 alias sm="$HOME/.config/bash/scripts/syncPhoneMusic.sh -v"
 alias rmmp3="$HOME/.config/bash/scripts/fixYoutubeMusic_Duplicates.sh"
+alias gm="getmusic"
 
 # Builtin Shorthands
 alias Q="exit"
