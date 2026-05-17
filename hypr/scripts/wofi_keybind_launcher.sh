@@ -28,7 +28,7 @@ menu_stack=()
 _update_args() {
   if [[ ${#menu_stack[@]} -eq 0 ]]; then
     WOFI_PROMPT="Select Submap"
-    WOFI_WIDTH="20%"
+    WOFI_WIDTH="10%"
   else
     local IFS=' › '
     WOFI_PROMPT="${menu_stack[*]}"

@@ -30,6 +30,23 @@ hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd(terminal, { float = true
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("hyprlock"))
 
+-- Screenshots
+hl.bind(
+	"PRINT",
+	hl.dsp.exec_cmd([[
+    grim -g "$(slurp)" -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy &&
+    notify-send -u low -t 1000 -a center-text "Screenshot taken"
+  ]])
+)
+
+hl.bind(
+	mainMod .. " + PRINT",
+	hl.dsp.exec_cmd([[
+    grim -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy &&
+    notify-send -u low -t 1000 -a center-text "Screenshot taken"
+  ]])
+)
+
 -- Universal Binds
 hl.bind(mainMod .. " + escape", hl.dsp.submap("reset"), { submap_universal = true })
 
@@ -200,7 +217,6 @@ hl.define_submap("Notification", function()
 	hl.bind("r", hl.dsp.exec_cmd("dunstctl reload"))
 	hl.bind("p", hl.dsp.exec_cmd("dunstctl history-pop"))
 	hl.bind("n", hl.dsp.exec_cmd("dunstctl close-all"))
-	-- hl.bind("f", hl.dsp.exec_raw("kitty fish -c 'bash -c $HOME/.config/hypr/scripts/dunst_history_fzf.sh'"))
 	hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_fzf.sh"))
 	hl.bind("c", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_clear.sh"))
 	hl.bind("g", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_get.sh"))
