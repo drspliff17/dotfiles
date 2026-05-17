@@ -116,10 +116,21 @@ _dbDeleteEntry() {
   return 0
 }
 
+# Update modified time on manifest entry-entry
+_dbTouchEntry() {
+  local eid="$1"
+  local modified="$(date +"%Y-%m-%dT%H:%M:%SZ")"
+  E_EID="$eid" \
+    E_MODIFIED="$modified" \
+    yq -i '
+      (.data[] | select(.id == (env(E_EID) | tonumber))).modified_date = env(E_MODIFIED)
+    ' "$DB"
+}
+
 # Add entry to DB (and create entry file)
 _dbAddEntry() {
   local title="${1:-Untitled}"
-  local created="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+  local created="$(date +"%Y-%m-%dT%H:%M:%SZ")"
   local eid="$(yq '.data | length' "$DB")"
   local filepath="$ENTRY_DIR/entry_$eid.md"
 
@@ -140,5 +151,5 @@ _dbAddEntry() {
   }]
   ' "$DB"
 
-  _notify -a ct "Created Entry: $filepath"
+  _notify -a ct "Created Entry: Title: $title - Path: $filepath"
 }
