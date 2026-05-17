@@ -17,7 +17,7 @@ _notify() {
     if [[ "$doErr" -eq 0 ]]; then
       echo "$message"
     else
-      echo "$message" >&2
+      echo "[ERROR] $message" >&2
     fi
   }
 
@@ -45,6 +45,15 @@ _notify() {
       shift
       case "$urgency" in
       low | normal | critical)
+        ;;
+      l)
+        urgency="low"
+        ;;
+      n)
+        urgency="normal"
+        ;;
+      c)
+        urgency="critical"
         ;;
       *)
         urgency="$d_urgency"
