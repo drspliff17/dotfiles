@@ -64,6 +64,10 @@ while [[ "$#" -gt 0 ]]; do
     done
     break
     ;;
+  -i | iedit)
+    shift
+    MODE="IEDIT"
+    ;;
   -b | backup)
     shift
     MODE="BACKUP"
@@ -100,6 +104,19 @@ EDIT)
     [[ -f "$ENTRY_DIR/entry_$id.md" ]] && kitty fish -c "n $ENTRY_DIR/entry_$id.md"
     _dbTouchEntry "$id"
   done
+  ;;
+IEDIT)
+  WOFI_PROMPT="Pick Entry"
+  WOFI_WIDTH="15%"
+  WOFI_HEIGHT="35%"
+  WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+  w_args=()
+  _construct w_args
+  selection="$(ls "$ENTRY_DIR" | wofi -d "${w_args[@]}")"
+  [[ -z "$selection" ]] && exit 1
+  kitty fish -c "n $ENTRY_DIR/$selection"
+  selection="$(echo $selection | sed 's/entry_/ /' | sed 's/.md/ /')"
+  _dbTouchEntry "$selection"
   ;;
 BACKUP)
   case "$BACKUP_MODE" in
