@@ -95,6 +95,9 @@ process_dir() {
   exit 1
 }
 
+[[ -n "$1" ]] && {
+  [[ -d "$ROOT/$1" ]] && process_dir "$ROOT/$1" && exit 0
+}
 for DIR in "$ROOT"/*/; do
   [[ -d "$DIR" ]] || continue
   process_dir "$DIR"
