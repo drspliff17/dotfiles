@@ -80,7 +80,7 @@ while [[ "$#" -gt 0 ]]; do
     BACKUP_MODE="${1:-create}"
     shift
     case "$BACKUP_MODE" in
-    create | remove | rollback)
+    c | create | d | delete | r | rollback)
       ;;
     *)
       _notify -e -a ct "Invalid BACKUP_MODE. Use -h / help for information"
@@ -121,19 +121,19 @@ IEDIT)
   WOFI_PROMPT="Pick Entry"
   WOFI_WIDTH="15%"
   WOFI_HEIGHT="35%"
-  WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+  WOFI_CONFIG="$WOFI_C_CENTER"
   _construct w_args
   _dbInteractiveEdit || return 1
   ;;
 BACKUP)
   case "$BACKUP_MODE" in
-  create)
+  c | create)
     _dbCreateBackup
     ;;
-  remove)
-    #TODO: Make interactive backup remove
+  d | delete)
+    _dbDeleteBackup
     ;;
-  rollback)
+  r | rollback)
     #TODO: Make interactive backup rollback
     ;;
   esac

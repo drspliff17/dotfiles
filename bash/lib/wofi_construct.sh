@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+WOFI_C_DEFAULT="$HOME/.config/wofi/config"
+WOFI_C_CENTER="$HOME/.config/wofi/center-align-config"
+
 WOFI_PROMPT=""
 WOFI_WIDTH=""
 WOFI_HEIGHT=""

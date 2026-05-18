@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#TODO: Include _dbConfirmationPrompt into _dbDeleteEntry if selected entry is not an empty file
+#TODO: Add title length checking / concat -> make self-adjusting WOFI_LINES as used in wofi_command_launcher.sh
+
 _init() {
   [[ -z "$ROOT_DIR" || -z "$ENTRY_DIR" || -z "$DB" ]] && {
     return 1
@@ -26,14 +29,13 @@ _foundFiles() {
 
 # Independantly Handles Confirmation Menu, Prompt String && Menu Opts can be overwritten with $1 && $2 respectively
 _dbConfirmationPrompt() {
+  local a=()
+  local opts="${2:-Yes\nNo}"
+
   WOFI_PROMPT="${1:-Are You Sure?}"
   WOFI_WIDTH="5%"
-  WOFI_HEIGHT="10%"
-
-  local a=()
+  WOFI_LINES="${#opts[@]}"
   _construct a
-
-  local opts="${2:-Yes\nNo}"
   local v="$(echo -e "$opts" | wofi -d "${a[@]}")"
   case "$v" in
   Yes)
@@ -121,6 +123,12 @@ _dbDeleteBackup() {
 
   [[ ${#backups[@]} -eq 0 ]] && _notify -a ct "No backups in $BACKUP_DIR" && return 1
 
+  WOFI_PROMPT="Select Backup To Delete"
+  WOFI_WIDTH="15%"
+  WOFI_HEIGHT="35%"
+  WOFI_CONFIG="$WOFI_C_CENTER"
+  _construct w_args
+
   local selection="$(
     for b in "${backups[@]}"; do
       printf '%s\n' "${b##*/}"
@@ -192,6 +200,7 @@ _dbDeleteEntry() {
 _dbGetEntryMenu() {
   local selection
   local files
+  local maxEntryCount=15
 
   shopt -s nullglob
   files=("$ENTRY_DIR"/entry_*.md)
@@ -199,6 +208,10 @@ _dbGetEntryMenu() {
 
   [[ ${#files[@]} -eq 0 ]] && _notify -a ct -e "No files in $ENTRY_DIR" && return 1
 
+  WOFI_LINES=${#files[@]}
+  ((WOFI_LINES > maxEntryCount)) && WOFI_LINES=$maxEntryCount
+
+  _construct w_args
   selection="$(
     for f in "${files[@]}"; do
       id="${f##*/}"
@@ -229,6 +242,20 @@ _dbGetEntryTitle() {
 
 # Handle Wofi menu for Interactive Edit
 _dbInteractiveEdit() {
+  local files
+  local maxLineCount=15
+
+  shopt -s nullglob
+  files=("$ENTRY_DIR"/entry_*.md)
+  shopt -u nullglob
+
+  [[ ${#files[@]} -eq 0 ]] && return 1
+
+  WOFI_LINES=${#files[@]}
+  ((WOFI_LINES > maxLineCount)) && WOFI_LINES=$maxLineCount
+
+  _construct w_args
+
   selection="$(
     for f in "$ENTRY_DIR"/entry_*.md; do
       id="${f##*/}"
@@ -255,6 +282,12 @@ _dbInteractiveMenu() {
   local imenu_state="Root"
   local w_args=()
   local selection entryID
+  local rootOpts=(
+    "Add"
+    "Delete"
+    "Edit"
+    "Backup"
+  )
 
   _optValid() {
     case "$1" in
@@ -265,13 +298,13 @@ _dbInteractiveMenu() {
     return 1
   }
 
-  WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+  WOFI_CONFIG="$WOFI_C_CENTER"
   while true; do
     case "$imenu_state" in
     Root)
-      WOFI_PROMPT="Select Option"
+      WOFI_PROMPT="Todo Tool Menu"
       WOFI_WIDTH="10%"
-      WOFI_HEIGHT="15%"
+      WOFI_LINES="${#rootOpts[@]}"
       _construct w_args
       selection="$(echo -e "Add\nDelete\nEdit\nBackup" | wofi -d "${w_args[@]}")"
       _optValid "$selection" || return 0
@@ -279,11 +312,12 @@ _dbInteractiveMenu() {
       ;;
 
     Add)
-      WOFI_PROMPT="Enter Title" #BUG: Not showing correctly, think its because no options are present, so it forces it to be hidden?
-      WOFI_WIDTH="20%"
+      WOFI_PROMPT="Enter Title (default Untitled)"
+      WOFI_WIDTH="15%"
       WOFI_HEIGHT="5%"
+      WOFI_LINES=""
       _construct w_args
-      selection="$(wofi -d "${w_args[@]}")"
+      selection="$(echo | wofi -d "${w_args[@]}")"
       entryID="$(_dbAddEntry "$selection")"
       kitty fish -c "n $ENTRY_DIR/entry_$entryID.md"
       _dbTouchEntry "$entryID"
@@ -307,22 +341,32 @@ _dbInteractiveMenu() {
       WOFI_PROMPT="Pick Entry"
       WOFI_WIDTH="15%"
       WOFI_HEIGHT="35%"
-      WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+      WOFI_CONFIG="$WOFI_C_CENTER"
       _construct w_args
       _dbInteractiveEdit || return 1
       ;;
     Backup)
+      local menu_backup_opts=(
+        "Create Backup"
+        "Delete Backup"
+        "Open"
+      )
       WOFI_PROMPT="Select Backup Mode"
       WOFI_WIDTH="10%"
-      WOFI_HEIGHT="5%"
+      WOFI_LINES="${#menu_backup_opts[@]}"
       _construct w_args
-      selection="$(echo -e "Create Backup\nDelete Backup" | wofi -d "${w_args[@]}")"
+      selection="$(
+        printf '%s\n' "${menu_backup_opts[@]}" | wofi -d "${w_args[@]}"
+      )"
       case "$selection" in
       "Create Backup")
         imenu_state="B_Create"
         ;;
       "Delete Backup")
         imenu_state="B_Delete"
+        ;;
+      "Open")
+        imenu_state="B_Open"
         ;;
       *)
         return 1
@@ -334,11 +378,11 @@ _dbInteractiveMenu() {
       return 0
       ;;
     B_Delete)
-      WOFI_PROMPT="Select Backup To Delete"
-      WOFI_WIDTH="15%"
-      WOFI_HEIGHT="35%"
-      _construct w_args
       _dbDeleteBackup || imenu_state="Backup"
+      ;;
+    B_Open)
+      kitty yazi "~/.local/share/todo_tool/backups" &
+      return 0
       ;;
     esac
   done
