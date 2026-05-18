@@ -24,6 +24,27 @@ _foundFiles() {
   return 0
 }
 
+# Independantly Handles Confirmation Menu, Prompt String && Menu Opts can be overwritten with $1 && $2 respectively
+_dbConfirmationPrompt() {
+  WOFI_PROMPT="${1:-Are You Sure?}"
+  WOFI_WIDTH="5%"
+  WOFI_HEIGHT="10%"
+
+  local a=()
+  _construct a
+
+  local opts="${2:-Yes\nNo}"
+  local v="$(echo -e "$opts" | wofi -d "${a[@]}")"
+  case "$v" in
+  Yes)
+    return 0
+    ;;
+  *)
+    return 1
+    ;;
+  esac
+}
+
 # Reassigns id for all entries, renaming entry files accordingly
 _dbReindex() {
   local tmp
@@ -107,10 +128,13 @@ _dbDeleteBackup() {
   )"
   [[ -z "$selection" ]] && return 1
   [[ ! -d "$BACKUP_DIR/$selection" ]] && _notify -a ct -e "No matching backup found for: $selection" && return 1
-  #TODO: INCLUDE CONF PROMPT HERE
-  rm -r "$BACKUP_DIR/$selection"
-  _notify "[OK] Backup Deleted: $BACKUP_DIR/$selection"
-  return 0
+  if _dbConfirmationPrompt; then
+    rm -r "$BACKUP_DIR/$selection"
+    _notify "[OK] Backup Deleted: $BACKUP_DIR/$selection"
+    return 0
+  else
+    return 1
+  fi
 }
 
 # Add entry to DB (and create entry file), 'returns' the new entry ID
