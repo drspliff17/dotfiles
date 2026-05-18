@@ -159,6 +159,29 @@ _dbAddEntry() {
   echo "$eid"
 }
 
+_dbGetEntryMenu() {
+  local selection
+  local files
+
+  shopt -s nullglob
+  files=("$ENTRY_DIR"/entry_*.md)
+  shopt -u nullglob
+
+  [[ ${#files[@]} -eq 0 ]] && _notify -a ct -e "No files in $ENTRY_DIR" && return 1
+
+  selection="$(
+    for f in "${files[@]}"; do
+      id="${f##*/}"
+      id="${id#entry_}"
+      id="${id%.md}"
+      title="$(_dbGetEntryTitle "$id")"
+      printf '%s - %s\n' "$title" "${f##*/}"
+    done | wofi -d "${w_args[@]}"
+  )"
+
+  echo "$selection"
+}
+
 _dbInteractiveMenu() {
   local imenu_state="Root"
   local w_args=()
@@ -166,35 +189,73 @@ _dbInteractiveMenu() {
 
   _optValid() {
     case "$1" in
-    Add | Edit | Delete | Backup)
+    Add | Delete | Backup | B_Create | B_Delete)
       return 0
       ;;
     esac
     return 1
   }
 
+  WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
   while true; do
     case "$imenu_state" in
     Root)
       WOFI_PROMPT="Select Option"
       WOFI_WIDTH="10%"
-      WOFI_HEIGHT="20%"
-      WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+      WOFI_HEIGHT="15%"
       _construct w_args
-      selection="$(echo -e "Add\nEdit\nDelete\nBackup" | wofi -d "${w_args[@]}")"
-      _optValid "$selection" || return 1
+      selection="$(echo -e "Add\nDelete\nBackup" | wofi -d "${w_args[@]}")"
+      _optValid "$selection" || return 0
       imenu_state="$selection"
       ;;
 
     Add)
-      WOFI_PROMPT="Enter Title (Optional)"
-      WOFI_WIDTH="30%"
-      WOFI_HEIGHT="10%"
+      WOFI_PROMPT="Enter Title" #BUG: Not showing correctly, think its because no options are present, so it forces it to be hidden?
+      WOFI_WIDTH="20%"
+      WOFI_HEIGHT="5%"
       _construct w_args
       selection="$(wofi -d "${w_args[@]}")"
       entryID="$(_dbAddEntry "$selection")"
       kitty fish -c "n $ENTRY_DIR/entry_$entryID.md"
       _dbTouchEntry "$entryID"
+      return 0
+      ;;
+
+    Delete)
+      WOFI_PROMPT="Select Entry To Delete"
+      WOFI_WIDTH="15%"
+      WOFI_HEIGHT="35%"
+      _construct w_args
+      selection="$(_dbGetEntryMenu)"
+      [[ -z "$selection" ]] && return 1
+      selection="${selection##* - }"
+      id="${selection#entry_}"
+      id="${id%.md}"
+      _dbDeleteEntry "$id"
+      _dbReindex
+      ;;
+    Backup)
+      WOFI_PROMPT="Select Backup Mode"
+      WOFI_WIDTH="10%"
+      WOFI_HEIGHT="5%"
+      _construct w_args
+      selection="$(echo -e "Create Backup\nDelete Backup" | wofi -d "${w_args[@]}")"
+      case "$selection" in
+      "Create Backup")
+        imenu_state="$B_Create"
+        ;;
+      "Delete Backup")
+        imenu_state="$B_Delete"
+        ;;
+      *)
+        return 1
+        ;;
+      esac
+      ;;
+    B_Create)
+      return 0
+      ;;
+    B_Delete)
       return 0
       ;;
     esac

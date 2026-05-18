@@ -104,7 +104,10 @@ DELETE)
   _dbReindex
   ;;
 IMENU)
-  _dbInteractiveMenu
+  LOOP=true
+  while $LOOP; do
+    _dbInteractiveMenu && LOOP=false
+  done
   ;;
 EDIT)
   for id in "${TARGETS[@]}"; do
