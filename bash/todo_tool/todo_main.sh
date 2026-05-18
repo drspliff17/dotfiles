@@ -120,28 +120,8 @@ IEDIT)
   WOFI_WIDTH="15%"
   WOFI_HEIGHT="35%"
   WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
-  w_args=()
   _construct w_args
-
-  selection="$(
-    for f in "$ENTRY_DIR"/entry_*.md; do
-      id="${f##*/}"
-      id="${id#entry_}"
-      id="${id%.md}"
-      title="$(_dbGetEntryTitle "$id")"
-      printf '%s - %s\n' "$title" "${f##*/}"
-    done | wofi -d "${w_args[@]}"
-  )"
-  [[ -z "$selection" ]] && exit 1
-
-  selection="${selection##* - }"
-
-  kitty fish -c "n $ENTRY_DIR/$selection"
-
-  id="${selection#entry_}"
-  id="${id%.md}"
-  _dbTouchEntry "$id"
-  _notify -a ct "Updated manifest for $selection"
+  _dbInteractiveEdit || return 1
   ;;
 BACKUP)
   case "$BACKUP_MODE" in

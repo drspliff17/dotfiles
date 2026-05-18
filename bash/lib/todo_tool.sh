@@ -182,6 +182,28 @@ _dbGetEntryMenu() {
   echo "$selection"
 }
 
+_dbInteractiveEdit() {
+  selection="$(
+    for f in "$ENTRY_DIR"/entry_*.md; do
+      id="${f##*/}"
+      id="${id#entry_}"
+      id="${id%.md}"
+      title="$(_dbGetEntryTitle "$id")"
+      printf '%s - %s\n' "$title" "${f##*/}"
+    done | wofi -d "${w_args[@]}"
+  )"
+  [[ -z "$selection" ]] && return 1
+
+  selection="${selection##* - }"
+
+  kitty fish -c "n $ENTRY_DIR/$selection"
+
+  id="${selection#entry_}"
+  id="${id%.md}"
+  _dbTouchEntry "$id"
+  _notify -a ct "Updated manifest for $selection"
+}
+
 _dbInteractiveMenu() {
   local imenu_state="Root"
   local w_args=()
@@ -189,7 +211,7 @@ _dbInteractiveMenu() {
 
   _optValid() {
     case "$1" in
-    Add | Delete | Backup | B_Create | B_Delete)
+    Add | Delete | Edit | Backup | B_Create | B_Delete)
       return 0
       ;;
     esac
@@ -204,7 +226,7 @@ _dbInteractiveMenu() {
       WOFI_WIDTH="10%"
       WOFI_HEIGHT="15%"
       _construct w_args
-      selection="$(echo -e "Add\nDelete\nBackup" | wofi -d "${w_args[@]}")"
+      selection="$(echo -e "Add\nDelete\nEdit\nBackup" | wofi -d "${w_args[@]}")"
       _optValid "$selection" || return 0
       imenu_state="$selection"
       ;;
@@ -233,6 +255,14 @@ _dbInteractiveMenu() {
       id="${id%.md}"
       _dbDeleteEntry "$id"
       _dbReindex
+      ;;
+    Edit)
+      WOFI_PROMPT="Pick Entry"
+      WOFI_WIDTH="15%"
+      WOFI_HEIGHT="35%"
+      WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+      _construct w_args
+      _dbInteractiveEdit || return 1
       ;;
     Backup)
       WOFI_PROMPT="Select Backup Mode"
