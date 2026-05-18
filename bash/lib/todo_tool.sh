@@ -127,6 +127,10 @@ _dbTouchEntry() {
     ' "$DB"
 }
 
+_dbGetEntryTitle() {
+  yq -r ".data[] | select(.id == ${1}) | .title" "$DB"
+}
+
 # Add entry to DB (and create entry file)
 _dbAddEntry() {
   local title="${1:-Untitled}"
@@ -152,4 +156,48 @@ _dbAddEntry() {
   ' "$DB"
 
   _notify -a ct "Created Entry: Title: $title - Path: $filepath"
+  echo "$eid"
+}
+
+_dbInteractiveMenu() {
+  local imenu_state="Root"
+  local w_args=()
+  local selection entryID
+
+  _optValid() {
+    case "$1" in
+    Add | Edit | Delete | Backup)
+      return 0
+      ;;
+    esac
+    return 1
+  }
+
+  while true; do
+    case "$imenu_state" in
+    Root)
+      WOFI_PROMPT="Select Option"
+      WOFI_WIDTH="10%"
+      WOFI_HEIGHT="20%"
+      WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+      _construct w_args
+      selection="$(echo -e "Add\nEdit\nDelete\nBackup" | wofi -d "${w_args[@]}")"
+      _optValid "$selection" || return 1
+      imenu_state="$selection"
+      ;;
+
+    Add)
+      WOFI_PROMPT="Enter Title (Optional)"
+      WOFI_WIDTH="30%"
+      WOFI_HEIGHT="10%"
+      _construct w_args
+      selection="$(wofi -d "${w_args[@]}")"
+      entryID="$(_dbAddEntry "$selection")"
+      kitty fish -c "n $ENTRY_DIR/entry_$entryID.md"
+      _dbTouchEntry "$entryID"
+      return 0
+      ;;
+    esac
+  done
+  return 0
 }

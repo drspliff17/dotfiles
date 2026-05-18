@@ -68,6 +68,10 @@ while [[ "$#" -gt 0 ]]; do
     shift
     MODE="IEDIT"
     ;;
+  -m | imenu)
+    shift
+    MODE="IMENU"
+    ;;
   -b | backup)
     shift
     MODE="BACKUP"
@@ -99,6 +103,9 @@ DELETE)
   done
   _dbReindex
   ;;
+IMENU)
+  _dbInteractiveMenu
+  ;;
 EDIT)
   for id in "${TARGETS[@]}"; do
     [[ -f "$ENTRY_DIR/entry_$id.md" ]] && kitty fish -c "n $ENTRY_DIR/entry_$id.md"
@@ -112,11 +119,26 @@ IEDIT)
   WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
   w_args=()
   _construct w_args
-  selection="$(ls "$ENTRY_DIR" | wofi -d "${w_args[@]}")"
+
+  selection="$(
+    for f in "$ENTRY_DIR"/entry_*.md; do
+      id="${f##*/}"
+      id="${id#entry_}"
+      id="${id%.md}"
+      title="$(_dbGetEntryTitle "$id")"
+      printf '%s - %s\n' "$title" "${f##*/}"
+    done | wofi -d "${w_args[@]}"
+  )"
   [[ -z "$selection" ]] && exit 1
+
+  selection="${selection##* - }"
+
   kitty fish -c "n $ENTRY_DIR/$selection"
-  selection="$(echo $selection | sed 's/entry_/ /' | sed 's/.md/ /')"
-  _dbTouchEntry "$selection"
+
+  id="${selection#entry_}"
+  id="${id%.md}"
+  _dbTouchEntry "$id"
+  _notify -a ct "Updated manifest for $selection"
   ;;
 BACKUP)
   case "$BACKUP_MODE" in
