@@ -81,12 +81,14 @@ _dbReindex() {
   mv "$tmp" "$DB"
 }
 
-# Create a (timestamped and sha256 hashed) backup in $BACKUP_DIR
+# Create a (timestamped and sha256 hashed) backup in $BACKUP_DIR. Optionally prefix backup_dir with $1
 _dbCreateBackup() {
   local ts backup_dir count
+  local backup_dir_prefix="$1"
 
   ts="$(date -u +"%Y%m%dT%H%M%SZ")"
   backup_dir="$BACKUP_DIR/$ts"
+  [[ -n "$backup_dir_prefix" ]] && backup_dir="$BACKUP_DIR/$backup_dir_prefix.$ts"
 
   mkdir -p "$backup_dir/entries"
   mkdir -p "$backup_dir/logs"
@@ -119,13 +121,14 @@ EOF
 _dbDeleteBackup() {
   shopt -s nullglob
   local backups=("$BACKUP_DIR"/*)
+  local backup_count="${#backups[@]}"
   shopt -u nullglob
 
-  [[ ${#backups[@]} -eq 0 ]] && _notify -a ct "No backups in $BACKUP_DIR" && return 1
+  [[ $backup_count -eq 0 ]] && _notify -a ct "No backups in $BACKUP_DIR" && return 1
 
   WOFI_PROMPT="Select Backup To Delete"
   WOFI_WIDTH="15%"
-  WOFI_HEIGHT="35%"
+  WOFI_LINES="$backup_count"
   WOFI_CONFIG="$WOFI_C_CENTER"
   _construct w_args
 
@@ -206,7 +209,7 @@ _dbGetEntryMenu() {
   files=("$ENTRY_DIR"/entry_*.md)
   shopt -u nullglob
 
-  [[ ${#files[@]} -eq 0 ]] && _notify -a ct -e "No files in $ENTRY_DIR" && return 1
+  [[ ${#files[@]} -eq 0 ]] && _notify -a ct "No files in $ENTRY_DIR" && return 1
 
   WOFI_LINES=${#files[@]}
   ((WOFI_LINES > maxEntryCount)) && WOFI_LINES=$maxEntryCount
@@ -242,6 +245,11 @@ _dbGetEntryTitle() {
 
 # Handle Wofi menu for Interactive Edit
 _dbInteractiveEdit() {
+  WOFI_PROMPT="Pick Entry"
+  WOFI_WIDTH="15%"
+  WOFI_HEIGHT="35%"
+  WOFI_CONFIG="$WOFI_C_CENTER"
+  _construct w_args
   local files
   local maxLineCount=15
 
@@ -249,7 +257,7 @@ _dbInteractiveEdit() {
   files=("$ENTRY_DIR"/entry_*.md)
   shopt -u nullglob
 
-  [[ ${#files[@]} -eq 0 ]] && return 1
+  [[ ${#files[@]} -eq 0 ]] && _notify -a ct "No entries inside $ENTRY_DIR" && return 1
 
   WOFI_LINES=${#files[@]}
   ((WOFI_LINES > maxLineCount)) && WOFI_LINES=$maxLineCount

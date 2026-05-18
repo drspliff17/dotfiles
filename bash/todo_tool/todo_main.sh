@@ -88,10 +88,6 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     esac
     ;;
-  -l | list)
-    shift
-    MODE="LIST"
-    ;;
   esac
 done
 
@@ -118,12 +114,7 @@ EDIT)
   done
   ;;
 IEDIT)
-  WOFI_PROMPT="Pick Entry"
-  WOFI_WIDTH="15%"
-  WOFI_HEIGHT="35%"
-  WOFI_CONFIG="$WOFI_C_CENTER"
-  _construct w_args
-  _dbInteractiveEdit || return 1
+  _dbInteractiveEdit || exit 1
   ;;
 BACKUP)
   case "$BACKUP_MODE" in
@@ -137,8 +128,5 @@ BACKUP)
     #TODO: Make interactive backup rollback
     ;;
   esac
-  ;;
-LIST)
-  #TODO: Make entry data list dump
   ;;
 esac
