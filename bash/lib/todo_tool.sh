@@ -4,7 +4,7 @@ _init() {
   [[ -z "$ROOT_DIR" || -z "$ENTRY_DIR" || -z "$DB" ]] && {
     return 1
   }
-  [[ -f "$DB" ]] && _dbBackup
+  [[ -f "$DB" ]] && _dbCreateBackup
   mkdir -p "$ROOT_DIR"
   mkdir -p "$ENTRY_DIR"
   mkdir -p "$LOG_DIR"
@@ -24,40 +24,7 @@ _foundFiles() {
   return 0
 }
 
-_dbBackup() {
-  local ts backup_dir count
-
-  ts="$(date -u +"%Y%m%dT%H%M%SZ")"
-  backup_dir="$BACKUP_DIR/$ts"
-
-  mkdir -p "$backup_dir/entries"
-  mkdir -p "$backup_dir/logs"
-
-  cp "$DB" "$backup_dir/db.yml"
-
-  shopt -s nullglob
-  cp "$ENTRY_DIR"/entry_*.md "$backup_dir/entries/"
-  shopt -u nullglob
-
-  cp "$LOG_DIR"/* "$backup_dir/logs/" 2>/dev/null || true
-
-  count=$(yq '.data | length' "$DB")
-
-  find "$ENTRY_DIR" -maxdepth 1 -type f -name "entry_*.md" |
-    sort >"$backup_dir/file_index.txt"
-
-  sha256sum "$DB" >"$backup_dir/db.sha256"
-
-  cat >"$backup_dir/manifest.txt" <<EOF
-timestamp: $ts
-entries: $count
-backup_dir: $backup_dir
-EOF
-
-  echo "[OK] backup created: $backup_dir"
-}
-
-# Reassigns DB entry's id, based on index
+# Reassigns id for all entries, renaming entry files accordingly
 _dbReindex() {
   local tmp
   tmp=$(mktemp)
@@ -91,47 +58,62 @@ _dbReindex() {
   mv "$tmp" "$DB"
 }
 
-# Delete entry from DB via ID
-_dbDeleteEntry() {
-  local target_id="$1"
+# Create a (timestamped and sha256 hashed) backup in $BACKUP_DIR
+_dbCreateBackup() {
+  local ts backup_dir count
 
-  [[ -z "$target_id" ]] && return 1
+  ts="$(date -u +"%Y%m%dT%H%M%SZ")"
+  backup_dir="$BACKUP_DIR/$ts"
 
-  local filepath
-  filepath="$(yq -r ".data[] | select(.id == ($target_id | tonumber)) | .filepath" "$DB")"
+  mkdir -p "$backup_dir/entries"
+  mkdir -p "$backup_dir/logs"
 
-  [[ -z "$filepath" || "$filepath" == "null" ]] && {
-    echo "No entry found for id $target_id"
-    return 1
-  }
+  cp "$DB" "$backup_dir/db.yml"
 
-  rm -f "$filepath"
+  shopt -s nullglob
+  cp "$ENTRY_DIR"/entry_*.md "$backup_dir/entries/"
+  shopt -u nullglob
 
-  yq -i "
-  .data |= map(select(.id != ($target_id | tonumber)))
-  " "$DB"
+  cp "$LOG_DIR"/* "$backup_dir/logs/" 2>/dev/null || true
 
-  _notify -a ct "Deleted Entry: $filepath"
+  count=$(yq '.data | length' "$DB")
 
+  find "$ENTRY_DIR" -maxdepth 1 -type f -name "entry_*.md" |
+    sort >"$backup_dir/file_index.txt"
+
+  sha256sum "$DB" >"$backup_dir/db.sha256"
+
+  cat >"$backup_dir/manifest.txt" <<EOF
+timestamp: $ts
+entries: $count
+backup_dir: $backup_dir
+EOF
+
+  _notify -a ct "[OK] Backup Created (E: $count): $backup_dir"
+}
+
+# Handle Wofi menu for Deleting Backup
+_dbDeleteBackup() {
+  shopt -s nullglob
+  local backups=("$BACKUP_DIR"/*)
+  shopt -u nullglob
+
+  [[ ${#backups[@]} -eq 0 ]] && _notify -a ct "No backups in $BACKUP_DIR" && return 1
+
+  local selection="$(
+    for b in "${backups[@]}"; do
+      printf '%s\n' "${b##*/}"
+    done | wofi -d "${w_args[@]}"
+  )"
+  [[ -z "$selection" ]] && return 1
+  [[ ! -d "$BACKUP_DIR/$selection" ]] && _notify -a ct -e "No matching backup found for: $selection" && return 1
+  #TODO: INCLUDE CONF PROMPT HERE
+  rm -r "$BACKUP_DIR/$selection"
+  _notify "[OK] Backup Deleted: $BACKUP_DIR/$selection"
   return 0
 }
 
-# Update modified time on manifest entry-entry
-_dbTouchEntry() {
-  local eid="$1"
-  local modified="$(date +"%Y-%m-%dT%H:%M:%SZ")"
-  E_EID="$eid" \
-    E_MODIFIED="$modified" \
-    yq -i '
-      (.data[] | select(.id == (env(E_EID) | tonumber))).modified_date = env(E_MODIFIED)
-    ' "$DB"
-}
-
-_dbGetEntryTitle() {
-  yq -r ".data[] | select(.id == ${1}) | .title" "$DB"
-}
-
-# Add entry to DB (and create entry file)
+# Add entry to DB (and create entry file), 'returns' the new entry ID
 _dbAddEntry() {
   local title="${1:-Untitled}"
   local created="$(date +"%Y-%m-%dT%H:%M:%SZ")"
@@ -159,6 +141,30 @@ _dbAddEntry() {
   echo "$eid"
 }
 
+# Delete entry from DB via it's entry ID
+_dbDeleteEntry() {
+  local target_id="$1"
+  [[ -z "$target_id" ]] && return 1
+
+  local filepath
+  filepath="$(yq -r ".data[] | select(.id == ($target_id | tonumber)) | .filepath" "$DB")"
+
+  [[ -z "$filepath" || "$filepath" == "null" ]] && {
+    _notify -e -a ct "No entry found for id $target_id"
+    return 1
+  }
+
+  rm -f "$filepath"
+
+  yq -i "
+  .data |= map(select(.id != ($target_id | tonumber)))
+  " "$DB"
+
+  _notify -a ct "Deleted Entry: $filepath"
+  return 0
+}
+
+# Handle Wofi menu for $ENTRY_DIR
 _dbGetEntryMenu() {
   local selection
   local files
@@ -182,6 +188,22 @@ _dbGetEntryMenu() {
   echo "$selection"
 }
 
+# Update entry modified time, via its entry ID
+_dbTouchEntry() {
+  local eid="$1"
+  local modified="$(date +"%Y-%m-%dT%H:%M:%SZ")"
+  E_EID="$eid" \
+    E_MODIFIED="$modified" \
+    yq -i '
+      (.data[] | select(.id == (env(E_EID) | tonumber))).modified_date = env(E_MODIFIED)
+    ' "$DB"
+}
+
+_dbGetEntryTitle() {
+  yq -r ".data[] | select(.id == ${1}) | .title" "$DB"
+}
+
+# Handle Wofi menu for Interactive Edit
 _dbInteractiveEdit() {
   selection="$(
     for f in "$ENTRY_DIR"/entry_*.md; do
@@ -204,6 +226,7 @@ _dbInteractiveEdit() {
   _notify -a ct "Updated manifest for $selection"
 }
 
+# Handle Wofi menu for Full Interactive Edit
 _dbInteractiveMenu() {
   local imenu_state="Root"
   local w_args=()
@@ -272,10 +295,10 @@ _dbInteractiveMenu() {
       selection="$(echo -e "Create Backup\nDelete Backup" | wofi -d "${w_args[@]}")"
       case "$selection" in
       "Create Backup")
-        imenu_state="$B_Create"
+        imenu_state="B_Create"
         ;;
       "Delete Backup")
-        imenu_state="$B_Delete"
+        imenu_state="B_Delete"
         ;;
       *)
         return 1
@@ -283,10 +306,15 @@ _dbInteractiveMenu() {
       esac
       ;;
     B_Create)
+      _dbCreateBackup
       return 0
       ;;
     B_Delete)
-      return 0
+      WOFI_PROMPT="Select Backup To Delete"
+      WOFI_WIDTH="15%"
+      WOFI_HEIGHT="35%"
+      _construct w_args
+      _dbDeleteBackup || imenu_state="Backup"
       ;;
     esac
   done

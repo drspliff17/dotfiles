@@ -67,10 +67,12 @@ while [[ "$#" -gt 0 ]]; do
   -i | iedit)
     shift
     MODE="IEDIT"
+    break
     ;;
   -m | imenu)
     shift
     MODE="IMENU"
+    break
     ;;
   -b | backup)
     shift
@@ -126,7 +128,7 @@ IEDIT)
 BACKUP)
   case "$BACKUP_MODE" in
   create)
-    _dbBackup
+    _dbCreateBackup
     ;;
   remove)
     #TODO: Make interactive backup remove
