@@ -60,6 +60,8 @@ hl.bind(mainMod .. " + CTRL + TAB", hl.dsp.window.cycle_next({ floating = true }
 
 hl.bind(mainMod .. " + c", hl.dsp.window.close(), { submap_universal = true })
 
+hl.bind(mainMod .. " + a", hl.dsp.window.set_prop({ prop = "opaque", value = "toggle" }), { submap_universal = true })
+
 -- Toggle Float (With Custom Actions)
 hl.bind(mainMod .. " + f", function()
 	local w = hl.get_active_window()
@@ -73,6 +75,11 @@ hl.bind(mainMod .. " + f", function()
 		kitty = function(win)
 			hl.dispatch(hl.dsp.window.center({ window = win }))
 			hl.dispatch(hl.dsp.window.resize({ x = "1000", y = "400", relative = false, window = win }))
+		end,
+
+		firefox = function(win)
+			hl.dispatch(hl.dsp.window.center({ window = win }))
+			hl.dispatch(hl.dsp.window.resize({ x = "1200", y = "800", relative = false, window = win }))
 		end,
 	}
 
