@@ -19,7 +19,7 @@ end, { desc = "Open Snacks Dashboard" })
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
 
 vim.keymap.set("n", "<leader>o", "<cmd>Oil<CR>", { desc = "Open Oil (CWD)" })
-vim.keymap.set("n", "<leader>O", "<cmd>Oil C:/Users/pixie/<CR>", { desc = "Open Oil (~)" })
+vim.keymap.set("n", "<leader>O", "<cmd>Oil /home/drspliff<CR>", { desc = "Open Oil (~)" })
 vim.keymap.set("n", "-", function()
   require("oil").toggle_float()
 end)
