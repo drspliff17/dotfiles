@@ -46,7 +46,7 @@ hl.window_rule({
 	match = { class = "waypaper" },
 	animation = "slide",
 	float = true,
-	size = "800 420",
+	size = "800 600",
 	move = "10 (monitor_h-(window_h)*0.5-(window_h*0.20)",
 })
 

@@ -1,8 +1,6 @@
 -- See https://wiki.hypr.land/Configuring/Keywords/
 -- Example binds, see https://wiki.hypr.land/Configuring/Binds/ for more
 
---TODO: Create dynamic help message for submaps
-
 local mainMod = "SUPER"
 local terminal = "kitty"
 local fileManager = "yazi"
@@ -20,13 +18,14 @@ local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
+local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 
 -- Core Binds
 hl.bind(
 	mainMod .. " + SHIFT + Q",
 	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
 )
-hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd(terminal, { float = true }))
+hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd(terminal, { float = true, size = "1000 400" }))
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("hyprlock"))
 
@@ -34,7 +33,7 @@ hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(
 	"PRINT",
 	hl.dsp.exec_cmd([[
-    grim -g "$(slurp)" -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy &&
+    grim -g "$(slurp)" -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png &&
     notify-send -u low -t 1000 -a center-text "Screenshot taken"
   ]])
 )
@@ -42,7 +41,7 @@ hl.bind(
 hl.bind(
 	mainMod .. " + PRINT",
 	hl.dsp.exec_cmd([[
-    grim -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy &&
+    grim -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png &&
     notify-send -u low -t 1000 -a center-text "Screenshot taken"
   ]])
 )
@@ -60,7 +59,29 @@ hl.bind(mainMod .. " + SHIFT + TAB", hl.dsp.window.cycle_next({ next = false }),
 hl.bind(mainMod .. " + CTRL + TAB", hl.dsp.window.cycle_next({ floating = true }), { submap_universal = true })
 
 hl.bind(mainMod .. " + c", hl.dsp.window.close(), { submap_universal = true })
-hl.bind(mainMod .. " + f", hl.dsp.window.float(), { submap_universal = true })
+
+-- Toggle Float (With Custom Actions)
+hl.bind(mainMod .. " + f", function()
+	local w = hl.get_active_window()
+	if not w then
+		return
+	end
+
+	hl.dispatch(hl.dsp.window.float(w))
+	local class = w.initial_class
+	local actions = {
+		kitty = function(win)
+			hl.dispatch(hl.dsp.window.center({ window = win }))
+			hl.dispatch(hl.dsp.window.resize({ x = "1000", y = "400", relative = false, window = win }))
+		end,
+	}
+
+	local a = actions[class]
+	if a then
+		a(w)
+	end
+end, { submap_universal = true })
+
 hl.bind(mainMod .. " + p", hl.dsp.window.pin(), { submap_universal = true })
 
 -- Global Window Binds
@@ -221,4 +242,11 @@ hl.define_submap("Notification", function()
 	hl.bind("c", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_clear.sh"))
 	hl.bind("g", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_get.sh"))
 	hl.bind("catchall", hl.dsp.submap("reset"))
+end)
+
+-- Todo Mode
+hl.bind(mainMod .. " + t", hl.dsp.submap("Todo"))
+hl.define_submap("Todo", "reset", function()
+	hl.bind("SPACE", hl.dsp.exec_cmd(scr_todo .. " -i"))
+	hl.bind("t", hl.dsp.exec_cmd(scr_todo .. " -m"))
 end)
