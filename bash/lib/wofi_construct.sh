@@ -11,6 +11,12 @@ WOFI_CONFIG=""
 WOFI_LINES=""
 WOFI_COLUMNS=""
 
+_captureMonitor() {
+  local monitor="$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')"
+  [[ -z "$monitor" ]] && return 1
+  echo "$monitor" >~/.config/wofi/state/monitor_prelaunch
+}
+
 _construct() {
   local -n _out="$1"
   local prompt="${WOFI_PROMPT:-}"
@@ -29,4 +35,6 @@ _construct() {
   [[ -n $WOFI_LINES ]] && _out+=("--lines" "$WOFI_LINES")
   [[ -n $WOFI_SORT ]] && _out+=("-O" "$WOFI_SORT")
   [[ -n $WOFI_CONFIG ]] && _out+=("--conf" "$WOFI_CONFIG")
+
+  _captureMonitor
 }

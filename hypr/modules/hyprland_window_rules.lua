@@ -67,3 +67,11 @@ hl.window_rule({
 	workspace = "10",
 	monitor = "1",
 })
+
+hl.window_rule({
+	name = "wofi-monitor0-on-open",
+	match = {
+		class = "wofi",
+	},
+	monitor = "0",
+})
