@@ -58,3 +58,12 @@ hl.window_rule({
 	},
 	opacity = "0.94 override 0.9 override 0.9 override",
 })
+
+hl.window_rule({
+	name = "cmus-monitor1-on-open",
+	match = {
+		class = "cmus",
+	},
+	workspace = "10",
+	monitor = "1",
+})
