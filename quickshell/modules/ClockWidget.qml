@@ -2,9 +2,9 @@ import QtQuick
 
 Rectangle {
     radius: 8
-    color: "#222222"
+    color: Colors.colors.color3
 
-    border.color: "#444444"
+    border.color: Colors.colors.color1
     border.width: 1
 
     implicitWidth: clockWidget.implicitWidth + 16
