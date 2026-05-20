@@ -64,8 +64,8 @@ hl.window_rule({
 	match = {
 		class = "cmus",
 	},
-	workspace = "10",
-	monitor = "1",
+	no_initial_focus = true,
+	workspace = "special:music",
 })
 
 hl.window_rule({

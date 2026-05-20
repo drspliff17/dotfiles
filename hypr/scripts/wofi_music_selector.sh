@@ -130,10 +130,8 @@ _menuArtistFileSelection() {
 case "$mode" in
 artist | files)
   if ! pgrep cmus; then
-    prevWorkspace="$(hyprctl monitors -j | jq -r '.[] | select(.name==eDP-1) | .activeWorkspace.id')"
     kitty --class cmus fish -c cmus &
-    sleep 0.2
-    hyprctl dispatch 'hl.dsp.focus({ monitor = 0 })'
+    hyprctl dispatch 'hl.dsp.workspace.toggle_special("music")'
     exit 0
   fi
   ;;

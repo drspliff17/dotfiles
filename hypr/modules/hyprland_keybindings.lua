@@ -98,6 +98,28 @@ hl.bind(mainMod .. " + SHIFT + s", hl.dsp.layout("movetoroot"))
 hl.bind(mainMod .. " + s", hl.dsp.layout("swapsplit"))
 hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen())
 
+-- Special Workspaces
+-- hl.bind(mainMod .. " + SHIFT + m", hl.dsp.workspace.toggle_special("music"))
+hl.bind(mainMod .. " + SHIFT + m", function()
+	local ws = hl.get_workspaces()
+	for _, w in ipairs(ws) do
+		if w.name == "special:music" then
+			hl.dispatch(hl.dsp.workspace.toggle_special("music"))
+			return
+		end
+	end
+end)
+
+-- Swap Workspace Between Two Monitors
+hl.bind(mainMod .. " + CTRL + s", function()
+	local m = hl.get_active_monitor().id
+	if m == 0 then
+		hl.dispatch(hl.dsp.workspace.swap_monitors({ monitor1 = m, monitor2 = "1" }))
+	else
+		hl.dispatch(hl.dsp.workspace.swap_monitors({ monitor1 = m, monitor2 = "0" }))
+	end
+end)
+
 -- Focus Windows / Workspaces
 for i = 1, 10 do
 	local key = i % 10 -- 10 maps to key 0
