@@ -44,6 +44,7 @@ THEME_DIR loc: $THEME_DIR
 
 Modes:
 -h | help   - View this message
+-l | list   - Print all themes to stdout (line separated)
 -r | random - Automatically pick theme from THEME_DIR
 -s | set    - Specify theme (dir name relative to THEME_DIR)
 -t | toggle - Toggle StateFile.randomThemeOnBoot value
@@ -83,6 +84,10 @@ while [[ "$#" -gt 0 ]]; do
       exit 0
     fi
     ;;
+  -l | list)
+    shift
+    MODE="list"
+    ;;
   -*)
     echo "[ERROR] Unknown Option: $1" >&2
     exit 1
@@ -102,15 +107,23 @@ set)
   ! _validTheme && echo "[ERROR] Invalid Theme: $SELECTED_THEME" >&2 && exit 1
   _update && exit 0
   ;;
-random)
-  [[ "$(yq '.randomThemeOnBoot' "$SDDM_STATE_DATA")" == 0 ]] && {
-    echo "Aborting, Reason: StateFile.randomThemeOnBoot is currently FALSE" >&2
-    exit 1
-  }
+random | list)
 
   mapfile -t THEMES < <(
     find "$THEME_DIR" -mindepth 1 -maxdepth 1 -type d -printf "%f\n"
   )
+
+  [[ "$MODE" = "list" ]] && {
+    for theme in "${THEMES[@]}"; do
+      echo "$theme"
+    done
+    exit 0
+  }
+
+  [[ "$(yq '.randomThemeOnBoot' "$SDDM_STATE_DATA")" == 0 ]] && {
+    echo "Aborting, Reason: StateFile.randomThemeOnBoot is currently FALSE" >&2
+    exit 1
+  }
 
   FILTERED=()
   for theme in "${THEMES[@]}"; do
