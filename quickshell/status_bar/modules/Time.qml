@@ -6,11 +6,15 @@ import QtQuick
 
 Singleton {
     id: root
-    // an expression can be broken across multiple lines using {}
+    property int currentFormat: 0
+    property var formats: ["hh:mm AP", "ddd dd MMM", "ddd dd-MM-yy  hh:mm AP"]
+
     readonly property string time: {
-        // The passed format string matches the default output of
-        // the `date` command.
-        Qt.formatDateTime(clock.date, "hh:mm AP ");
+        Qt.formatDateTime(clock.date, formats[currentFormat]);
+    }
+
+    function cycleFormat() {
+        currentFormat = (currentFormat + 1) % formats.length;
     }
 
     SystemClock {

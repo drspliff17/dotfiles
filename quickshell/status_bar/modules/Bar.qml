@@ -8,6 +8,7 @@ Scope {
         PanelWindow {
             required property var modelData
             screen: modelData
+            color: "transparent"
 
             anchors {
                 top: true
