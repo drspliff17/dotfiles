@@ -99,12 +99,21 @@ hl.bind(mainMod .. " + s", hl.dsp.layout("swapsplit"))
 hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen())
 
 -- Special Workspaces
--- hl.bind(mainMod .. " + SHIFT + m", hl.dsp.workspace.toggle_special("music"))
 hl.bind(mainMod .. " + SHIFT + m", function()
 	local ws = hl.get_workspaces()
 	for _, w in ipairs(ws) do
 		if w.name == "special:music" then
 			hl.dispatch(hl.dsp.workspace.toggle_special("music"))
+			return
+		end
+	end
+end)
+
+hl.bind(mainMod .. " + SHIFT + d", function()
+	local ws = hl.get_workspaces()
+	for _, w in ipairs(ws) do
+		if w.name == "special:discord" then
+			hl.dispatch(hl.dsp.workspace.toggle_special("discord"))
 			return
 		end
 	end
@@ -225,7 +234,6 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("slash", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/print_mode_help.sh open"))
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu))
 	hl.bind("e", hl.dsp.exec_cmd(fileManager))
-	hl.bind("d", hl.dsp.exec_cmd("/opt/Discord/discord"))
 	hl.bind("b", hl.dsp.exec_cmd("firefox"))
 	hl.bind("w", hl.dsp.exec_cmd("waypaper"))
 	hl.bind("s", hl.dsp.exec_cmd("steam"))
@@ -233,6 +241,7 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
 	hl.bind("m", hl.dsp.exec_cmd("kitty --class cmus fish -c cmus"))
 	hl.bind("v", hl.dsp.exec_cmd("vlc"))
+	hl.bind("d", hl.dsp.exec_cmd("/opt/Discord/discord"))
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)

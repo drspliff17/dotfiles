@@ -60,7 +60,7 @@ hl.window_rule({
 })
 
 hl.window_rule({
-	name = "cmus-monitor1-on-open",
+	name = "cmus-move-special",
 	match = {
 		class = "cmus",
 	},
@@ -74,4 +74,13 @@ hl.window_rule({
 		class = "wofi",
 	},
 	monitor = "0",
+})
+
+hl.window_rule({
+	name = "discord-move-special",
+	match = {
+		initial_class = "discord",
+	},
+	no_initial_focus = true,
+	workspace = "special:discord",
 })
