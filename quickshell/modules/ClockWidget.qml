@@ -6,6 +6,7 @@ Rectangle {
     property bool vertical: false
 
     color: Colors.colors.color3
+    opacity: 0.65
 
     border.color: Colors.colors.color1
     border.width: 1

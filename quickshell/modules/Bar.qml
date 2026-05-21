@@ -4,6 +4,7 @@ import Quickshell
 Scope {
     property int widgetRadius: 10
 
+    // Layout Presets for Status Bar
     QtObject {
         id: layoutPresets
 
@@ -77,18 +78,34 @@ Scope {
         model: Quickshell.screens
 
         PanelWindow {
-            property string barPreset: "top"
-
-            readonly property var layout: layoutPresets.bar(barPreset)
-
-            readonly property bool horizontal: layout.orientation === "horizontal"
-
-            readonly property bool vertical: layout.orientation === "vertical"
-
             required property var modelData
 
-            screen: modelData
-            color: Colors.colors.color0
+            property string barPreset: "bottom"
+            property string preferredScreenName: "HDMI-A-1"
+            property string fallbackScreenName: "eDP-1"
+
+            readonly property var layout: layoutPresets.bar(barPreset)
+            readonly property bool horizontal: layout.orientation === "horizontal"
+            readonly property bool vertical: layout.orientation === "vertical"
+
+            readonly property bool preferredExists: Quickshell.screens.some(s => s.name === preferredScreenName)
+
+            readonly property bool fallbackExists: Quickshell.screens.some(s => s.name === fallbackScreenName)
+
+            readonly property bool shouldUseThisScreen: {
+                if (preferredExists)
+                    return modelData.name === preferredScreenName;
+
+                if (fallbackExists)
+                    return modelData.name === fallbackScreenName;
+
+                return modelData === Quickshell.primaryScreen;
+            }
+
+            screen: shouldUseThisScreen ? modelData : Quickshell.primaryScreen
+            visible: shouldUseThisScreen
+
+            color: Colors.special.background
 
             anchors {
                 top: layout.anchors.top
@@ -105,7 +122,6 @@ Scope {
                 anchors.fill: parent
                 visible: horizontal
 
-                // LEFT SECTION
                 Row {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -119,12 +135,11 @@ Scope {
                     }
                 }
 
-                // CENTER SECTION
                 Item {
                     anchors.centerIn: parent
+                    Cmus {}
                 }
 
-                // RIGHT SECTION
                 Row {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -155,7 +170,6 @@ Scope {
                     ClockWidget {
                         radius: widgetRadius
                         vertical: false
-
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
@@ -166,7 +180,6 @@ Scope {
                 anchors.fill: parent
                 visible: vertical
 
-                // TOP SECTION
                 Column {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -180,12 +193,10 @@ Scope {
                     }
                 }
 
-                // CENTER SECTION
                 Item {
                     anchors.centerIn: parent
                 }
 
-                // BOTTOM SECTION
                 Column {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -216,7 +227,6 @@ Scope {
                     ClockWidget {
                         radius: widgetRadius
                         vertical: true
-
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                 }

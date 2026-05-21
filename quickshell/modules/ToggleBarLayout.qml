@@ -10,6 +10,7 @@ Rectangle {
     color: Colors.colors.color3
     border.color: Colors.colors.color1
     border.width: 1
+    opacity: 0.45
 
     width: 24
     height: 24
