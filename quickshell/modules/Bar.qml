@@ -74,10 +74,12 @@ Scope {
         }
     }
 
+    // Main Bar - using Variants so that monitor adjusts  TODO: Ensure this happens when monitor changes, probably a signal for this exact thing already
     Variants {
         model: Quickshell.screens
 
         PanelWindow {
+            id: bar
             required property var modelData
 
             property string barPreset: "bottom"
@@ -89,7 +91,6 @@ Scope {
             readonly property bool vertical: layout.orientation === "vertical"
 
             readonly property bool preferredExists: Quickshell.screens.some(s => s.name === preferredScreenName)
-
             readonly property bool fallbackExists: Quickshell.screens.some(s => s.name === fallbackScreenName)
 
             readonly property bool shouldUseThisScreen: {
@@ -101,7 +102,6 @@ Scope {
 
                 return modelData === Quickshell.primaryScreen;
             }
-
             screen: shouldUseThisScreen ? modelData : Quickshell.primaryScreen
             visible: shouldUseThisScreen
 
@@ -120,7 +120,7 @@ Scope {
             // HORIZONTAL BAR
             Item {
                 anchors.fill: parent
-                visible: horizontal
+                visible: bar.horizontal
 
                 Row {
                     anchors.left: parent.left
@@ -155,14 +155,14 @@ Scope {
                             width: 24
                             height: 24
 
-                            currentPreset: barPreset
+                            currentPreset: bar.barPreset
 
                             onCycleRequested: {
                                 const presets = ["top", "right", "bottom", "left"];
-                                let i = presets.indexOf(barPreset);
+                                let i = presets.indexOf(bar.barPreset);
                                 if (i < 0)
                                     i = 0;
-                                barPreset = presets[(i + 1) % presets.length];
+                                bar.barPreset = presets[(i + 1) % presets.length];
                             }
                         }
                     }
@@ -178,7 +178,7 @@ Scope {
             // VERTICAL BAR
             Item {
                 anchors.fill: parent
-                visible: vertical
+                visible: bar.vertical
 
                 Column {
                     anchors.top: parent.top
@@ -212,14 +212,14 @@ Scope {
                             width: 24
                             height: 24
 
-                            currentPreset: barPreset
+                            currentPreset: bar.barPreset
 
                             onCycleRequested: {
                                 const presets = ["top", "right", "bottom", "left"];
-                                let i = presets.indexOf(barPreset);
+                                let i = presets.indexOf(bar.barPreset);
                                 if (i < 0)
                                     i = 0;
-                                barPreset = presets[(i + 1) % presets.length];
+                                bar.barPreset = presets[(i + 1) % presets.length];
                             }
                         }
                     }

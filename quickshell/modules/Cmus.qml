@@ -19,11 +19,11 @@ Rectangle {
         }
     }
 
-    readonly property string title: player ? (player.trackTitle || "Unknown Title") : ""
-    readonly property string artist: player ? (player.trackArtist || "Unknown Artist") : ""
+    readonly property string title: player.trackTitle || ""
+    readonly property string artist: player.trackArtist || ""
     readonly property string playing: player.isPlaying ? " " : " "
 
-    readonly property string formatted: playing + "  " + artist + "  -  " + title + ""
+    readonly property string formatted: player ? playing + "  " + artist + "  -  " + title + "" : ""
     Text {
         id: textItem
 
