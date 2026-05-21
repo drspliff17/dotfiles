@@ -1,7 +1,10 @@
-// Bar.qml
+import QtQuick
 import Quickshell
+import Quickshell.Hyprland
 
 Scope {
+    property int widgetRadius: 10
+
     Variants {
         model: Quickshell.screens
 
@@ -18,9 +21,17 @@ Scope {
 
             implicitHeight: 30
 
-            ClockWidget {
-                // anchors.centerIn: parent
-                anchors.left: parent
+            Row {
+                anchors.fill: parent
+                spacing: 10
+
+                ClockWidget {
+                    radius: widgetRadius
+                }
+
+                WorkspaceWidget {
+                    radius: widgetRadius
+                }
             }
         }
     }

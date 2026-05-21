@@ -7,21 +7,28 @@ Scope {
 
     FileView {
         id: walFile
-        path: "/home/drspliff/.cache/wal/colors.json"
 
-        function reload() {
-            const raw = text();
-            if (!raw || raw.length < 10)
-                return;
+        path: "/home/drspliff/.cache/wal/colors.json"
+        watchChanges: true
+        blockLoading: true
+
+        function reloadColors() {
             try {
-                Colors.setColors(JSON.parse(raw));
+                Colors.setColors(JSON.parse(text()));
             } catch (e) {
-                console.log("wal parse failed", e);
+                console.log("wal parse failed:", e);
             }
         }
 
-        onLoaded: reload()
-        onFileChanged: reload()
+        onLoaded: reloadColors()
+
+        onFileChanged: {
+            reload();
+        }
+
+        onTextChanged: {
+            reloadColors();
+        }
     }
 
     Bar {}
