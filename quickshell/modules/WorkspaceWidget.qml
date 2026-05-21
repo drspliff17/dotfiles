@@ -1,10 +1,15 @@
 import QtQuick
 import Quickshell.Hyprland
 
-Row {
+Flow {
     id: root
+
     property int radius: 6
+    property bool vertical: false
+
     spacing: 4
+
+    flow: vertical ? Flow.TopToBottom : Flow.LeftToRight
 
     Repeater {
         model: Hyprland.workspaces
@@ -14,15 +19,17 @@ Row {
 
             visible: modelData.id > 0
 
-            width: visible ? 28 : 0
-            height: visible ? 28 : 0
+            width: visible ? 24 : 0
+            height: visible ? 24 : 0
 
             radius: root.radius
 
             property bool active: Hyprland.focusedWorkspace?.id === modelData.id
 
-            opacity: active ? 1.0 : 0.7
+            opacity: active ? 1.0 : 0.5
+
             color: Colors.colors.color3
+
             border.color: Colors.colors.color1
             border.width: 1
 
@@ -34,6 +41,7 @@ Row {
 
             MouseArea {
                 anchors.fill: parent
+
                 onClicked: Hyprland.dispatch("hl.dsp.focus({ workspace = " + modelData.id + "})")
             }
         }

@@ -3,20 +3,25 @@ import QtQuick
 Rectangle {
     id: root
 
-    radius: 8
+    property bool vertical: false
+
     color: Colors.colors.color3
+
     border.color: Colors.colors.color1
     border.width: 1
 
-    property string label: Time.time
+    property string label: vertical ? Time.verticalTime : Time.time
 
-    implicitWidth: textItem.implicitWidth + 16
-    implicitHeight: textItem.implicitHeight + 10
+    implicitWidth: textItem.implicitWidth + 10
+    implicitHeight: textItem.implicitHeight + 8
 
     Text {
         id: textItem
+
         text: root.label
         color: "white"
+
+        horizontalAlignment: Text.AlignHCenter
 
         anchors.centerIn: parent
     }
