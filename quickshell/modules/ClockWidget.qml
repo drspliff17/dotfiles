@@ -1,27 +1,30 @@
 import QtQuick
 
 Rectangle {
+    id: root
+
     radius: 8
     color: Colors.colors.color3
-
     border.color: Colors.colors.color1
     border.width: 1
 
-    implicitWidth: clockWidget.implicitWidth + 16
-    implicitHeight: clockWidget.implicitHeight + 8
+    property string label: Time.time
+
+    implicitWidth: textItem.implicitWidth + 16
+    implicitHeight: textItem.implicitHeight + 10
+
     Text {
-        id: clockWidget
-        anchors.centerIn: parent
+        id: textItem
+        text: root.label
         color: "white"
-        text: Time.time
 
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
+        anchors.centerIn: parent
+    }
 
-            onClicked: {
-                Time.cycleFormat();
-            }
-        }
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+
+        onClicked: Time.cycleFormat()
     }
 }

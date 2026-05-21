@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 
 Scope {
     property int widgetRadius: 10
@@ -11,7 +10,7 @@ Scope {
         PanelWindow {
             required property var modelData
             screen: modelData
-            color: "transparent"
+            color: Colors.colors.color1
 
             anchors {
                 top: true
@@ -23,13 +22,15 @@ Scope {
 
             Row {
                 anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.topMargin: 1
                 spacing: 10
-
-                ClockWidget {
+                WorkspaceWidget {
                     radius: widgetRadius
                 }
 
-                WorkspaceWidget {
+                ClockWidget {
                     radius: widgetRadius
                 }
             }
