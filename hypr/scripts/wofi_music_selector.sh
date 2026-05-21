@@ -131,6 +131,7 @@ case "$mode" in
 artist | files)
   if ! pgrep cmus; then
     kitty --class cmus fish -c cmus &
+    sleep 0.2
     hyprctl dispatch 'hl.dsp.workspace.toggle_special("music")'
     exit 0
   fi
