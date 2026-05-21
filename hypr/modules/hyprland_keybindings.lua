@@ -5,7 +5,7 @@ local mainMod = "SUPER"
 local terminal = "kitty"
 local fileManager = "yazi"
 local menu = "wofi --show drun"
-local status = "waybar"
+local status = "qs"
 
 -- My Scripts
 local scr_toggleProgram = "~/.config/hypr/scripts/toggle_program.sh"

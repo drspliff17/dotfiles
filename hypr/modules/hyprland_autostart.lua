@@ -1,5 +1,5 @@
 hl.on("hyprland.start", function()
-	hl.exec_cmd("waybar")
+	hl.exec_cmd("qs")
 	hl.exec_cmd("dunst")
 	hl.exec_cmd("waypaper --restore")
 	hl.exec_cmd("wal -r")
@@ -17,7 +17,7 @@ hl.on("window.close", function(win)
 		return
 	end
 
-  local monitor = f:read("*all"):gsub("[\n\r]", "")
+	local monitor = f:read("*all"):gsub("[\n\r]", "")
 	f:close()
 
 	os.remove(path)
