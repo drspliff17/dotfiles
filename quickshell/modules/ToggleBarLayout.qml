@@ -9,7 +9,6 @@ Rectangle {
     property string currentPreset
     signal cycleRequested
 
-    radius: 8
     color: Colors.colors.color3
     border.color: Colors.colors.color1
     border.width: 1

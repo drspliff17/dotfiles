@@ -4,7 +4,7 @@ import Quickshell
 
 Scope {
     id: shellroot
-    property int widgetRadius: 10
+    property int widgetRadius: Config.config_barWidgetRadius
 
     // Layout Presets for Status Bar
     QtObject {
@@ -84,7 +84,7 @@ Scope {
             id: bar
             required property var modelData
 
-            property string barPreset: "bottom"
+            property string barPreset: Config.config_barPreset
 
             property string screenMode: "primary" // "all", "primary", "inverted"
             property string preferredScreenName: "HDMI-A-1"
@@ -156,20 +156,6 @@ Scope {
                 }
 
                 // Center Section
-                // Item {
-                //     anchors.centerIn: parent
-                //     visible: bar.horizontal
-                //
-                //     // Cmus {}
-                //     SubmapWidget {
-                //         baseOpacity: 1.0
-                //         hoverOpacity: 1.0
-                //         vertical: false
-                //         radius: shellroot.widgetRadius
-                //         anchors.horizontalCenter: parent.horizontalCenter
-                //     }
-                // }
-
                 Row {
                     anchors.centerIn: parent
                     spacing: 12
@@ -201,6 +187,7 @@ Scope {
                             anchors.centerIn: parent
                             width: 24
                             height: 24
+                            radius: shellroot.widgetRadius
 
                             baseOpacity: 0.45
                             hoverOpacity: 0.9
@@ -276,6 +263,7 @@ Scope {
                             anchors.centerIn: parent
                             width: 24
                             height: 24
+                            radius: shellroot.widgetRadius
 
                             baseOpacity: 0.45
                             hoverOpacity: 0.9

@@ -4,6 +4,7 @@ import Quickshell.Io
 import "modules"
 
 Scope {
+    id: shellroot
 
     FileView {
         id: walFile
@@ -31,5 +32,7 @@ Scope {
         }
     }
 
-    Bar {}
+    Bar {
+        id: bar
+    }
 }
