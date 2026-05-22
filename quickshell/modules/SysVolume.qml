@@ -14,12 +14,13 @@ Rectangle {
     border.color: Colors.colors.color1
     border.width: 1
 
-    implicitWidth: vertical ? 28 : textItem.implicitWidth + 10
+    implicitWidth: vertical ? textItem.implicitWidth + 8 : textItem.implicitWidth + 10
     implicitHeight: vertical ? textItem.implicitHeight + 8 : textItem.implicitHeight + 8
 
     Text {
         id: textItem
 
+        font.pixelSize: root.vertical ? 8 : this.font.pixelSize
         color: "white"
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

@@ -1,7 +1,9 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 
 Scope {
+    id: shellroot
     property int widgetRadius: 10
 
     // Layout Presets for Status Bar
@@ -44,7 +46,7 @@ Scope {
                         right: false
                     },
                     implicitHeight: undefined,
-                    implicitWidth: 32
+                    implicitWidth: 48
                 };
             case "right":
                 return {
@@ -56,7 +58,7 @@ Scope {
                         right: true
                     },
                     implicitHeight: undefined,
-                    implicitWidth: 32
+                    implicitWidth: 48
                 };
             default:
                 return {
@@ -134,10 +136,12 @@ Scope {
             implicitWidth: layout.implicitWidth
 
             // HORIZONTAL BAR
+
             Item {
                 anchors.fill: parent
                 visible: bar.horizontal
 
+                // Left Section
                 Row {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -145,19 +149,44 @@ Scope {
                     spacing: 10
 
                     WorkspaceWidget {
-                        radius: widgetRadius
+                        radius: shellroot.widgetRadius
                         spacing: 2
                         vertical: false
                     }
                 }
 
-                Item {
-                    anchors.centerIn: parent
-                    visible: bar.horizontal
+                // Center Section
+                // Item {
+                //     anchors.centerIn: parent
+                //     visible: bar.horizontal
+                //
+                //     // Cmus {}
+                //     SubmapWidget {
+                //         baseOpacity: 1.0
+                //         hoverOpacity: 1.0
+                //         vertical: false
+                //         radius: shellroot.widgetRadius
+                //         anchors.horizontalCenter: parent.horizontalCenter
+                //     }
+                // }
 
-                    Cmus {}
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 12
+
+                    SubmapWidget {
+                        id: sw
+                        baseOpacity: 1.0
+                        hoverOpacity: 1.0
+                        vertical: false
+                        radius: shellroot.widgetRadius
+                    }
+                    Cmus {
+                        visible: !sw.visible
+                    }
                 }
 
+                // Right Section
                 Row {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -165,7 +194,7 @@ Scope {
                     spacing: 4
 
                     Item {
-                        width: 32
+                        width: 24
                         height: 32
 
                         ToggleBarLayout {
@@ -197,12 +226,12 @@ Scope {
                             vertical: false
                             baseOpacity: 0.45
                             hoverOpacity: 0.9
-                            radius: widgetRadius
+                            radius: shellroot.widgetRadius
                         }
                     }
 
                     ClockWidget {
-                        radius: widgetRadius
+                        radius: shellroot.widgetRadius
                         vertical: false
                         baseOpacity: 0.65
                         hoverOpacity: 0.9
@@ -223,7 +252,7 @@ Scope {
                     spacing: 10
 
                     WorkspaceWidget {
-                        radius: widgetRadius
+                        radius: shellroot.widgetRadius
                         spacing: 2
                         vertical: true
                     }
@@ -241,7 +270,7 @@ Scope {
 
                     Item {
                         width: 32
-                        height: 32
+                        height: 24
 
                         ToggleBarLayout {
                             anchors.centerIn: parent
@@ -263,8 +292,21 @@ Scope {
                         }
                     }
 
+                    Item {
+                        width: 32
+                        height: 32
+
+                        SysVolume {
+                            anchors.centerIn: parent
+                            vertical: true
+                            baseOpacity: 0.45
+                            hoverOpacity: 0.9
+                            radius: shellroot.widgetRadius
+                        }
+                    }
+
                     ClockWidget {
-                        radius: widgetRadius
+                        radius: shellroot.widgetRadius
                         vertical: true
                         baseOpacity: 0.65
                         hoverOpacity: 1.0

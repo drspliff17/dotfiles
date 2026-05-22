@@ -4,6 +4,9 @@ import Quickshell.Services.Mpris
 Rectangle {
     id: root
 
+    implicitWidth: textItem.implicitWidth
+    implicitHeight: textItem.implicitHeight
+    color: "transparent"
     property var player: null
 
     function updatePlayer() {
