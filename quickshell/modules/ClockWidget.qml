@@ -4,9 +4,11 @@ Rectangle {
     id: root
 
     property bool vertical: false
+    required property real baseOpacity
+    required property real hoverOpacity
 
     color: Colors.colors.color3
-    opacity: 0.65
+    opacity: baseOpacity
 
     border.color: Colors.colors.color1
     border.width: 1
@@ -29,8 +31,11 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
+        onEntered: root.opacity = root.hoverOpacity
+        onExited: root.opacity = root.baseOpacity
         onClicked: Time.cycleFormat()
     }
 }

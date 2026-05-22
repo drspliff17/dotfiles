@@ -3,6 +3,9 @@ import QtQuick
 Rectangle {
     id: root
 
+    required property real baseOpacity
+    required property real hoverOpacity
+
     property string currentPreset
     signal cycleRequested
 
@@ -10,7 +13,7 @@ Rectangle {
     color: Colors.colors.color3
     border.color: Colors.colors.color1
     border.width: 1
-    opacity: 0.45
+    opacity: baseOpacity
 
     width: 24
     height: 24
@@ -34,8 +37,11 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
+        onEntered: root.opacity = root.hoverOpacity
+        onExited: root.opacity = root.baseOpacity
         onClicked: root.cycleRequested()
     }
 }

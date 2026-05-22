@@ -4,10 +4,12 @@ import Quickshell.Services.Pipewire
 
 Rectangle {
     id: root
+    required property real baseOpacity
+    required property real hoverOpacity
 
     property bool vertical: false
     color: Colors.colors.color3
-    opacity: 0.45
+    opacity: baseOpacity
 
     border.color: Colors.colors.color1
     border.width: 1
@@ -95,8 +97,8 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
-        onEntered: parent.opacity = 0.9
-        onExited: parent.opacity = 0.45
+        onEntered: root.opacity = root.hoverOpacity
+        onExited: root.opacity = root.baseOpacity
         onClicked: {
             Quickshell.execDetached({
                 command: ["pavucontrol"]

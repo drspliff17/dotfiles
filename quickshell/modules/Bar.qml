@@ -173,6 +173,9 @@ Scope {
                             width: 24
                             height: 24
 
+                            baseOpacity: 0.45
+                            hoverOpacity: 0.9
+
                             currentPreset: bar.barPreset
 
                             onCycleRequested: {
@@ -192,6 +195,8 @@ Scope {
                         SysVolume {
                             anchors.centerIn: parent
                             vertical: false
+                            baseOpacity: 0.45
+                            hoverOpacity: 0.9
                             radius: widgetRadius
                         }
                     }
@@ -199,6 +204,8 @@ Scope {
                     ClockWidget {
                         radius: widgetRadius
                         vertical: false
+                        baseOpacity: 0.65
+                        hoverOpacity: 0.9
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
@@ -241,6 +248,9 @@ Scope {
                             width: 24
                             height: 24
 
+                            baseOpacity: 0.45
+                            hoverOpacity: 0.9
+
                             currentPreset: bar.barPreset
 
                             onCycleRequested: {
@@ -256,6 +266,8 @@ Scope {
                     ClockWidget {
                         radius: widgetRadius
                         vertical: true
+                        baseOpacity: 0.65
+                        hoverOpacity: 1.0
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                 }
