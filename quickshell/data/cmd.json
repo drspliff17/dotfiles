@@ -1,0 +1,20 @@
+[
+  {
+    "command": "set_barPreset",
+    "alias": [
+      "set_barPreset",
+      "sbp"
+    ],
+    "arg_count": 1,
+    "arg_type": "direction"
+  },
+  {
+    "command": "cycle_barPreset",
+    "alias": [
+      "cycle_barPreset",
+      "cbp"
+    ],
+    "arg_count": 0,
+    "arg_type": ""
+  }
+]

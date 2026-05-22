@@ -6,6 +6,7 @@ import "modules"
 Scope {
     id: shellroot
 
+    // Watch for pywal update, and trigger Colors singleton reload
     FileView {
         id: walFile
 
@@ -23,16 +24,32 @@ Scope {
 
         onLoaded: reloadColors()
 
-        onFileChanged: {
-            reload();
-        }
+        onFileChanged: reload() 
 
-        onTextChanged: {
-            reloadColors();
+        onTextChanged: reloadColors()
+    }
+
+    // Watch for command files, and trigger CLI to process them if found
+    FileView {
+      id: commandFile
+
+      path: "/home/drspliff/.config/quickshell/data/cmd_dispatch.json"
+      watchChanges: true
+      blockLoading: true
+
+      function reloadCommand() {
+        try {
+          CLI.setProp(JSON.parse(text()));
+        } catch(e) {
+          console.log("command parse failed:", e);
         }
+      }
+      onFileChanged: reload()
+      onTextChanged: reloadCommand()
     }
 
     Bar {
         id: bar
     }
+
 }
