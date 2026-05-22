@@ -7,7 +7,7 @@ import QtQuick
 Singleton {
     id: root
     property int currentFormat: 0
-    readonly property var formats: ["HH:mm AP", "ddd dd MMM", "ddd dd-MM-yy  HH:mm AP"]
+    readonly property var formats: ["HH:mm AP", "ddd dd MMM", "ddd  dd-MM-yy  HH:mm AP"]
 
     readonly property string time: {
         Qt.formatDateTime(clock.date, formats[currentFormat]);

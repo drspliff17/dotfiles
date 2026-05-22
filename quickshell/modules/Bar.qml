@@ -83,6 +83,8 @@ Scope {
             required property var modelData
 
             property string barPreset: "bottom"
+
+            property string screenMode: "primary" // "all", "primary", "inverted"
             property string preferredScreenName: "HDMI-A-1"
             property string fallbackScreenName: "eDP-1"
 
@@ -102,8 +104,22 @@ Scope {
 
                 return modelData === Quickshell.primaryScreen;
             }
-            screen: shouldUseThisScreen ? modelData : Quickshell.primaryScreen
-            visible: shouldUseThisScreen
+
+            function isVisibleScreen(screen) {
+                if (screenMode === "all")
+                    return true;
+
+                if (screenMode === "primary")
+                    return Quickshell.screens.some(s => s.name === preferredScreenName) ? screen.name === preferredScreenName : screen.name === fallbackScreenName;
+
+                if (screenMode === "inverted")
+                    return Quickshell.screens.some(s => s.name === fallbackScreenName) ? screen.name === fallbackScreenName : screen.name === preferredScreenName;
+
+                return false;
+            }
+
+            screen: modelData
+            visible: isVisibleScreen(modelData)
 
             color: Colors.special.background
 
@@ -137,6 +153,8 @@ Scope {
 
                 Item {
                     anchors.centerIn: parent
+                    visible: bar.horizontal
+
                     Cmus {}
                 }
 
@@ -164,6 +182,17 @@ Scope {
                                     i = 0;
                                 bar.barPreset = presets[(i + 1) % presets.length];
                             }
+                        }
+                    }
+
+                    Item {
+                        width: 110
+                        height: 32
+
+                        SysVolume {
+                            anchors.centerIn: parent
+                            vertical: false
+                            radius: widgetRadius
                         }
                     }
 

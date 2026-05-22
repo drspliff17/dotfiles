@@ -15,8 +15,8 @@ Flow {
         model: Hyprland.workspaces
 
         delegate: Rectangle {
+            id: rec
             required property var modelData
-
             visible: modelData.id > 0
 
             width: visible ? 24 : 0
@@ -35,14 +35,14 @@ Flow {
 
             Text {
                 anchors.centerIn: parent
-                text: modelData.id
+                text: rec.modelData.id
                 color: "white"
             }
 
             MouseArea {
                 anchors.fill: parent
 
-                onClicked: Hyprland.dispatch("hl.dsp.focus({ workspace = " + modelData.id + "})")
+                onClicked: Hyprland.dispatch("hl.dsp.focus({ workspace = " + rec.modelData.id + "})")
             }
         }
     }
