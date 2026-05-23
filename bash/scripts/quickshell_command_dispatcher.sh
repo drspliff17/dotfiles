@@ -13,6 +13,7 @@ source "$LIB_QS" || {
 }
 
 CMD_DISPATCH="$HOME/.config/quickshell/data/cmd_dispatch.json"
+CMD_RESPONSE="$HOME/.config/quickshell/data/cmd_response"
 CMD_DB="$HOME/.config/quickshell/data/cmd.json"
 TMP_FILE="$(mktemp)"
 
@@ -46,6 +47,8 @@ ARG_RAW=("$@")
   esac
 }
 
+# Dispatch Command
+RESPONSE_EXPECTED="$(echo "$MATCH" | jq -r '.response_expected')"
 if [[ "$#" -gt 0 ]]; then
   ARG_JSON="$(printf '%s\n' "$@" | jq -R . | jq -s .)"
 else
@@ -57,8 +60,19 @@ jq -n \
   --arg command "$CMD_NAME" \
   --arg ts "$TS" \
   --argjson args "$ARG_JSON" \
-  '{ts: $ts, command: $command, args: $args}' >"$TMP_FILE"
+  '{ts: $ts, command: $command, args: $args, response: ""}' >"$TMP_FILE"
 
 mv "$TMP_FILE" "$CMD_DISPATCH"
 sleep 0.2
 echo "{}" >"$CMD_DISPATCH"
+
+# Check for response and do a thing
+[[ ! "$RESPONSE_EXPECTED" = "true" ]] && {
+  exit 0
+}
+[[ ! -f "$CMD_RESPONSE" ]] && _notify -a ct -e "Reponse expected but file not found!" && exit 1
+RESPONSE="$(cat "$CMD_RESPONSE")"
+echo "$RESPONSE"
+rm "$CMD_RESPONSE" && exit 0
+
+#TODO: Potentially add post command, response based action here, maybe eval a cmd string from cmd database?

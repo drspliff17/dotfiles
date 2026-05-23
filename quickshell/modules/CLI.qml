@@ -7,6 +7,8 @@ QtObject {
     property string command: ""
     property var args: []
 
+    signal writeResponseRequested(string data)
+
     function setProp(obj) {
         CLI.command = obj.command;
         CLI.args = obj.args;
@@ -31,6 +33,9 @@ QtObject {
             if (i < 0)
                 i = 0;
             Config.config_barPreset = presets[(i + 1) % presets.length];
+            break;
+        case "get_barPreset":
+            writeResponseRequested(Config.config_barPreset);
             break;
         }
     }
