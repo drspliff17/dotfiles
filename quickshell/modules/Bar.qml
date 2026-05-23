@@ -4,7 +4,7 @@ import Quickshell
 
 Scope {
     id: shellroot
-    property int widgetRadius: Config.config_barWidgetRadius
+    property int widgetRadius: Config.config_barWidgets_Radius
 
     // Layout Presets for Status Bar
     QtObject {
@@ -193,7 +193,6 @@ Scope {
                             hoverOpacity: 0.9
 
                             currentPreset: Config.config_barPreset
-
                             onCycleRequested: {
                                 CLI.executeCommand("cycle_barPreset");
                             }
