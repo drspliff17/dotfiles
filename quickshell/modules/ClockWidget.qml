@@ -36,6 +36,7 @@ Rectangle {
 
         onEntered: root.opacity = root.hoverOpacity
         onExited: root.opacity = root.baseOpacity
-        onClicked: Time.cycleFormat()
+        onClicked: Time.cycleFormat(true)
+        onWheel: Time.cycleFormat(false)
     }
 }
