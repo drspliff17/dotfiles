@@ -192,14 +192,10 @@ Scope {
                             baseOpacity: 0.45
                             hoverOpacity: 0.9
 
-                            currentPreset: bar.barPreset
+                            currentPreset: Config.config_barPreset
 
                             onCycleRequested: {
-                                const presets = ["top", "right", "bottom", "left"];
-                                let i = presets.indexOf(bar.barPreset);
-                                if (i < 0)
-                                    i = 0;
-                                bar.barPreset = presets[(i + 1) % presets.length];
+                                CLI.executeCommand("cycle_barPreset");
                             }
                         }
                     }
@@ -268,14 +264,10 @@ Scope {
                             baseOpacity: 0.45
                             hoverOpacity: 0.9
 
-                            currentPreset: bar.barPreset
+                            currentPreset: Config.config_barPreset
 
                             onCycleRequested: {
-                                const presets = ["top", "right", "bottom", "left"];
-                                let i = presets.indexOf(bar.barPreset);
-                                if (i < 0)
-                                    i = 0;
-                                bar.barPreset = presets[(i + 1) % presets.length];
+                                CLI.executeCommand("cycle_barPreset");
                             }
                         }
                     }

@@ -33,3 +33,4 @@ jq -n \
   '{ts: $ts, command: $command, args: $args}' >"$TMP_FILE"
 
 mv "$TMP_FILE" "$CMD_DISPATCH"
+echo "{}" >"$CMD_DISPATCH"
