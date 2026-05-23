@@ -12,6 +12,9 @@ source "$LIB_QS" || {
   exit 1
 }
 
+_logAppend -t i -m "QS CMD DSP Start"
+trap '_logAppend -t i -m "QS CMD DSP Exit"' EXIT
+
 CMD_DISPATCH="$HOME/.config/quickshell/data/cmd_dispatch.json"
 CMD_RESPONSE="$HOME/.config/quickshell/data/cmd_response"
 CMD_DB="$HOME/.config/quickshell/data/cmd.json"
@@ -39,10 +42,7 @@ ARG_RAW=("$@")
 [[ -n "$ARG_TYPE" ]] && {
   case "$ARG_TYPE" in
   orientation)
-    _validateOrientation "$ARG_RAW" || {
-      _notify -a ct -e "Invalid orientation given. Valid = < top bottom left right >"
-      exit 1
-    }
+    _validateOrientation "$ARG_RAW" || exit 1
     ;;
   esac
 }
@@ -62,16 +62,21 @@ jq -n \
   --argjson args "$ARG_JSON" \
   '{ts: $ts, command: $command, args: $args, response: ""}' >"$TMP_FILE"
 
-mv "$TMP_FILE" "$CMD_DISPATCH"
+mv "$TMP_FILE" "$CMD_DISPATCH" && _logAppend -t i -m "Dispatch Created: $CMD_NAME : ${ARG_RAW[*]}"
 sleep 0.2
-echo "{}" >"$CMD_DISPATCH"
+echo "{}" >"$CMD_DISPATCH" && _logAppend -t i -m "Dispatch Cleared"
 
 # Check for response and do a thing
 [[ ! "$RESPONSE_EXPECTED" = "true" ]] && {
   exit 0
 }
-[[ ! -f "$CMD_RESPONSE" ]] && _notify -a ct -e "Reponse expected but file not found!" && exit 1
+[[ ! -f "$CMD_RESPONSE" ]] && {
+  _notify -a ct -e "Reponse expected but file not found!"
+  _logAppend -t e -m "$CMD_NAME failed: Reason: Expected cmd response not found"
+  exit 1
+}
 RESPONSE="$(cat "$CMD_RESPONSE")"
+_logAppend -t i -m "Received Response: $RESPONSE"
 echo "$RESPONSE"
 rm "$CMD_RESPONSE" && exit 0
 

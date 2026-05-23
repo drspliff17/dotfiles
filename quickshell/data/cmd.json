@@ -6,7 +6,8 @@
       "sbp"
     ],
     "arg_count": 1,
-    "arg_type": "direction"
+    "arg_type": "orientation",
+    "response_expected": false
   },
   {
     "command": "cycle_barPreset",
@@ -15,6 +16,17 @@
       "cbp"
     ],
     "arg_count": 0,
-    "arg_type": ""
+    "arg_type": "",
+    "response_expected": false
+  },
+  {
+    "command": "get_barPreset",
+    "alias": [
+      "get_barPreset",
+      "gbp"
+    ],
+    "arg_count": 0,
+    "arg_type": "",
+    "response_expected": true
   }
 ]

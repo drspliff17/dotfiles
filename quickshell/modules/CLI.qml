@@ -6,6 +6,13 @@ QtObject {
 
     property string command: ""
     property var args: []
+    property var handlers: ({})
+
+    Component.onCompleted: {
+        handlers.set_barPreset = set_barPreset;
+        handlers.cycle_barPreset = cycle_barPreset;
+        handlers.get_barPreset = get_barPreset;
+    }
 
     signal writeResponseRequested(string data)
 
@@ -16,6 +23,22 @@ QtObject {
         executeCommand();
     }
 
+    function set_barPreset() {
+        Config.config_barPreset = args[0];
+    }
+
+    function cycle_barPreset() {
+        let presets = Config.config_barPresetOrder;
+        let i = presets.indexOf(Config.config_barPreset);
+        if (i < 0)
+            i = 0;
+        Config.config_barPreset = presets[(i + 1) % presets.length];
+    }
+
+    function get_barPreset() {
+        writeResponseRequested(Config.config_barPreset);
+    }
+
     // Main logic
     function executeCommand(command_overwrite) {
         if (command_overwrite)
@@ -23,20 +46,11 @@ QtObject {
         if (!command) {
             return;
         }
-        switch (command) {
-        case "set_barPreset":
-            Config.config_barPreset = args[0];
-            break;
-        case "cycle_barPreset":
-            let presets = Config.config_barPresetOrder;
-            let i = presets.indexOf(Config.config_barPreset);
-            if (i < 0)
-                i = 0;
-            Config.config_barPreset = presets[(i + 1) % presets.length];
-            break;
-        case "get_barPreset":
-            writeResponseRequested(Config.config_barPreset);
-            break;
+        const fn = handlers[command];
+        if (fn) {
+            fn();
+        } else {
+            console.log("Unknown command:", command);
         }
     }
 }

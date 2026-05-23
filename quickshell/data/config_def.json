@@ -1,0 +1,14 @@
+[
+  {
+    "option": "barPreset",
+    "type": "orientation"
+  },
+  {
+    "option": "barWidgets_Radius",
+    "type": "real"
+  },
+  {
+    "option": "barPresetOrder",
+    "type": "array"
+  }
+]
