@@ -19,6 +19,27 @@ local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
+local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
+
+local function exec_capture(cmd)
+	local handle = io.popen(cmd)
+	if not handle then
+		return nil
+	end
+	local out = handle:read("*a")
+	handle:close()
+	return (out:gsub("%s+$", ""))
+end
+
+hl.bind(mainMod .. " + y", function()
+	-- local r = exec_capture(scr_qs .. " gbp")
+	-- if r == "top" then
+	-- 	hl.exec_cmd(scr_qs .. " sbp bottom")
+	-- else
+	-- 	hl.exec_cmd(scr_qs .. " sbp top")
+	-- end
+	hl.exec_cmd(scr_qs .. " cycle_barPreset")
+end)
 
 -- Core Binds
 hl.bind(
