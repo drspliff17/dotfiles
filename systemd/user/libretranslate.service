@@ -1,0 +1,11 @@
+[Unit]
+Description=LibreTranslate
+After=network.target
+
+[Service]
+WorkingDirectory=/home/drspliff/dev/LibreTranslate
+ExecStart=hatch run dev
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
