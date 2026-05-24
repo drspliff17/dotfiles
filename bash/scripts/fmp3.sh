@@ -2,6 +2,8 @@
 
 # Script port of my fixMP3_Meta.sh function
 
+shopt -s nullglob
+
 # HELP
 if [[ $# -eq 0 ]]; then
   cat <<'HELP'
@@ -20,10 +22,12 @@ Arguments
 -gma| --get-missing-album : List files missing album
 -fna| --files-no-album    : Apply to files with empty album tag
 -ta | --target-album      : Apply to files with matching album tag
+-la | --list-album        : List all albums tags present in current dir
 
 -q  | --quiet             : Quiet eyeD3 output
 
 Modes are mutually exclusive.
+-la passes start/finish to stderr, so that it can be easily discarded as needed
 HELP
   exit 1
 fi
@@ -139,6 +143,13 @@ while [[ $# -gt 0 ]]; do
   -da | --dump-all)
     mode="dump_all"
     shift
+    ;;
+
+  -la | --list-album)
+    echo "Finding all album tags, may take a moment..." >&2
+    "$0" -da | rg album | sort -u
+    echo "[FINISHED]" >&2
+    exit 0
     ;;
 
   -q | --quiet)
