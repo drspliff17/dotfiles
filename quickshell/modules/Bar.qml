@@ -215,8 +215,6 @@ Scope {
                     ClockWidget {
                         radius: shellroot.widgetRadius
                         vertical: false
-                        baseOpacity: 0.65
-                        hoverOpacity: Config.barWidgets_hoverOpacity
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
@@ -287,8 +285,6 @@ Scope {
                     ClockWidget {
                         radius: shellroot.widgetRadius
                         vertical: true
-                        baseOpacity: 0.65
-                        hoverOpacity: 1.0
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                 }
