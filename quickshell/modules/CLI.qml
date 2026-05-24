@@ -38,7 +38,7 @@ QtObject {
     // Bar Preset Order functions
 
     function reset_barPresetOrder() {
-        Config.barPresetOrder = [...Config.barPresetDefault];
+        Config.barPresetOrder = Config.barPresetDefault;
     }
 
     function pop_barPresetOrder() {

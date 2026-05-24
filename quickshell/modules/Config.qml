@@ -10,12 +10,12 @@ QtObject {
 
     property real barWidgets_baseOpacity: 0.45
     property real barWidgets_hoverOpacity: 0.9
-    property bool barWidgets_doChangeOpacity: true
+    property real barWidgets_doChangeOpacity: 1
     property real barWidgets_staticOpacity: 0.9
 
     property string barPreset: "bottom"
     readonly property var barPresetDefault: ["top", "right", "bottom", "left"]
-    property var barPresetOrder: barPresetDefault
+    property var barPresetOrder: ["top", "right", "bottom", "left"]
 
     // Set/Get any config property by name
     function interactProperty(mode, propName, propValue) {
