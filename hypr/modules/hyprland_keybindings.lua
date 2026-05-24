@@ -31,16 +31,6 @@ local function exec_capture(cmd)
 	return (out:gsub("%s+$", ""))
 end
 
-hl.bind(mainMod .. " + y", function()
-	-- local r = exec_capture(scr_qs .. " gbp")
-	-- if r == "top" then
-	-- 	hl.exec_cmd(scr_qs .. " sbp bottom")
-	-- else
-	-- 	hl.exec_cmd(scr_qs .. " sbp top")
-	-- end
-	hl.exec_cmd(scr_qs .. " cycle_barPreset")
-end)
-
 -- Core Binds
 hl.bind(
 	mainMod .. " + SHIFT + Q",
@@ -173,7 +163,7 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- My Scripts
 hl.bind(mainMod .. " + w", hl.dsp.exec_cmd(scr_swapWallpaper))
-hl.bind(mainMod .. " + q", hl.dsp.exec_raw("kitty fish -c cursor_swap"))
+hl.bind(mainMod .. " + SHIFT + c", hl.dsp.exec_raw("kitty fish -c cursor_swap"))
 hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
 
 -- Wofi Music Selector
@@ -308,4 +298,12 @@ hl.bind(mainMod .. " + t", hl.dsp.submap("Todo"))
 hl.define_submap("Todo", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(scr_todo .. " -i"))
 	hl.bind("t", hl.dsp.exec_cmd(scr_todo .. " -m"))
+	hl.bind("catchall", hl.dsp.submap("reset"))
+end)
+
+-- Quickshell Mode
+hl.bind(mainMod .. " + q", hl.dsp.submap("Quickshell"))
+hl.define_submap("Quickshell", function()
+	hl.bind("c", hl.dsp.exec_cmd(scr_qs .. " cycle_barPreset"))
+	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
