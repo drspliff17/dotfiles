@@ -11,18 +11,18 @@ QtObject {
 
     function interactProperty(mode, propName, propValue) {
         if (propName in this) {
-            switch(mode){
-              case "set":
-                this[propName] = propValue
+            switch (mode) {
+            case "set":
+                this[propName] = propValue;
                 console.log(`Config.interactProperty() >> Set property ( ${propName} ) to value [ ${propValue} ]`);
-              break;
-              case "get":
-                CLI.writeResponseRequested(this[propName])
-              break;
-              default:
-                console.warn(`Config.interactProperty() >> Invalid mode given: ${mode}`)
-                return false
-              break;
+                break;
+            case "get":
+                CLI.writeResponseRequested(this[propName]);
+                break;
+            default:
+                console.warn(`Config.interactProperty() >> Invalid mode given: ${mode}`);
+                return false;
+                break;
             }
             return true;
         }
