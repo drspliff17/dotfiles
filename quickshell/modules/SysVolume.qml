@@ -1,5 +1,5 @@
 import QtQuick
-import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 
 Rectangle {
@@ -93,6 +93,12 @@ Rectangle {
         }
     }
 
+    Process {
+        id: open_vol
+        command: ["bash", "-c", "/home/drspliff/.config/hypr/scripts/wofi_volume_controller.sh"]
+        running: false
+    }
+
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
@@ -100,5 +106,8 @@ Rectangle {
 
         onEntered: root.opacity = root.hoverOpacity
         onExited: root.opacity = root.baseOpacity
+        onClicked: {
+            open_vol.startDetached();
+        }
     }
 }

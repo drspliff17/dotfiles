@@ -4,18 +4,13 @@ import QtQuick
 
 QtObject {
 
+    signal writeResponseRequested(string data)
+
     property string command: ""
     property var args: []
     property var handlers: ({})
 
-    Component.onCompleted: {
-        handlers.set_configProperty = set_configProperty;
-        handlers.get_configProperty = get_configProperty;
-        handlers.cycle_barPreset = cycle_barPreset;
-    }
-
-    signal writeResponseRequested(string data)
-
+    // Update main CLI properties
     function setProp(obj) {
         CLI.command = obj.command;
         CLI.args = obj.args;
@@ -23,12 +18,13 @@ QtObject {
         executeCommand();
     }
 
+    // Local command logic
     function set_configProperty() {
-        Config.interactProperty("set", args[0], args[1])
+        Config.interactProperty("set", args[0], args[1]);
     }
 
     function get_configProperty() {
-      Config.interactProperty("get", args[0])
+        Config.interactProperty("get", args[0]);
     }
 
     function cycle_barPreset() {
@@ -37,6 +33,12 @@ QtObject {
         if (i < 0)
             i = 0;
         Config.config_barPreset = presets[(i + 1) % presets.length];
+    }
+
+    Component.onCompleted: {
+        handlers.set_configProperty = set_configProperty;
+        handlers.get_configProperty = get_configProperty;
+        handlers.cycle_barPreset = cycle_barPreset;
     }
 
     // Main logic

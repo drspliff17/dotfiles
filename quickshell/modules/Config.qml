@@ -3,12 +3,18 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    property int config_barWidgets_Radius: 10
-    property bool config_barWidgets_doHoverOpacity: true
 
-    property string config_barPreset: "bottom"
-    property var config_barPresetOrder: ["top", "right", "bottom", "left"]
+    // Bar Configuration
+    property int barWidgets_Radius: 10
 
+    property real barWidgets_baseOpacity: 0.45
+    property real barWidgets_hoverOpacity: 0.9
+    property bool barWidgets_doHoverOpacity: true
+
+    property string barPreset: "bottom"
+    property var barPresetOrder: ["top", "right", "bottom", "left"]
+
+    // Set/Get any config property by name
     function interactProperty(mode, propName, propValue) {
         if (propName in this) {
             switch (mode) {

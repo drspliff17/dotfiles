@@ -4,7 +4,7 @@ import Quickshell
 
 Scope {
     id: shellroot
-    property int widgetRadius: Config.config_barWidgets_Radius
+    property int widgetRadius: Config.barWidgets_Radius
 
     // Layout Presets for Status Bar
     QtObject {
@@ -84,7 +84,7 @@ Scope {
             id: bar
             required property var modelData
 
-            property string barPreset: Config.config_barPreset
+            property string barPreset: Config.barPreset
 
             property string screenMode: "primary" // "all", "primary", "inverted"
             property string preferredScreenName: "HDMI-A-1"
@@ -162,8 +162,8 @@ Scope {
 
                     SubmapWidget {
                         id: sw
-                        baseOpacity: 1.0
-                        hoverOpacity: 1.0
+                        baseOpacity: 0.9
+                        hoverOpacity: 0.9
                         vertical: false
                         radius: shellroot.widgetRadius
                     }
@@ -189,10 +189,10 @@ Scope {
                             height: 24
                             radius: shellroot.widgetRadius
 
-                            baseOpacity: 0.45
-                            hoverOpacity: 0.9
+                            baseOpacity: Config.barWidgets_baseOpacity
+                            hoverOpacity: Config.barWidgets_hoverOpacity
 
-                            currentPreset: Config.config_barPreset
+                            currentPreset: Config.barPreset
                             onCycleRequested: {
                                 CLI.executeCommand("cycle_barPreset");
                             }
@@ -206,8 +206,8 @@ Scope {
                         SysVolume {
                             anchors.centerIn: parent
                             vertical: false
-                            baseOpacity: 0.45
-                            hoverOpacity: 0.9
+                            baseOpacity: Config.barWidgets_baseOpacity
+                            hoverOpacity: Config.barWidgets_hoverOpacity
                             radius: shellroot.widgetRadius
                         }
                     }
@@ -216,7 +216,7 @@ Scope {
                         radius: shellroot.widgetRadius
                         vertical: false
                         baseOpacity: 0.65
-                        hoverOpacity: 0.9
+                        hoverOpacity: Config.barWidgets_hoverOpacity
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
@@ -260,10 +260,10 @@ Scope {
                             height: 24
                             radius: shellroot.widgetRadius
 
-                            baseOpacity: 0.45
-                            hoverOpacity: 0.9
+                            baseOpacity: Config.barWidgets_baseOpacity
+                            hoverOpacity: Config.barWidgets_hoverOpacity
 
-                            currentPreset: Config.config_barPreset
+                            currentPreset: Config.barPreset
 
                             onCycleRequested: {
                                 CLI.executeCommand("cycle_barPreset");
@@ -278,8 +278,8 @@ Scope {
                         SysVolume {
                             anchors.centerIn: parent
                             vertical: true
-                            baseOpacity: 0.45
-                            hoverOpacity: 0.9
+                            baseOpacity: Config.barWidgets_baseOpacity
+                            hoverOpacity: Config.barWidgets_hoverOpacity
                             radius: shellroot.widgetRadius
                         }
                     }
