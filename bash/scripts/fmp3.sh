@@ -19,6 +19,7 @@ Arguments
 -g  | --get [file] [tag]  : Get metadata
 -gma| --get-missing-album : List files missing album
 -fna| --files-no-album    : Apply to files with empty album tag
+-ta | --target-album      : Apply to files with matching album tag
 
 -q  | --quiet             : Quiet eyeD3 output
 
@@ -71,6 +72,7 @@ getTag=""
 useFilenameAsTitle=1
 quietMode=1
 
+specifiedAlbum=""
 specifiedFiles=()
 eyeArguments=()
 
@@ -124,6 +126,13 @@ while [[ $# -gt 0 ]]; do
 
   -tr | --trim)
     mode="trim"
+    shift
+    ;;
+
+  -ta | --target-album)
+    mode="target_album"
+    shift
+    specifiedAlbum="$1"
     shift
     ;;
 
@@ -185,6 +194,17 @@ trim)
   for f in *.mp3; do
     eyeD3 --remove-all "$f" >/dev/null
     echo "[TRIMMED] $f"
+  done
+  ;;
+
+target_album)
+  [[ -z "$specifiedAlbum" ]] && echo "[ERROR] Must specify album tag" >&2 && exit 1
+  for f in *.mp3; do
+    cur="$(_retrieveFileDataD3 "$f" "album")"
+    [[ "$cur" = "$specifiedAlbum" ]] && {
+      echo "[TEST] Would be changing $f"
+      # _changeFileDataD3 "$f"
+    }
   done
   ;;
 
