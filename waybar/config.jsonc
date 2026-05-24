@@ -6,8 +6,8 @@
     "mpris"
   ],
   "modules-center": [
-    "hyprland/submap",
     "clock",
+    "hyprland/submap",
     "tray",
     "idle_inhibitor",
     "power-profiles-daemon",

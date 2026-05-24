@@ -13,7 +13,8 @@
     "command": "set_configProperty",
     "alias": [
       "set_configProperty",
-      "scp"
+      "scp",
+      "fuckyou"
     ],
     "arg_count": 2,
     "arg_type": "",

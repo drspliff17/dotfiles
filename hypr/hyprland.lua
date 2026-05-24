@@ -1,5 +1,5 @@
 require("modules.hyprland_colors")
-require("modules.hyprland_autostart")
+require("modules.hyprland_events")
 require("modules.hyprland_env")
 require("modules.hyprland_permissions")
 
