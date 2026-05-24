@@ -165,7 +165,6 @@ update)
   ;;
 
 *)
-  # _notify center-text urgent "[ERROR] wofi_music_selector.sh" " Invalid mode! Valid = [ artist files update ] | Got: $mode "
   _notify -a ct -u urgent "[ERROR] wofi_music_selector.sh" " Invalid mode! Valid = [ artist files update ] | Got: $mode "
   exit 1
   ;;
