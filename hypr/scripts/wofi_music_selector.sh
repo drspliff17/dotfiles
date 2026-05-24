@@ -100,7 +100,7 @@ _menuFromCache() {
 # Generate wofi from $musicPath (Set selectedArtist)
 _menuArtistSelection() {
   WOFI_PROMPT="Select Artist"
-  WOFI_CONFIG="$HOME/.config/wofi/center-align-config"
+  WOFI_CONFIG="$WOFI_C_CENTER"
   _construct w_args
   selectedArtist="$(/usr/bin/ls "$musicPath" | sed 's/_/ /g' | wofi -d "${w_args[@]}")"
   [[ -z "$selectedArtist" ]] && return 1
@@ -114,6 +114,7 @@ _menuArtistSelection() {
 # Generate wofi from $musicPath/$selectedArtist (Sets selectedFile)
 _menuArtistFileSelection() {
   [[ -z "$selectedArtist" ]] && return 1
+  WOFI_CONFIG="$WOFI_C_CENTER"
   _construct w_args
   selectedFile="$(/usr/bin/ls "$musicPath/$selectedArtist" | sed 's/_/ /g' | sed 's/\.[^.]*$//' | wofi -d "${w_args[@]}")"
   [[ -z "$selectedFile" ]] && exit 1
