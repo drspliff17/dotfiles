@@ -9,9 +9,9 @@ QtObject {
     property var handlers: ({})
 
     Component.onCompleted: {
-        handlers.set_barPreset = set_barPreset;
+        handlers.set_configProperty = set_configProperty;
+        handlers.get_configProperty = get_configProperty;
         handlers.cycle_barPreset = cycle_barPreset;
-        handlers.get_barPreset = get_barPreset;
     }
 
     signal writeResponseRequested(string data)
@@ -23,8 +23,12 @@ QtObject {
         executeCommand();
     }
 
-    function set_barPreset() {
-        Config.config_barPreset = args[0];
+    function set_configProperty() {
+        Config.interactProperty("set", args[0], args[1])
+    }
+
+    function get_configProperty() {
+      Config.interactProperty("get", args[0])
     }
 
     function cycle_barPreset() {
@@ -33,10 +37,6 @@ QtObject {
         if (i < 0)
             i = 0;
         Config.config_barPreset = presets[(i + 1) % presets.length];
-    }
-
-    function get_barPreset() {
-        writeResponseRequested(Config.config_barPreset);
     }
 
     // Main logic

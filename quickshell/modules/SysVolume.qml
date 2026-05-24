@@ -100,10 +100,5 @@ Rectangle {
 
         onEntered: root.opacity = root.hoverOpacity
         onExited: root.opacity = root.baseOpacity
-        onClicked: {
-            Quickshell.execDetached({
-                command: ["pavucontrol"]
-            });
-        }
     }
 }

@@ -1,15 +1,5 @@
 [
   {
-    "command": "set_barPreset",
-    "alias": [
-      "set_barPreset",
-      "sbp"
-    ],
-    "arg_count": 1,
-    "arg_type": "orientation",
-    "response_expected": false
-  },
-  {
     "command": "cycle_barPreset",
     "alias": [
       "cycle_barPreset",
@@ -20,12 +10,22 @@
     "response_expected": false
   },
   {
-    "command": "get_barPreset",
+    "command": "set_configProperty",
     "alias": [
-      "get_barPreset",
-      "gbp"
+      "set_configProperty",
+      "scp"
     ],
-    "arg_count": 0,
+    "arg_count": 2,
+    "arg_type": "",
+    "response_expected": false
+  },
+  {
+    "command": "get_configProperty",
+    "alias": [
+      "get_configProperty",
+      "gcp"
+    ],
+    "arg_count": 1,
     "arg_type": "",
     "response_expected": true
   }
