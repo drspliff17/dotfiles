@@ -167,8 +167,8 @@ hl.bind(mainMod .. " + SHIFT + c", hl.dsp.exec_raw("kitty fish -c cursor_swap"))
 hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
 
 -- Wofi Music Selector
-hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("timeout 30 " .. scr_musicSelector .. " artist"))
-hl.bind(mainMod .. " + SHIFT + F1", hl.dsp.exec_cmd("timeout 30 " .. scr_musicSelector .. " files"))
+hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " artist"))
+hl.bind(mainMod .. " + SHIFT + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " files"))
 hl.bind(mainMod .. " + CTRL + F1", hl.dsp.exec_cmd(scr_musicSelector .. " update"))
 
 -- Wofi Volume Controller
