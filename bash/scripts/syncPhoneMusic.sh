@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#TODO: Add help message
-
 set -u
 
 SOURCE_PATH="$HOME/Music/Songs"

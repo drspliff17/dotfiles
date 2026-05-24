@@ -206,8 +206,6 @@ Scope {
                         SysVolume {
                             anchors.centerIn: parent
                             vertical: false
-                            baseOpacity: Config.barWidgets_baseOpacity
-                            hoverOpacity: Config.barWidgets_hoverOpacity
                             radius: shellroot.widgetRadius
                         }
                     }
@@ -276,8 +274,6 @@ Scope {
                         SysVolume {
                             anchors.centerIn: parent
                             vertical: true
-                            baseOpacity: Config.barWidgets_baseOpacity
-                            hoverOpacity: Config.barWidgets_hoverOpacity
                             radius: shellroot.widgetRadius
                         }
                     }

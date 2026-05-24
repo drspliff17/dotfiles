@@ -4,12 +4,21 @@ import Quickshell.Services.Pipewire
 
 Rectangle {
     id: root
-    required property real baseOpacity
-    required property real hoverOpacity
+
+    WidgetBehavior_Opacity {
+        id: ctl_opacity
+        target: root
+        baseOpacity: 0.45
+        hoverOpacity: 0.9
+    }
+
+    // required property real baseOpacity
+    // required property real hoverOpacity
 
     property bool vertical: false
     color: Colors.colors.color3
-    opacity: baseOpacity
+    // opacity: baseOpacity
+    opacity: ctl_opacity.update(false)
 
     border.color: Colors.colors.color1
     border.width: 1
@@ -104,8 +113,8 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
-        onEntered: root.opacity = root.hoverOpacity
-        onExited: root.opacity = root.baseOpacity
+        onEntered: ctl_opacity.update(true)
+        onExited: ctl_opacity.update(false)
         onClicked: {
             open_vol.startDetached();
         }

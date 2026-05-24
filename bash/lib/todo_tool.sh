@@ -285,6 +285,8 @@ _dbInteractiveEdit() {
   _notify -a ct "Updated manifest for $selection"
 }
 
+#NOTE: Interactive menu runs in loop. Returning 0 kills the loop, else _dbInteractiveMenu gets called again
+
 # Handle Wofi menu for Full Interactive Edit
 _dbInteractiveMenu() {
   local imenu_state="Root"
