@@ -50,10 +50,28 @@ ARG_RAW=("$@")
 # Dispatch Command
 RESPONSE_EXPECTED="$(echo "$MATCH" | jq -r '.response_expected')"
 if [[ "$#" -gt 0 ]]; then
-  ARG_JSON="$(printf '%s\n' "$@" | jq -R . | jq -s .)"
+  ARG_JSON="$(
+    for arg in "$@"; do
+      if jq -e . >/dev/null 2>&1 <<<"$arg"; then
+        if jq -e 'type != "string" or startswith("[") or startswith("{")' >/dev/null 2>&1 <<<"$arg"; then
+          echo "$arg"
+        else
+          jq -Rn --arg v "$arg" '$v'
+        fi
+      else
+        jq -Rn --arg v "$arg" '$v'
+      fi
+    done | jq -s .
+  )"
 else
   ARG_JSON="[]"
 fi
+
+# if [[ "$#" -gt 0 ]]; then
+#   ARG_JSON="$(printf '%s\n' "$@" | jq -R . | jq -s .)"
+# else
+#   ARG_JSON="[]"
+# fi
 
 TS=$(date +%s%3N)
 jq -n \
