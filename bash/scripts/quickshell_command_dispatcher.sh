@@ -2,13 +2,13 @@
 
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
-  notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
+  notify-send -u critical -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
   exit 1
 }
 
 LIB_QS="$HOME/.config/bash/lib/qs.sh"
 source "$LIB_QS" || {
-  _notify -a ct -e "Could not source required lib: $LIB_QS"
+  _notify -u c -a ct -e "Could not source required lib: $LIB_QS"
   exit 1
 }
 
@@ -34,7 +34,13 @@ MATCH="$(jq -c --arg cmd "$INPUT" '
 # Validate Arg Count
 CMD_NAME="$(echo "$MATCH" | jq -r '.command')"
 ARG_COUNT="$(echo "$MATCH" | jq -r '.arg_count')"
-[[ "$#" -ne "$ARG_COUNT" ]] && exit 1
+[[ "$1" = "n" ]] || {
+  [[ "$#" -ne "$ARG_COUNT" ]] && {
+    _notify -u c -a ct -e "[$CMD_NAME] Invalid argument count provided. Expected: $ARG_COUNT, got $# "
+    _logAppend -t e -m "[$CMD_NAME] Invalid argument count provided. Expected: $ARG_COUNT, got $# "
+    exit 1
+  }
+}
 
 # Validate Arg Type, if applicable
 ARG_TYPE="$(echo "$MATCH" | jq -r '.arg_type')"
@@ -67,12 +73,6 @@ else
   ARG_JSON="[]"
 fi
 
-# if [[ "$#" -gt 0 ]]; then
-#   ARG_JSON="$(printf '%s\n' "$@" | jq -R . | jq -s .)"
-# else
-#   ARG_JSON="[]"
-# fi
-
 TS=$(date +%s%3N)
 jq -n \
   --arg command "$CMD_NAME" \
@@ -89,7 +89,7 @@ echo "{}" >"$CMD_DISPATCH" && _logAppend -t i -m "Dispatch Cleared"
   exit 0
 }
 [[ ! -f "$CMD_RESPONSE" ]] && {
-  _notify -a ct -e "Reponse expected but file not found!"
+  _notify -u c -a ct -e "Reponse expected but file not found!"
   _logAppend -t e -m "$CMD_NAME failed: Reason: Expected cmd response not found"
   exit 1
 }
