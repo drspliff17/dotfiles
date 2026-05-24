@@ -28,5 +28,27 @@
     "arg_count": 1,
     "arg_type": "",
     "response_expected": true
+  },
+  {
+    "command": "reset_barPresetOrder",
+    "alias": [
+      "reset_barPreeetOrder",
+      "reset_preset",
+      "rp"
+    ],
+    "arg_count": 0,
+    "arg_type": "",
+    "response_expected": false
+  },
+  {
+    "command": "pop_barPresetOrder",
+    "alias": [
+      "pop_barPresentOrder",
+      "pop_preset",
+      "pp"
+    ],
+    "arg_count": 0,
+    "arg_type": "",
+    "response_expected": false
   }
 ]

@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 
 QtObject {
+    id: root
 
     // Bar Configuration
     property int barWidgets_Radius: 10
@@ -13,7 +14,8 @@ QtObject {
     property real barWidgets_staticOpacity: 0.9
 
     property string barPreset: "bottom"
-    property var barPresetOrder: ["top", "right", "bottom", "left"]
+    readonly property var barPresetDefault: ["top", "right", "bottom", "left"]
+    property var barPresetOrder: barPresetDefault
 
     // Set/Get any config property by name
     function interactProperty(mode, propName, propValue) {

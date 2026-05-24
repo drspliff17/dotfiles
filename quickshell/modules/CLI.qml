@@ -28,17 +28,31 @@ QtObject {
     }
 
     function cycle_barPreset() {
-        let presets = Config.config_barPresetOrder;
-        let i = presets.indexOf(Config.config_barPreset);
+        let presets = Config.barPresetOrder;
+        let i = presets.indexOf(Config.barPreset);
         if (i < 0)
             i = 0;
-        Config.config_barPreset = presets[(i + 1) % presets.length];
+        Config.barPreset = presets[(i + 1) % presets.length];
+    }
+
+    // Bar Preset Order functions
+
+    function reset_barPresetOrder() {
+        Config.barPresetOrder = [...Config.barPresetDefault];
+    }
+
+    function pop_barPresetOrder() {
+        const removed = Config.barPresetOrder.pop();
+        console.log("Popped preset:", removed);
+        return removed;
     }
 
     Component.onCompleted: {
         handlers.set_configProperty = set_configProperty;
         handlers.get_configProperty = get_configProperty;
         handlers.cycle_barPreset = cycle_barPreset;
+        handlers.pop_barPresetOrder = pop_barPresetOrder;
+        handlers.reset_barPresetOrder = reset_barPresetOrder;
     }
 
     // Main logic
