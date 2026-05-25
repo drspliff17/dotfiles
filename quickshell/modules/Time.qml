@@ -16,6 +16,7 @@ Singleton {
     readonly property string verticalTime: {
         Qt.formatDateTime(clock.date, "hh\nmm");
     }
+
     function cycleFormat() {
         currentFormat = (currentFormat + 1) % formats.length;
     }

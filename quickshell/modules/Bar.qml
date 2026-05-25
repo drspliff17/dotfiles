@@ -123,7 +123,7 @@ Scope {
             screen: modelData
             visible: isVisibleScreen(modelData)
 
-            color: Colors.special.background
+            color: Colors.bg_transparent
 
             anchors {
                 top: layout.anchors.top

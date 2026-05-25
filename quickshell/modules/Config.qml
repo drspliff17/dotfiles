@@ -6,6 +6,8 @@ QtObject {
     id: root
 
     // Bar Configuration
+    property real barPanel_Opacity: 0.8
+
     property int barWidgets_Radius: 10
 
     property real barWidgets_baseOpacity: 0.45
@@ -37,5 +39,9 @@ QtObject {
         }
         console.warn(`Config.interactProperty() >> Unknown config property: ${propName}`);
         return false;
+    }
+
+    onBarPanel_OpacityChanged: {
+        Colors.updateSpecial();
     }
 }

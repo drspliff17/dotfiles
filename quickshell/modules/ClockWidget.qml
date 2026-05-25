@@ -20,7 +20,7 @@ Rectangle {
 
     property string label: vertical ? Time.verticalTime : Time.time
 
-    implicitWidth: textItem.implicitWidth + 10
+    implicitWidth: textItem.implicitWidth + 11
     implicitHeight: textItem.implicitHeight + 8
 
     Text {
@@ -28,7 +28,6 @@ Rectangle {
 
         text: root.label
         color: "white"
-
         horizontalAlignment: Text.AlignHCenter
 
         anchors.centerIn: parent
