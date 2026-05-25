@@ -19,7 +19,8 @@ return {
           Lua = {
             workspace = {
               library = {
-                vim.fn.expand("~/.local/share/hyprland-meta/hl.meta.lua"),
+                -- vim.fn.expand("~/.local/share/hyprland-meta/hl.meta.lua"),
+                vim.fn.expand("/usr/share/hypr/stubs/hl.meta.lua"),
               },
               checkThirdParty = false,
             },
