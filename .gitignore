@@ -7,6 +7,10 @@
 #
 !bash/**
 bash/temp
+bash/state
+#NOTE: temp probably if i remember to remove this later
+bash/scripts/moshictl.sh
+bash/scripts/plist.sh
 #
 !cmus/**
 cmus/playlists/
@@ -33,6 +37,7 @@ fish/fish_variables
 #
 !hypr/**
 hypr/hyprlock.conf
+hypr/modules/hyprland_colors.lua
 #
 !keyd/**
 #
@@ -48,6 +53,10 @@ kitty.conf.bak
 !scripts/**
 #
 !systemd/**
+systemd/user/graphical-session.target.wants/*
+#
+!quickshell/**
+quickshell/data/log
 #
 !wofi/**
 #
