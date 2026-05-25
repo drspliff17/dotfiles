@@ -320,7 +320,7 @@ hl.define_submap("Quickshell", function()
 		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barPreset right"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
-	hl.bind("c", hl.dsp.exec_cmd(scr_qs .. " cbj"))
+	hl.bind("c", hl.dsp.exec_cmd(scr_qs .. " cbp"))
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
