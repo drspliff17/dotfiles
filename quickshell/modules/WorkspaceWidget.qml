@@ -25,13 +25,23 @@ Flow {
             radius: root.radius
 
             property bool active: Hyprland.focusedWorkspace?.id === modelData.id
+            WidgetBehavior_Opacity {
+                id: ctl_opacity
+                target: rec
+                baseOpacity: 0.45
+                hoverOpacity: 0.9
+            }
 
-            opacity: active ? 1.0 : 0.5
+            opacity: active ? ctl_opacity.update(true) : ctl_opacity.update(false)
 
             color: Colors.colors.color3
 
             border.color: Colors.colors.color1
             border.width: 1
+
+            onActiveChanged: {
+                ctl_opacity.update(active);
+            }
 
             Text {
                 anchors.centerIn: parent

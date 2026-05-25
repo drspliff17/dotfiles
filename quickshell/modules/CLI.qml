@@ -11,7 +11,7 @@ QtObject {
     property var handlers: ({})
 
     // Update main CLI properties
-    function setProp(obj) {
+    function set_Property(obj) {
         CLI.command = obj.command;
         CLI.args = obj.args;
 
@@ -34,8 +34,6 @@ QtObject {
             i = 0;
         Config.barPreset = presets[(i + 1) % presets.length];
     }
-
-    // Bar Preset Order functions
 
     function reset_barPresetOrder() {
         Config.barPresetOrder = Config.barPresetDefault;

@@ -39,7 +39,7 @@ Scope {
 
         function reloadCommand() {
             try {
-                CLI.setProp(JSON.parse(text()));
+                CLI.set_Property(JSON.parse(text()));
             } catch (e) {
                 console.log("command parse failed:", e);
             }

@@ -6,10 +6,9 @@ QtObject {
     id: root
 
     // Bar Configuration
-    property real barPanel_Opacity: 0.8
+    property real barPanel_Opacity: 1.0
 
     property int barWidgets_Radius: 10
-
     property real barWidgets_baseOpacity: 0.45
     property real barWidgets_hoverOpacity: 0.9
     property real barWidgets_doChangeOpacity: 1
