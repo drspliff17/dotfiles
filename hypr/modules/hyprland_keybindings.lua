@@ -3,7 +3,7 @@
 
 local mainMod = "SUPER"
 local terminal = "kitty"
-local fileManager = "yazi"
+local fileManager = "y"
 local menu = "wofi --show drun"
 local status = "qs"
 
@@ -203,8 +203,6 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"
 
 hl.bind(mainMod .. " + r", hl.dsp.submap("Resize"))
 hl.define_submap("Resize", function()
-	hl.bind("slash", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/print_mode_help.sh resize"))
-
 	hl.bind("CTRL + h", hl.dsp.window.resize({ x = -10, y = 0, relative = true }), { repeating = true })
 	hl.bind("CTRL + j", hl.dsp.window.resize({ x = 0, y = -10, relative = true }), { repeating = true })
 	hl.bind("CTRL + k", hl.dsp.window.resize({ x = 0, y = 10, relative = true }), { repeating = true })
@@ -222,8 +220,6 @@ end)
 -- Move Mode (Floating Windows)
 hl.bind(mainMod .. " + m", hl.dsp.submap("MoveFloat"))
 hl.define_submap("MoveFloat", function()
-	hl.bind("slash", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/print_mode_help.sh movefloat"))
-
 	hl.bind(" + CTRL + h", hl.dsp.window.move({ x = -5, y = 0, relative = true }), { repeating = true })
 	hl.bind(" + CTRL + j", hl.dsp.window.move({ x = 0, y = 5, relative = true }), { repeating = true })
 	hl.bind(" + CTRL + k", hl.dsp.window.move({ x = 0, y = -5, relative = true }), { repeating = true })
@@ -242,7 +238,6 @@ end)
 --Open Mode (Launch Programs)
 hl.bind(mainMod .. " + o", hl.dsp.submap("Open"))
 hl.define_submap("Open", "reset", function()
-	hl.bind("slash", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/print_mode_help.sh open"))
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu))
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager))
 	hl.bind("b", hl.dsp.exec_cmd("firefox"))
