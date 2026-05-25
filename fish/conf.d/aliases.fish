@@ -7,6 +7,8 @@ alias nbrc="n ~/.bashrc"
 alias nas="n ~/.config/fish/conf.d/aliases.fish"
 alias ssd="df -h | head -n 1; df -h | rg home; df -h | rg storage"
 alias ff="fastfetch"
+alias csh="curl cheat.sh"
+alias rqs="ps -o pid,rss,vsz,cmd -C qs"
 
 #Music stuff because am lazy ja
 alias fm="$HOME/.config/bash/scripts/fmp3.sh"

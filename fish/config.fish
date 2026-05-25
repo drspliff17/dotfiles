@@ -1,5 +1,6 @@
 source /usr/share/cachyos-fish-config/cachyos-config.fish
 
+set -Ux QML2_IMPORT_PATH "/usr/lib/qt6/qml:$HOME/.config/quickshell/modules"
 set -gx FZF_DEFAULT_OPTS "
 --layout=reverse
 --border
