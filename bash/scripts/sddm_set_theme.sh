@@ -49,6 +49,7 @@ Modes:
 -r | random - Automatically pick theme from THEME_DIR
 -s | set    - Specify theme (dir name relative to THEME_DIR)
 -t | toggle - Toggle StateFile.randomThemeOnBoot value
+-g | get    - Return current theme
 EOF
 }
 
@@ -92,6 +93,9 @@ while [[ "$#" -gt 0 ]]; do
   -c | count)
     shift
     MODE="count"
+    ;;
+  -g | get)
+    echo "$CURRENT_THEME" && exit 0
     ;;
   -*)
     echo "[ERROR] Unknown Option: $1" >&2
