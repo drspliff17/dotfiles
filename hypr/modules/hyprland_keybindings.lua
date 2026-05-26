@@ -326,6 +326,18 @@ hl.define_submap("Wallpaper", "reset", function()
 	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g"))
 	hl.bind("p", hl.dsp.exec_cmd(scr_themeSelector .. " -p"))
 	hl.bind("g", hl.dsp.exec_cmd(scr_themeSelector .. " -g"))
+
 	hl.bind("SHIFT + w", hl.dsp.exec_cmd(scr_swapWallpaper))
 	hl.bind("CTRL+ w", hl.dsp.exec_cmd(scr_themeSelector .. " update"))
+
+	hl.bind("SPACE", hl.dsp.submap("reset"))
+end)
+
+hl.bind(mainMod .. " + SHIFT + w", hl.dsp.submap("Fav Wallpaper"))
+hl.define_submap("Fav Wallpaper", "reset", function()
+	--TODO: Add a 'w' bind here that randomizes from $HOME/dev/data/favourite_wallpapers.yml
+	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f"))
+	hl.bind("a", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f add"))
+	hl.bind("r", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f rm"))
+	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)

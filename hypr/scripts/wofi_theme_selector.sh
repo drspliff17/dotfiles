@@ -19,6 +19,23 @@ _filenameInCache() {
   return 0
 }
 
+_favExists() {
+  yq -e ".wallpapers[] | select(. == \"$1\")" "$FAV_DB" >/dev/null 2>&1
+}
+
+_addFav() {
+  local path="$1"
+  _favExists "$path" && return 0
+  yq -i ".wallpapers += [\"$path\"]" "$FAV_DB"
+  _notify -a ct "Added to favourites: $(basename "$path")"
+}
+
+_removeFav() {
+  local path="$1"
+  yq -i "del(.wallpapers[] | select(. == \"$path\"))" "$FAV_DB"
+  _notify -a ct "Removed from favourites: $(basename "$path")"
+}
+
 # Remove all pngs inside of $GIF_TO_PNG_CACHE_DIR and clear nsxiv cache
 _clearGifCache() {
   rm -r "$GIF_TO_PNG_CACHE_DIR"/* || {
@@ -80,6 +97,14 @@ _updateGifCache() {
   return 0
 }
 
+_loadFavs() {
+  FILES=()
+  [[ ! -f "$FAV_DB" ]] && _notify -a ct -e "Favourites file not found: $FAV_DB" && return 1
+  mapfile -t FILES < <(yq -r '.wallpapers[]' "$FAV_DB")
+  [[ "${#FILES[@]}" -eq 0 ]] && _notify -a ct "No entires in favourites file" && return 1
+  return 0
+}
+
 # Grab all pngs and gifs
 _assembleOptions() {
   local pngs gifs
@@ -90,13 +115,28 @@ _assembleOptions() {
   [[ "${#gifs[@]}" -eq 0 ]] && _updateGifCache
   [[ "$DO_PNG" -eq 1 ]] && FILES+=("${pngs[@]}")
   [[ "$DO_GIF" -eq 1 ]] && FILES+=("${gifs[@]}")
-  # FILES=("${pngs[@]}" "${gifs[@]}")
   shopt -u nullglob
+}
+
+# Open nsxiv, process selection, and call sw
+_selectAndApply() {
+  local selection="$(printf '%s\n' "${FILES[@]}" | nsxiv -to - | tr -d '\n')"
+  [[ -z "$selection" ]] && exit 0
+  selection="$(basename "$selection")"
+  [[ ! -f "$PNG_DIR/$selection" ]] && {
+    selection="${selection%.png}.gif"
+    [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a ct -e "Could not find $selection" && exit 1
+    sw "$GIF_DIR/$selection" 2>&1 >/dev/null
+    exit 0
+  }
+  sw "$PNG_DIR/$selection" 2>&1 >/dev/null
+  _notify -a ct "Set theme $(basename "$selection")"
 }
 
 PNG_DIR="$HOME/Pictures/Selectable/image-wallpapers"
 GIF_DIR="$HOME/Pictures/Selectable/Gif-wallpapers"
 GIF_TO_PNG_CACHE_DIR="$HOME/.cache/themectl/converted_to_png"
+FAV_DB="$HOME/dev/data/favourite_wallpapers.yml"
 FILES=()
 MODE=""
 VERBOSE=0
@@ -129,6 +169,24 @@ while [[ "$#" -gt 0 ]]; do
     DO_GIF=1
     shift
     ;;
+  -f | fav)
+    MODE="FAV"
+    shift
+    case "$1" in
+    a | add)
+      MODE="FAV_ADD"
+      shift
+      ;;
+    r | rm)
+      MODE="FAV_REMOVE"
+      shift
+      ;;
+    esac
+    ;;
+  -t | toggle)
+    MODE="TOGGLE_FAV"
+    shift
+    ;;
   -*)
     _notify -a ct -e "Unknown option: $1" && exit 1
     ;;
@@ -147,18 +205,35 @@ case "$MODE" in
   ;;
 "SELECT")
   _assembleOptions
-  selection="$(printf '%s\n' "${FILES[@]}" | nsxiv -to - | tr -d '\n')"
-  [[ -z "$selection" ]] && exit 0
-  selection="$(basename "$selection")"
-  [[ ! -f "$PNG_DIR/$selection" ]] && {
-    selection="${selection%.png}.gif"
-    [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a ct -e "Could not find $selection" && exit 1
-    sw "$GIF_DIR/$selection" 2>&1 >/dev/null
-    exit 0
-  }
-  sw "$PNG_DIR/$selection" 2>&1 >/dev/null
-  _notify -a ct "Set theme $(basename "$selection")"
-  exit 0
+  _selectAndApply || exit 1
+  ;;
+"FAV")
+  _loadFavs || exit 1
+  _selectAndApply
+  ;;
+"FAV_ADD")
+  _assembleOptions || exit 1
+
+  mapfile -t selection < <(printf '%s\n' "${FILES[@]}" | nsxiv -to -)
+
+  [[ "${#selection[@]}" -eq 0 ]] && exit 0
+
+  for s in "${selection[@]}"; do
+    [[ -z "$s" ]] && continue
+    _addFav "$s"
+  done
+  ;;
+"FAV_REMOVE")
+  _loadFavs || exit 1
+
+  mapfile -t selection < <(printf '%s\n' "${FILES[@]}" | nsxiv -to -)
+
+  [[ "${#selection[@]}" -eq 0 ]] && exit 0
+
+  for s in "${selection[@]}"; do
+    [[ -z "$s" ]] && continue
+    _removeFav "$s"
+  done
   ;;
 *)
   _notify -a ct -e "Invalid mode: $MODE" && exit 1
