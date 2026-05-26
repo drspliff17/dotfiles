@@ -168,10 +168,6 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 hl.bind(mainMod .. " + SHIFT + c", hl.dsp.exec_raw("kitty fish -c cursor_swap"))
 hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
 
--- Wallpaper / Theme
-hl.bind(mainMod .. " + w", hl.dsp.exec_cmd(scr_swapWallpaper))
-hl.bind(mainMod .. " + SHIFT + w", hl.dsp.exec_cmd(scr_themeSelector .. " update"))
-
 -- Wofi Music Selector
 hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " artist"))
 hl.bind(mainMod .. " + SHIFT + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " files"))
@@ -247,7 +243,6 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu))
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager))
 	hl.bind("b", hl.dsp.exec_cmd("firefox"))
-	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector))
 	hl.bind("s", hl.dsp.exec_cmd("steam"))
 	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"))
 	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
@@ -323,4 +318,14 @@ hl.define_submap("Quickshell", function()
 	hl.bind("c", hl.dsp.exec_cmd(scr_qs .. " cbp"))
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
+end)
+
+-- Wallpaper
+hl.bind(mainMod .. " + w", hl.dsp.submap("Wallpaper"))
+hl.define_submap("Wallpaper", "reset", function()
+	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g"))
+	hl.bind("p", hl.dsp.exec_cmd(scr_themeSelector .. " -p"))
+	hl.bind("g", hl.dsp.exec_cmd(scr_themeSelector .. " -g"))
+	hl.bind("SHIFT + w", hl.dsp.exec_cmd(scr_swapWallpaper))
+	hl.bind("CTRL+ w", hl.dsp.exec_cmd(scr_themeSelector .. " update"))
 end)

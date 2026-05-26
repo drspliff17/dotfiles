@@ -88,7 +88,9 @@ _assembleOptions() {
   pngs=("$PNG_DIR"/*)
   gifs=("$GIF_TO_PNG_CACHE_DIR"/*)
   [[ "${#gifs[@]}" -eq 0 ]] && _updateGifCache
-  FILES=("${pngs[@]}" "${gifs[@]}")
+  [[ "$DO_PNG" -eq 1 ]] && FILES+=("${pngs[@]}")
+  [[ "$DO_GIF" -eq 1 ]] && FILES+=("${gifs[@]}")
+  # FILES=("${pngs[@]}" "${gifs[@]}")
   shopt -u nullglob
 }
 
@@ -99,6 +101,8 @@ FILES=()
 MODE=""
 VERBOSE=0
 CLEAR=0
+DO_PNG=0
+DO_GIF=0
 
 mkdir -p "$GIF_DIR"
 mkdir -p "$GIF_TO_PNG_CACHE_DIR"
@@ -116,6 +120,14 @@ while [[ "$#" -gt 0 ]]; do
   -w | wipe)
     _clearGifCache
     exit 0
+    ;;
+  -p | png)
+    DO_PNG=1
+    shift
+    ;;
+  -g | gif)
+    DO_GIF=1
+    shift
     ;;
   -*)
     _notify -a ct -e "Unknown option: $1" && exit 1
