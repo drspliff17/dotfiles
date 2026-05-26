@@ -17,6 +17,7 @@ vim.keymap.set("n", "<leader>D", function()
 end, { desc = "Open Snacks Dashboard" })
 
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
+vim.keymap.set("n", "<leader>so", "<cmd>lsp restart<CR>", { desc = "Run lsp restart" })
 
 vim.keymap.set("n", "<leader>o", "<cmd>Oil<CR>", { desc = "Open Oil (CWD)" })
 vim.keymap.set("n", "<leader>O", "<cmd>Oil /home/drspliff<CR>", { desc = "Open Oil (~)" })
