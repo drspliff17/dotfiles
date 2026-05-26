@@ -12,12 +12,14 @@ source "$LIB_WOFI" || {
   exit 1
 }
 
+# Checks if given file name exists inside of $GIF_TO_PNG_CACHE_DIR
 _filenameInCache() {
   [[ ! -f "$GIF_TO_PNG_CACHE_DIR/$1" ]] && return 1
   _notify -a ct "Cleared GIF -> PNG Cache"
   return 0
 }
 
+# Remove all pngs inside of $GIF_TO_PNG_CACHE_DIR and clear nsxiv cache
 _clearGifCache() {
   rm -r "$GIF_TO_PNG_CACHE_DIR"/* || {
     _notify -a ct "GIF Cache already empty"
@@ -40,6 +42,13 @@ _gif2Png() {
   echo "$PNG_DIR/$fname"
 }
 
+_png2gif() {
+  local fname="$1"
+  fname="${fname%.png}.gif"
+  [[ ! -f "$fname" ]] && return 1
+}
+
+# Convert all gifs inside $GIF_DIR to png inside $GIF_TO_PNG_CACHE_DIR
 _updateGifCache() {
   local fname cname
   shopt -s nullglob
@@ -71,6 +80,7 @@ _updateGifCache() {
   return 0
 }
 
+# Grab all pngs and gifs
 _assembleOptions() {
   local pngs gifs
   FILES=()
@@ -127,8 +137,14 @@ case "$MODE" in
   _assembleOptions
   selection="$(printf '%s\n' "${FILES[@]}" | nsxiv -to - | tr -d '\n')"
   [[ -z "$selection" ]] && exit 0
-  [[ "$selection" == *.gif ]] && selection="$(_gif2Png "$selection")"
-  sw "$selection" 2>&1 >/dev/null
+  selection="$(basename "$selection")"
+  [[ ! -f "$PNG_DIR/$selection" ]] && {
+    selection="${selection%.png}.gif"
+    [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a ct -e "Could not find $selection" && exit 1
+    sw "$GIF_DIR/$selection" 2>&1 >/dev/null
+    exit 0
+  }
+  sw "$PNG_DIR/$selection" 2>&1 >/dev/null
   _notify -a ct "Set theme $(basename "$selection")"
   exit 0
   ;;
