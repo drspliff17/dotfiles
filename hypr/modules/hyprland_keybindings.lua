@@ -4,7 +4,7 @@
 local mainMod = "SUPER"
 local terminal = "kitty"
 local fileManager = "y"
-local menu = "wofi --show drun"
+local menu = "wofi --show drun --columns 3"
 local status = "qs"
 
 -- My Scripts
