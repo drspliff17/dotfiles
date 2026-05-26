@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell.Hyprland
 
@@ -28,11 +30,10 @@ Flow {
             WidgetBehavior_Opacity {
                 id: ctl_opacity
                 target: rec
-                baseOpacity: 0.45
-                hoverOpacity: 0.9
+                baseOpacity: 0.30
+                hoverOpacity: 0.55
+                isWorkspace: true
             }
-
-            opacity: active ? ctl_opacity.update(true) : ctl_opacity.update(false)
 
             color: Colors.colors.color3
 
@@ -40,7 +41,7 @@ Flow {
             border.width: 1
 
             onActiveChanged: {
-                ctl_opacity.update(active);
+                ctl_opacity.update_workspace(active);
             }
 
             Text {
@@ -51,7 +52,10 @@ Flow {
 
             MouseArea {
                 anchors.fill: parent
+                hoverEnabled: true
 
+                onEntered: ctl_opacity.update_workspace(true)
+                onExited: ctl_opacity.update_workspace(false)
                 onClicked: Hyprland.dispatch("hl.dsp.focus({ workspace = " + rec.modelData.id + "})")
             }
         }
