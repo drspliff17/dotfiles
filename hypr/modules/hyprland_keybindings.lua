@@ -18,6 +18,7 @@ local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
+local scr_themeSelector = "~/.config/hypr/scripts/wofi_theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
 
@@ -120,6 +121,7 @@ hl.bind(mainMod .. " + SHIFT + m", function()
 	end
 end)
 
+-- Launch Discord, and toggle it's special workspace
 hl.bind(mainMod .. " + SHIFT + d", function()
 	local ws = hl.get_workspaces()
 	for _, w in ipairs(ws) do
@@ -128,6 +130,7 @@ hl.bind(mainMod .. " + SHIFT + d", function()
 			return
 		end
 	end
+	hl.exec_cmd("/opt/Discord/discord")
 end)
 
 -- Swap Workspace Between Two Monitors
@@ -162,9 +165,12 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- My Scripts
-hl.bind(mainMod .. " + w", hl.dsp.exec_cmd(scr_swapWallpaper))
 hl.bind(mainMod .. " + SHIFT + c", hl.dsp.exec_raw("kitty fish -c cursor_swap"))
 hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
+
+-- Wallpaper / Theme
+hl.bind(mainMod .. " + w", hl.dsp.exec_cmd(scr_swapWallpaper))
+hl.bind(mainMod .. " + SHIFT + w", hl.dsp.exec_cmd(scr_themeSelector .. " update"))
 
 -- Wofi Music Selector
 hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " artist"))
@@ -241,13 +247,12 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu))
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager))
 	hl.bind("b", hl.dsp.exec_cmd("firefox"))
-	hl.bind("w", hl.dsp.exec_cmd("waypaper"))
+	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector))
 	hl.bind("s", hl.dsp.exec_cmd("steam"))
 	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"))
 	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
 	hl.bind("m", hl.dsp.exec_cmd("kitty --class cmus fish -c cmus"))
 	hl.bind("v", hl.dsp.exec_cmd("vlc"))
-	hl.bind("d", hl.dsp.exec_cmd("/opt/Discord/discord"))
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)

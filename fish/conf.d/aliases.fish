@@ -1,6 +1,6 @@
 # Other
 alias nvim="n"
-alias sw="swap_wallpaper >/dev/null"
+alias sw="sw >/dev/null"
 alias b="bash -lc"
 alias nfrc="n ~/.config/fish/config.fish"
 alias nbrc="n ~/.bashrc"

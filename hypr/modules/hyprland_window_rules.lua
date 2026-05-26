@@ -23,13 +23,7 @@ hl.window_rule({
 	},
 
 	no_focus = true,
-})
-
-hl.window_rule({
-	name = "move-hyprland-run",
-	match = { class = "hyprland-run" },
-	move = "20 monitor_h-120",
-	float = true,
+	opacity = "0.9 override 0.4 override 1.0",
 })
 
 hl.window_rule({
@@ -83,4 +77,15 @@ hl.window_rule({
 	},
 	no_initial_focus = true,
 	workspace = "special:discord",
+})
+
+hl.window_rule({
+	name = "theme-switcher",
+	match = {
+		initial_class = "Nsxiv",
+	},
+	monitor = "0",
+	float = true,
+	center = true,
+	size = "1200 600",
 })
