@@ -9,10 +9,17 @@ Rectangle {
     property string currentPreset
     signal cycleRequested
 
+    WidgetBehavior_Opacity {
+        id: ctl_opacity
+        target: root
+        baseOpacity: 0.45
+        hoverOpacity: 0.9
+    }
+
     color: Colors.colors.color3
     border.color: Colors.colors.color1
     border.width: 1
-    opacity: baseOpacity
+    opacity: ctl_opacity.update(false)
 
     width: 24
     height: 24
@@ -39,8 +46,8 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
-        onEntered: root.opacity = root.hoverOpacity
-        onExited: root.opacity = root.baseOpacity
+        onEntered: ctl_opacity.update(true)
+        onExited: ctl_opacity.update(false)
         onClicked: root.cycleRequested()
     }
 }

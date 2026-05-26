@@ -11,7 +11,7 @@ QtObject {
     property int barWidgets_Radius: 10
     property real barWidgets_baseOpacity: 0.45
     property real barWidgets_hoverOpacity: 0.9
-    property real barWidgets_doChangeOpacity: 1
+    property int barWidgets_doChangeOpacity: 1
     property real barWidgets_staticOpacity: 0.9
 
     property string barPreset: "bottom"
