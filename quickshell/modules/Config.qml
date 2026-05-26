@@ -5,6 +5,8 @@ import QtQuick
 QtObject {
     id: root
 
+    signal saveRequested
+
     // Bar Configuration
     property real barPanel_Opacity: 1.0
 
@@ -37,6 +39,7 @@ QtObject {
                 return false;
                 break;
             }
+            saveRequested();
             return true;
         }
         console.warn(`Config.interactProperty() >> Unknown config property: ${propName}`);
