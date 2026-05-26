@@ -45,12 +45,17 @@ QtObject {
         return removed;
     }
 
+    function request_save() {
+        Config.saveRequested();
+    }
+
     Component.onCompleted: {
         handlers.set_configProperty = set_configProperty;
         handlers.get_configProperty = get_configProperty;
         handlers.cycle_barPreset = cycle_barPreset;
         handlers.pop_barPresetOrder = pop_barPresetOrder;
         handlers.reset_barPresetOrder = reset_barPresetOrder;
+        handlers.request_save = request_save;
     }
 
     // Main logic

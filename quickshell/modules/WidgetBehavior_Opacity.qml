@@ -20,7 +20,7 @@ QtObject {
             target.opacity = 0.9;
             return;
         }
-        if (Config.barWidgets_doChangeOpacity_Workspace === 1) {
+        if (Config.barWidgets_WorkspaceWidget_doChangeOpacity === 1) {
             target.opacity = hover ? hoverOpacity : baseOpacity;
         } else {
             forceStatic();

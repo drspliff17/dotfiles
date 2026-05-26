@@ -42,6 +42,17 @@
     "response_expected": false
   },
   {
+    "command": "request_save",
+    "alias": [
+      "request_save",
+      "save",
+      "rs"
+    ],
+    "arg_count": 0,
+    "arg_type": "",
+    "response_expected": false
+  },
+  {
     "command": "pop_barPresetOrder",
     "alias": [
       "pop_barPresentOrder",
