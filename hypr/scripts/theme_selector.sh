@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
+#TODO: Create help message
+# Create extended functionality
+# Eventually integrate into themectl
+
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
   notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
-  exit 1
-}
-
-LIB_WOFI="$HOME/.config/bash/lib/wofi_construct.sh"
-source "$LIB_WOFI" || {
-  _notify -a ct -e -u normal "Could not source required lib: $LIB_WOFI"
   exit 1
 }
 

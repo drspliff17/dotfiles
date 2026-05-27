@@ -18,7 +18,7 @@ local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
-local scr_themeSelector = "~/.config/hypr/scripts/wofi_theme_selector.sh"
+local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
 
@@ -170,7 +170,7 @@ hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
 
 -- Wofi Music Selector
 hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " artist"))
-hl.bind(mainMod .. " + SHIFT + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " files"))
+hl.bind(mainMod .. " + SHIFT + F1", hl.dsp.exec_cmd("timeout 120 " .. scr_musicSelector .. " files"))
 hl.bind(mainMod .. " + CTRL + F1", hl.dsp.exec_cmd(scr_musicSelector .. " update"))
 
 -- Wofi Volume Controller
@@ -335,7 +335,7 @@ end)
 
 hl.bind(mainMod .. " + SHIFT + w", hl.dsp.submap("Fav Wallpaper"))
 hl.define_submap("Fav Wallpaper", "reset", function()
-	--TODO: Add a 'w' bind here that randomizes from $HOME/dev/data/favourite_wallpapers.yml
+	--TODO: Add a 'SHIFT + w' bind here that randomizes from $HOME/dev/data/favourite_wallpapers.yml
 	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f"))
 	hl.bind("a", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f add"))
 	hl.bind("r", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f rm"))
