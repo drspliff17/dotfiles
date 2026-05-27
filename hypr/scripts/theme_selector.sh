@@ -126,11 +126,12 @@ _selectAndApply() {
   [[ ! -f "$PNG_DIR/$selection" ]] && {
     selection="${selection%.png}.gif"
     [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a ct -e "Could not find $selection" && exit 1
-    sw "$GIF_DIR/$selection" 2>&1 >/dev/null
+    _handleOutput "$GIF_DIR/$selection"
+    _notify -a ct "Set theme $selection"
     exit 0
   }
-  sw "$PNG_DIR/$selection" 2>&1 >/dev/null
-  _notify -a ct "Set theme $(basename "$selection")"
+  _handleOutput "$PNG_DIR/$selection"
+  _notify -a ct "Set theme $selection"
 }
 
 PNG_DIR="$HOME/Pictures/Selectable/image-wallpapers"
@@ -282,7 +283,17 @@ case "$MODE" in
   esac
   mapfile -t rand < <(printf '%s\n' "${FILES[@]}" | shuf -n 1)
   [[ -z "${rand[*]}" ]] && exit 1
-  _handleOutput "${rand[0]}"
+  selection="${rand[0]}"
+  selection="$(basename "$selection")"
+  [[ ! -f "$PNG_DIR/$selection" ]] && {
+    selection="${selection%.png}.gif"
+    [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a ct -e "Could not find $selection" && exit 1
+    _handleOutput "$GIF_DIR/$selection"
+    _notify -a ct "Set theme $selection"
+    exit 0
+  }
+  _handleOutput "$PNG_DIR/$selection"
+  _notify -a ct "Set theme $selection"
   ;;
 *)
   _notify -a ct -e "Invalid mode: $MODE" && exit 1
