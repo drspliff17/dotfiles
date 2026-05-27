@@ -14,7 +14,7 @@ source "$LIB_WOFI" || {
   exit 1
 }
 
-wofi_command_line_data="$HOME/dev/data/wofi_command_line.yml"
+wofi_command_line_data="${1:-$HOME/dev/data/wofi_command_line.yml}"
 [[ ! -f "$wofi_command_line_data" ]] && _notify -u normal -t 2000 -a ct "Missing Expected File: $wofi_command_line_data" && exit 1
 
 WOFI_WIDTH="10%"
