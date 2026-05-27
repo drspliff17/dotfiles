@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
 WALLPAPER=""
+FAV_MODE=0
+case "$1" in
+-f | fav)
+  FAV_MODE=1
+  shift
+  ;;
+esac
+
 [[ -n "$1" ]] && {
   LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
   source "$LIB_NOTIFY" || {
@@ -15,12 +23,14 @@ WALLPAPER=""
   [[ -z "$WALLPAPER" ]] && _notify -a ct -e "Given wallpaper source is an invalid filetype. Supported: ${ALLOWED_EXT[*]}" && exit 1
 }
 
-if [[ -z "$WALLPAPER" ]]; then
-  /usr/bin/waypaper --random >/dev/null
-  WALLPAPER=$(waypaper --list | jq -r '.[] | .wallpaper')
-else
-  /usr/bin/waypaper --wallpaper "$WALLPAPER" >/dev/null
-fi
+[[ -z "$WALLPAPER" ]] && {
+  if [[ "$FAV_MODE" -eq 0 ]]; then
+    WALLPAPER="$(/usr/local/bin/theme_selector -o random)"
+  else
+    WALLPAPER="$(/usr/local/bin/theme_selector -o random -f)"
+  fi
+}
+/usr/bin/waypaper --wallpaper "$WALLPAPER" >/dev/null
 
 /usr/bin/wal -i "$WALLPAPER" >/dev/null 2>&1
 bash /home/drspliff/.config/hypr/scripts/update_colours.sh

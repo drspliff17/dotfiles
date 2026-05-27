@@ -335,9 +335,11 @@ end)
 
 hl.bind(mainMod .. " + SHIFT + w", hl.dsp.submap("Fav Wallpaper"))
 hl.define_submap("Fav Wallpaper", "reset", function()
-	--TODO: Add a 'SHIFT + w' bind here that randomizes from $HOME/dev/data/favourite_wallpapers.yml
 	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f"))
 	hl.bind("a", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f add"))
 	hl.bind("r", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f rm"))
+
+	hl.bind("SHIFT + w", hl.dsp.exec_cmd(scr_swapWallpaper .. " -f"))
+
 	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)

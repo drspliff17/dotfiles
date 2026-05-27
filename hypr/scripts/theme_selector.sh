@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 #TODO: Create help message
-# Create extended functionality
-# Eventually integrate into themectl
+# Create extended functionality and Eventually integrate into themectl
 
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
@@ -10,13 +9,16 @@ source "$LIB_NOTIFY" || {
   exit 1
 }
 
-# Checks if given file name exists inside of $GIF_TO_PNG_CACHE_DIR
+### Helper functions
+
+## Checks/Validation
 _filenameInCache() {
-  [[ ! -f "$GIF_TO_PNG_CACHE_DIR/$1" ]] && return 1
-  _notify -a ct "Cleared GIF -> PNG Cache"
-  return 0
+  local file="$1"
+  [[ -f "$GIF_CACHE_DIR/$file" ]] && return 0
+  return 1
 }
 
+## $FAV_DB integration logic
 _favExists() {
   yq -e ".wallpapers[] | select(. == \"$1\")" "$FAV_DB" >/dev/null 2>&1
 }
@@ -34,9 +36,27 @@ _removeFav() {
   _notify -a ct "Removed from favourites: $(basename "$path")"
 }
 
-# Remove all pngs inside of $GIF_TO_PNG_CACHE_DIR and clear nsxiv cache
+_loadFavs() {
+  FILES=()
+  [[ ! -f "$FAV_DB" ]] && _notify -a ct -e "Favourites file not found: $FAV_DB" && return 1
+  mapfile -t FILES < <(yq -r '.wallpapers[]' "$FAV_DB")
+  [[ "${#FILES[@]}" -eq 0 ]] && _notify -a ct "No entires in favourites file" && return 1
+  return 0
+}
+
+## Main logic
+
+_handleOutput() {
+  local file="$1"
+  case "$OUTPUT" in
+  0) sw "$file" 2>&1 >/dev/null ;;
+  1) echo "$file" ;;
+  esac
+}
+
+# Remove all pngs inside of $GIF_CACHE_DIR and clear nsxiv cache
 _clearGifCache() {
-  rm -r "$GIF_TO_PNG_CACHE_DIR"/* || {
+  rm -r "$GIF_CACHE_DIR"/* || {
     _notify -a ct "GIF Cache already empty"
     return 1
   }
@@ -45,25 +65,7 @@ _clearGifCache() {
   return 0
 }
 
-_gif2Png() {
-  local fname="$1"
-  [[ -f "$fname" ]] && fname="$(basename "$fname")"
-  shopt -s nullglob
-  [[ "$fname" == *.png ]] && {
-    echo "$GIF_DIR/${fname%.png}.gif"
-    return 0
-  }
-  shopt -u nullglob
-  echo "$PNG_DIR/$fname"
-}
-
-_png2gif() {
-  local fname="$1"
-  fname="${fname%.png}.gif"
-  [[ ! -f "$fname" ]] && return 1
-}
-
-# Convert all gifs inside $GIF_DIR to png inside $GIF_TO_PNG_CACHE_DIR
+# Convert all gifs inside $GIF_DIR to png inside $GIF_CACHE_DIR
 _updateGifCache() {
   local fname cname
   shopt -s nullglob
@@ -83,7 +85,7 @@ _updateGifCache() {
     if _filenameInCache "$cname"; then
       [[ "$VERBOSE" -eq 1 ]] && _notify -a ct "[INFO] Skipping cache processing for file: $fname - $cname already exists"
     else
-      ffmpeg -i "$f" -frames:v 1 "$GIF_TO_PNG_CACHE_DIR/$cname" 2>&1 >/dev/null || {
+      ffmpeg -i "$f" -frames:v 1 "$GIF_CACHE_DIR/$cname" 2>&1 >/dev/null || {
         _notify -a ct -e "Failed to cache $fname"
       }
     fi
@@ -95,21 +97,13 @@ _updateGifCache() {
   return 0
 }
 
-_loadFavs() {
-  FILES=()
-  [[ ! -f "$FAV_DB" ]] && _notify -a ct -e "Favourites file not found: $FAV_DB" && return 1
-  mapfile -t FILES < <(yq -r '.wallpapers[]' "$FAV_DB")
-  [[ "${#FILES[@]}" -eq 0 ]] && _notify -a ct "No entires in favourites file" && return 1
-  return 0
-}
-
 # Grab all pngs and gifs
 _assembleOptions() {
   local pngs gifs
   FILES=()
   shopt -s nullglob
   pngs=("$PNG_DIR"/*)
-  gifs=("$GIF_TO_PNG_CACHE_DIR"/*)
+  gifs=("$GIF_CACHE_DIR"/*)
   [[ "${#gifs[@]}" -eq 0 ]] && _updateGifCache
   [[ "$DO_PNG" -eq 1 ]] && FILES+=("${pngs[@]}")
   [[ "$DO_GIF" -eq 1 ]] && FILES+=("${gifs[@]}")
@@ -133,7 +127,7 @@ _selectAndApply() {
 
 PNG_DIR="$HOME/Pictures/Selectable/image-wallpapers"
 GIF_DIR="$HOME/Pictures/Selectable/Gif-wallpapers"
-GIF_TO_PNG_CACHE_DIR="$HOME/.cache/themectl/converted_to_png"
+GIF_CACHE_DIR="$HOME/.cache/themectl/converted_to_png"
 FAV_DB="$HOME/dev/data/favourite_wallpapers.yml"
 FILES=()
 MODE=""
@@ -141,9 +135,11 @@ VERBOSE=0
 CLEAR=0
 DO_PNG=0
 DO_GIF=0
+DO_RANDOM_ONLY_FAV=0
+OUTPUT=0
 
 mkdir -p "$GIF_DIR"
-mkdir -p "$GIF_TO_PNG_CACHE_DIR"
+mkdir -p "$GIF_CACHE_DIR"
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -181,9 +177,19 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     esac
     ;;
-  -t | toggle)
-    MODE="TOGGLE_FAV"
+  -o | output)
+    OUTPUT=1
     shift
+    ;;
+  -r | random)
+    MODE="RANDOM"
+    shift
+    case "$1" in
+    -f | fav)
+      DO_RANDOM_ONLY_FAV=1
+      shift
+      ;;
+    esac
     ;;
   -*)
     _notify -a ct -e "Unknown option: $1" && exit 1
@@ -232,6 +238,19 @@ case "$MODE" in
     [[ -z "$s" ]] && continue
     _removeFav "$s"
   done
+  ;;
+"RANDOM")
+  case "$DO_RANDOM_ONLY_FAV" in
+  0)
+    DO_PNG=1
+    DO_GIF=1
+    _assembleOptions
+    ;;
+  1) _loadFavs ;;
+  esac
+  mapfile -t rand < <(printf '%s\n' "${FILES[@]}" | shuf -n 1)
+  [[ -z "${rand[*]}" ]] && exit 1
+  _handleOutput "${rand[0]}"
   ;;
 *)
   _notify -a ct -e "Invalid mode: $MODE" && exit 1
