@@ -44,6 +44,14 @@ _loadFavs() {
   return 0
 }
 
+_clearFavs() {
+  rm "$FAV_DB"
+  cat <<EOF >"$FAV_DB"
+wallpapers: []
+EOF
+  _notify -a ct "Cleared Favourites!"
+}
+
 ## Main logic
 
 _handleOutput() {
@@ -141,6 +149,7 @@ OUTPUT=0
 mkdir -p "$GIF_DIR"
 mkdir -p "$GIF_CACHE_DIR"
 
+# Parse Args
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
   -u | update)
@@ -150,6 +159,19 @@ while [[ "$#" -gt 0 ]]; do
   -c | clear)
     CLEAR=1
     shift
+    case "$1" in
+    -g | gif)
+      MODE="CLEAR_GIF"
+      shift
+      continue
+      ;;
+    -f | fav)
+      MODE="CLEAR_FAV"
+      shift
+      continue
+      ;;
+    esac
+    [[ -z "$MODE" ]] && _notify -a ct -e "Expected CLEAR mode: valid modes = [ gif fav ]" && exit 1
     ;;
   -w | wipe)
     _clearGifCache
@@ -200,8 +222,18 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 [[ -z "$MODE" ]] && MODE="SELECT"
-[[ "$CLEAR" -eq 1 ]] && _clearGifCache
-
+[[ "$CLEAR" -eq 1 ]] && {
+  case "$MODE" in
+  CLEAR_GIF)
+    _clearGifCache
+    exit 0
+    ;;
+  CLEAR_FAV)
+    _clearFavs
+    exit 0
+    ;;
+  esac
+}
 case "$MODE" in
 "UPDATE")
   _updateGifCache || exit 1

@@ -3,4 +3,4 @@ Description=Set random wallpaper with waypaper
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/fish -c 'swap_wallpaper'
+ExecStart=/usr/local/bin/sw -f

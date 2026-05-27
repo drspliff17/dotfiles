@@ -338,6 +338,7 @@ hl.define_submap("Fav Wallpaper", "reset", function()
 	hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f"))
 	hl.bind("a", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f add"))
 	hl.bind("r", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f rm"))
+	hl.bind("c", hl.dsp.exec_cmd(scr_themeSelector .. " clear fav"))
 
 	hl.bind("SHIFT + w", hl.dsp.exec_cmd(scr_swapWallpaper .. " -f"))
 
