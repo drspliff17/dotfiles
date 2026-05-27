@@ -9,7 +9,7 @@
 * {
     /* *.background */
     --background-primary: {background};
-    --background-secondary: {background};
+    --background-secondary: {color1};
     --background-tertiary: {background};
 
     --background-primary-alt: {background};
@@ -125,4 +125,115 @@ html, body, #app-mount {
 html, body, #app-mount {
     background: rgba(0, 0, 0, 0.6) !important;
     backdrop-filter: blur(5px);
+}
+
+.divider,
+[class*="divider"],
+[class*="separator"],
+hr,
+[class*="guildSeparator"] {
+    border-color: {color2} !important;
+    background: {color2} !important;
+}
+
+.sidebar,
+[class*="sidebar"],
+nav[class*="sidebar"] {
+    border-right: 1px solid var(--background-modifier-accent) !important;
+}
+
+/* Far-left server list column */
+[class*="guilds"],
+nav[class*="guilds"] {
+    border-right: 1px solid var(--background-modifier-accent) !important;
+}
+
+/* Inner background of server bar */
+[class*="guilds"] {
+    background: var(--background-primary) !important;
+}
+
+#app-mount::before {
+    background: var(--background-primary) !important;
+}
+/* True top app header area */
+[class*="typeWindows"],
+[class*="titleBar"],
+[class*="withFrame"] {
+    background: var(--background-primary) !important;
+    border-bottom: 1px solid var(--background-modifier-accent) !important;
+    box-shadow: none !important;
+}
+/* Voice / call stage background */
+[class*="callContainer"],
+[class*="wrapper"] [class*="root"],
+[class*="minimum"] {
+    background: var(--background-primary) !important;
+}
+/* =========================
+   BOTTOM LEFT USER AREA (REAL FIX)
+   ========================= */
+
+/* the actual sidebar column */
+[class*="sidebar"] {
+    background: var(--background-primary) !important;
+}
+
+/* user panel root (correct container in modern Discord) */
+[class*="sidebar"] > [class*="container"],
+[class*="sidebar"] > [class*="container"] > [class*="panels"] {
+    background: var(--background-primary) !important;
+    box-shadow: none !important;
+}
+
+/* kill ONLY the fake shadow layer */
+[class*="sidebar"] [class*="panels"] {
+    border-top: 1px solid var(--background-modifier-accent) !important;
+}
+/* ====================================================
+   FORCE TOP TITLEBAR BACKGROUND MATCH 
+   ==================================================== */
+#app-mount > div[class^="typeWindows_"],
+div[class^="titleBar_"],
+.vencord-titlebar {
+    background: var(--background-primary) !important;
+    background-color: var(--background-primary) !important;
+    border-bottom: 1px solid var(--background-modifier-accent) !important;
+}
+
+/* ====================================================
+   CRUSH THE BOTTOM LEFT USER AREA BLACK BAR 
+   ==================================================== */
+/* Target the absolute wrapper of the voice & user panels */
+nav[class*="sidebar_"] > div[class*="panels_"] {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Target the real parent backgrounds leaking behind the buttons */
+div[class*="avatarWrapper_"],
+div[class*="container_"]:has(> div[class*="avatarWrapper_"]) {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+[class*="panels"] {
+    background: var(--background-primary) !important;
+    background-image: none !important;
+}
+/* broader safe version */
+div[class*="sidebar"]::after {
+    background: transparent !important;
+    background-color: transparent !important;
+    content: none !important;
+}
+
+/* broader safe version */
+div[class*="contentHeader"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    content: none !important;
+}
+.bg__960e4 {
+    background: var(--background-primary) !important;
+    background-image: none !important;
 }
