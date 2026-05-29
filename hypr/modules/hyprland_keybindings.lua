@@ -14,6 +14,7 @@ local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
 local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
 local scr_keybindLauncher = "~/.config/hypr/scripts/wofi_keybind_launcher.sh"
 local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
+local scr_clipvault = "~/.config/hypr/scripts/wofi_clipvault_selector.sh"
 local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
@@ -21,7 +22,6 @@ local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
-local scr_clipvault = "~/.config/hypr/scripts/wofi_clipvault_selector.sh"
 
 local function exec_capture(cmd)
 	local handle = io.popen(cmd)
@@ -239,6 +239,7 @@ hl.define_submap("MoveFloat", function()
 end)
 
 --Open Mode (Launch Programs)
+
 hl.bind(mainMod .. " + o", hl.dsp.submap("Open"))
 hl.define_submap("Open", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu))
@@ -252,7 +253,6 @@ hl.define_submap("Open", "reset", function()
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
-
 -- Cursor Mode
 
 hl.bind(mainMod .. " + g", hl.dsp.submap("Cursor"))
@@ -337,7 +337,7 @@ hl.define_submap("Wallpaper", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 
-	hl.bind("SHIFT + w", function()
+	hl.bind("q", function()
 		hl.dispatch(hl.dsp.exec_cmd(scr_swapWallpaper))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
@@ -354,7 +354,7 @@ hl.define_submap("Wallpaper", function()
 		hl.bind("r", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f rm"))
 		hl.bind("c", hl.dsp.exec_cmd(scr_themeSelector .. " clear fav"))
 
-		hl.bind("SHIFT + w", hl.dsp.exec_cmd(scr_swapWallpaper .. " -f"))
+		hl.bind("q", hl.dsp.exec_cmd(scr_swapWallpaper .. " -f"))
 
 		hl.bind("SPACE", hl.dsp.submap("reset"))
 	end)
@@ -384,15 +384,15 @@ hl.define_submap("Misc", function()
 	-- Clipboard mode
 	hl.bind("c", hl.dsp.submap("Clipboard"), { release = true })
 	hl.define_submap("Clipboard", function()
-		hl.bind("c", function()
-			hl.dispatch(hl.dsp.exec_cmd("timeout 60 " .. scr_clipvault .. " clear"))
+		hl.bind("q", function()
+			hl.dispatch(hl.dsp.exec_cmd(scr_clipvault .. " clear"))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end)
 		hl.bind("r", function()
 			hl.dispatch(hl.dsp.exec_cmd("timeout 60 " .. scr_clipvault .. " remove"))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end)
-		hl.bind("f", function()
+		hl.bind("c", function()
 			hl.dispatch(hl.dsp.exec_cmd("timeout 60 " .. scr_clipvault))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end)
