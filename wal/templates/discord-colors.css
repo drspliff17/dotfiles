@@ -156,6 +156,7 @@ nav[class*="guilds"] {
 #app-mount::before {
     background: var(--background-primary) !important;
 }
+
 /* True top app header area */
 [class*="typeWindows"],
 [class*="titleBar"],
@@ -164,35 +165,31 @@ nav[class*="guilds"] {
     border-bottom: 1px solid var(--background-modifier-accent) !important;
     box-shadow: none !important;
 }
+
 /* Voice / call stage background */
 [class*="callContainer"],
 [class*="wrapper"] [class*="root"],
 [class*="minimum"] {
     background: var(--background-primary) !important;
 }
-/* =========================
-   BOTTOM LEFT USER AREA (REAL FIX)
-   ========================= */
 
 /* the actual sidebar column */
 [class*="sidebar"] {
     background: var(--background-primary) !important;
 }
 
-/* user panel root (correct container in modern Discord) */
+/* user panel root */
 [class*="sidebar"] > [class*="container"],
 [class*="sidebar"] > [class*="container"] > [class*="panels"] {
     background: var(--background-primary) !important;
     box-shadow: none !important;
 }
 
-/* kill ONLY the fake shadow layer */
+/* kill the fake shadow layer */
 [class*="sidebar"] [class*="panels"] {
     border-top: 1px solid var(--background-modifier-accent) !important;
 }
-/* ====================================================
-   FORCE TOP TITLEBAR BACKGROUND MATCH 
-   ==================================================== */
+
 #app-mount > div[class^="typeWindows_"],
 div[class^="titleBar_"],
 .vencord-titlebar {
@@ -201,9 +198,6 @@ div[class^="titleBar_"],
     border-bottom: 1px solid var(--background-modifier-accent) !important;
 }
 
-/* ====================================================
-   CRUSH THE BOTTOM LEFT USER AREA BLACK BAR 
-   ==================================================== */
 /* Target the absolute wrapper of the voice & user panels */
 nav[class*="sidebar_"] > div[class*="panels_"] {
     background: transparent !important;
@@ -236,4 +230,88 @@ div[class*="contentHeader"] {
 .bg__960e4 {
     background: var(--background-primary) !important;
     background-image: none !important;
+}
+/* Screen share menu */
+[class*="container__"][class*="size-xl__"][class*="padding-size-sm__"] {
+    border: 1px solid var(--background-modifier-accent) !important;
+    border-radius: 8px;
+}
+
+/* Top of message box */
+[class*="form_"][class*="formWithLoadedChatInput_"] {
+    border-top: 1px solid var(--background-modifier-accent) !important;
+}
+
+/* Titlebar bottom border */
+[class*="title_"] {
+    border-bottom: 1px solid var(--background-modifier-accent) !important;
+}
+
+/* Titlebar bye buttons */
+
+[class*="winButtons"] {
+    display: none !important;
+}
+
+
+/* Message box */
+.channelTextArea_f75fb0.channelTextArea__74017 {
+    border: 1px solid var(--background-modifier-accent) !important;
+    box-shadow: none !important;
+    border-top: none !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+/* Remove server name from title bar */
+.title_edbb22 {
+    display: none !important;
+}
+
+
+/* Control/Call buttons */
+.centerControls_bfe55a button {
+    border: 1px solid color-mix(in srgb, {color2}, transparent 35%) !important;
+    border-radius: 6px;
+}
+.buttonSection__1405b {
+    border: none !important;
+    box-shadow: none !important;
+}
+.button__201d5.lookBlank__201d5 {
+    background: var(--background-primary) !important;
+    background-image: none !important;
+}
+.trailing_c38106 .clickable__81391 {
+  color: {color2} !important;
+}
+
+/* Border between elements inside the server channels area */
+.containerDefault__29444,
+.containerDefault_c69b6d {
+    border-bottom: 1px solid color-mix(in srgb, {color2}, transparent 44%) !important;
+    border-top: none !important;
+}
+
+
+/* Edge control */
+.edgeControls_bfe55a .controlIcon_f1ceac {
+    color: {color2} !important;
+    border: 1px solid color-mix(in srgb, {color2}, transparent 25%) !important;
+    border-radius: 6px
+}
+.edgeControls_bfe55a .controlIcon_f1ceac:hover {
+    color: {color2} !important;
+    /* border: 2px solid color-mix(in srgb, {color2}, transparent 35%) !important; */
+}
+.edgeControls_bfe55a .controlIcon_f1ceac:hover svg {
+    fill: {color2} !important;
+    border: 2px solid color-mix(in srgb, {color2}, transparent 45%) !important;
+    border-radius: 6px
+}
+
+[class'="content_"] .root__4ad81.tile__90dc5 {
+  display: none !important;
 }

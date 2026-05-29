@@ -8,7 +8,7 @@ source "$LIB_NOTIFY" || {
 
 mode="select"
 count="$(clipvault list | wc -l)"
-[[ "$count" -eq 0 ]] && exit 1
+[[ "$count" -eq 0 ]] && _notify -a ct "Clipvault is empty!" && exit 1
 case "$1" in
 -r | rm | remove)
   shift
@@ -46,8 +46,8 @@ EOF
 case "$mode" in
 remove)
   choice="$(gawk <<<"$list" "$prog" | wofi -I --dmenu --prompt "Delete" -Dimage_size=100 -Dynamic_lines=true -d -k /dev/null)"
-  [[ -z "$choice" ]] && _notify -a ct "Clipvault is empty!" && exit 0
-  echo "$choice" | clipvault delete && _notify -a ct "Clipvault Deleted: $choice"
+  [[ -z "$choice" ]] && exit 0
+  echo "$choice" | clipvault delete && _notify -a ct "Clipvault Deleted ID: ${choice::1}"
   exit 0
   ;;
 clear)
@@ -55,10 +55,10 @@ clear)
   ;;
 select)
   choice=$(gawk <<<"$list" "$prog" | wofi -I --dmenu --prompt "Clipboard" -Dimage_size=100 -Dynamic_lines=true -d -k /dev/null)
-  [[ -z "$choice" ]] && _notify -a ct "Clipvault is empty!" && exit 0
+  [[ -z "$choice" ]] && exit 0
   if [ "${choice::5}" = "text:" ]; then
     choice="${choice:5}"
   fi
-  echo "$choice" | clipvault get | wl-copy && _notify -a ct "Clipvault Copied: $choice"
+  echo "$choice" | clipvault get | wl-copy && _notify -a ct "Clipvault Copied ID: ${choice::1}"
   ;;
 esac
