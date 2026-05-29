@@ -4,6 +4,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("dunst")
 	hl.exec_cmd("waypaper --restore")
 	hl.exec_cmd("wal -R")
+	hl.exec_cmd("wl-paste --watch clipvault store")
 end)
 
 -- Wofi, refocus captured monitor on exit
