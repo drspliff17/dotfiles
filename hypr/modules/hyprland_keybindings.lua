@@ -249,7 +249,7 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"))
 	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
 	hl.bind("m", hl.dsp.exec_cmd("kitty --class cmus fish -c cmus"))
-	hl.bind("v", hl.dsp.exec_cmd("vlc"))
+	hl.bind("v", hl.dsp.exec_cmd("/opt/vintagestory/Vintagestory"))
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
@@ -370,17 +370,6 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 
-	-- Volume mode
-	hl.bind("v", hl.dsp.submap("Volume"), { release = true })
-	hl.define_submap("Volume", function()
-		hl.bind("v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " player"))
-		hl.bind("SHIFT + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController))
-		hl.bind("CTRL + v", hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " system"))
-		hl.bind("u", hl.dsp.submap("Misc"))
-
-		hl.bind("SPACE", hl.dsp.submap("reset"))
-	end)
-
 	-- Clipboard mode
 	hl.bind("c", hl.dsp.submap("Clipboard"), { release = true })
 	hl.define_submap("Clipboard", function()
@@ -400,6 +389,26 @@ hl.define_submap("Misc", function()
 
 		hl.bind("SPACE", hl.dsp.submap("reset"))
 	end)
+
+	hl.bind("SPACE", hl.dsp.submap("reset"))
+end)
+
+-- Volume mode
+hl.bind(mainMod .. " + v", hl.dsp.submap("Volume"), { release = true })
+hl.define_submap("Volume", function()
+	hl.bind("v", function()
+		hl.dispatch(hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " player"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+	hl.bind("SHIFT + v", function()
+		hl.dispatch(hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+	hl.bind("CTRL + v", function()
+		hl.dispatch(hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " system"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+	hl.bind("u", hl.dsp.submap("Misc"))
 
 	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)

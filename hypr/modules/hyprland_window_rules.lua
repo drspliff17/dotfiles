@@ -89,3 +89,11 @@ hl.window_rule({
 	center = true,
 	size = "1200 600",
 })
+
+hl.window_rule({
+	name = "VS",
+	match = {
+		initial_class = "Vintage Story",
+	},
+	confine_pointer = true,
+})
