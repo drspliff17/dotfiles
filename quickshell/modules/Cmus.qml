@@ -24,6 +24,7 @@ Rectangle {
         target: Mpris.players
         function onValuesChanged() {
             root.updatePlayer();
+            // root.updateFormat();
         }
     }
 
