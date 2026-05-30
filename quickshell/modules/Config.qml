@@ -6,12 +6,12 @@ QtObject {
     id: root
 
     signal saveRequested
-    signal cmusFormatChanged
+    signal cmusFormatChanged(int v)
 
     // Bar Configuration
     property real barPanel_Opacity: 1.0
 
-    property int barWidgets_Cmus_format: 0
+    property int barWidgets_Cmus_format: 1
 
     property int barWidgets_Radius: 10
     property real barWidgets_baseOpacity: 0.45
@@ -54,6 +54,6 @@ QtObject {
     }
 
     onBarWidgets_Cmus_formatChanged: {
-        cmusFormatChanged();
+        cmusFormatChanged(barWidgets_Cmus_format);
     }
 }

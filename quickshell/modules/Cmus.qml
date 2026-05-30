@@ -13,25 +13,19 @@ Rectangle {
         player = Mpris.players.values.find(p => p.identity.includes("cmus"));
     }
 
-    function updateFormat() {
-        index = Config.barWidgets_Cmus_format;
-        formatted = formats[index];
-    }
-
     Component.onCompleted: updatePlayer()
 
     Connections {
         target: Mpris.players
         function onValuesChanged() {
             root.updatePlayer();
-            // root.updateFormat();
         }
     }
 
     Connections {
         target: Config
-        function onCmusFormatChanged() {
-            root.updateFormat();
+        function onCmusFormatChanged(v) {
+            root.index = v;
         }
     }
 
