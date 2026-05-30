@@ -28,7 +28,7 @@
     ],
     "arg_count": 1,
     "arg_type": "",
-    "response_expected": true
+    "response_expected": false
   },
   {
     "command": "reset_barPresetOrder",

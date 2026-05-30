@@ -390,6 +390,22 @@ hl.define_submap("Misc", function()
 		hl.bind("SPACE", hl.dsp.submap("reset"))
 	end)
 
+	-- Toggle cmus format
+	hl.bind("t", function()
+		local r = exec_capture(scr_qs .. " gcp barWidgets_Cmus_format")
+		r = tonumber(r)
+		local max = 1
+		if r >= max then
+			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format 0"))
+		else
+			r = tonumber(r) + 1
+			r = hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format " .. r))
+		end
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+
+	hl.bind("u", hl.dsp.submap("Volume"))
+
 	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)
 

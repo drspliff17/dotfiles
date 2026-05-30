@@ -18,6 +18,7 @@ trap '_logAppend -t i -m "QS CMD DSP Exit"' EXIT
 CMD_DISPATCH="$HOME/.config/quickshell/data/cmd_dispatch.json"
 CMD_RESPONSE="$HOME/.config/quickshell/data/cmd_response"
 CMD_DB="$HOME/.config/quickshell/data/cmd.json"
+CONFIG_FILE="$HOME/.config/quickshell/config.json"
 TMP_FILE="$(mktemp)"
 
 # Grab command from CMD_DB
@@ -72,6 +73,14 @@ if [[ "$#" -gt 0 ]]; then
 else
   ARG_JSON="[]"
 fi
+
+# MANUAL OVERRIDES
+case "$CMD_NAME" in
+"get_configProperty")
+  jq -r ".$ARG_JSON" "$CONFIG_FILE" && exit 0
+  _notify -a ct -e "Failed to find key: $ARG_JSON" && exit 1
+  ;;
+esac
 
 TS=$(date +%s%3N)
 jq -n \

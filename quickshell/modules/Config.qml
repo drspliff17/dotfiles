@@ -6,9 +6,12 @@ QtObject {
     id: root
 
     signal saveRequested
+    signal cmusFormatChanged
 
     // Bar Configuration
     property real barPanel_Opacity: 1.0
+
+    property int barWidgets_Cmus_format: 0
 
     property int barWidgets_Radius: 10
     property real barWidgets_baseOpacity: 0.45
@@ -23,16 +26,16 @@ QtObject {
     readonly property var barPresetDefault: ["top", "right", "bottom", "left"]
     property var barPresetOrder: ["top", "right", "bottom", "left"]
 
-    // Set/Get any config property by name
+    // Set any config property by name
     function interactProperty(mode, propName, propValue) {
         if (propName in this) {
+            //NOTE: Moved get mode into quickshell_command_dispatch.sh as an override, to allow
+            // for an easier time using jq to pull values (the values that are actually being used by QS)
+
             switch (mode) {
             case "set":
                 this[propName] = propValue;
                 console.log(`Config.interactProperty() >> Set property ( ${propName} ) to value [ ${propValue} ]`);
-                break;
-            case "get":
-                CLI.writeResponseRequested(this[propName]);
                 break;
             default:
                 console.warn(`Config.interactProperty() >> Invalid mode given: ${mode}`);
@@ -48,5 +51,9 @@ QtObject {
 
     onBarPanel_OpacityChanged: {
         Colors.updateSpecial();
+    }
+
+    onBarWidgets_Cmus_formatChanged: {
+        cmusFormatChanged();
     }
 }

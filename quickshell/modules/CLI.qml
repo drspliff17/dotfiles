@@ -45,6 +45,14 @@ QtObject {
         return removed;
     }
 
+    // function cycle_CmusFormat() {
+    //   const max = 1;
+    //   let cur = Config.barWidgets_Cmus_format;
+    //   if(cur === max){
+    //     Config.barWidgets_Cmus_format
+    //   }
+    // }
+
     function request_save() {
         Config.saveRequested();
     }
