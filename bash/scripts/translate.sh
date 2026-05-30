@@ -8,5 +8,5 @@ curl -X POST "http://127.0.0.1:5000/translate" \
       q: $q,
       source: $s,
       target: $t
-    }')" | jq
+    }')" | jq -r '.translatedText'
 exit 0

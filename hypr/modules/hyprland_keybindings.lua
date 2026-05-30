@@ -22,6 +22,7 @@ local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
+local scr_translate = "~/.config/hypr/scripts/wofi_translate.sh"
 
 local function exec_capture(cmd)
 	local handle = io.popen(cmd)
@@ -390,8 +391,30 @@ hl.define_submap("Misc", function()
 		hl.bind("SPACE", hl.dsp.submap("reset"))
 	end)
 
+	hl.bind("t", hl.dsp.submap("Translate"), { release = true })
+	hl.define_submap("Translate", function()
+		hl.bind("t", function()
+			hl.dispatch(hl.dsp.submap("reset"))
+			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en"))
+		end)
+		hl.bind("f", function()
+			hl.dispatch(hl.dsp.submap("reset"))
+			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t fr"))
+		end)
+		hl.bind("g", function()
+			hl.dispatch(hl.dsp.submap("reset"))
+			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t de"))
+		end)
+		hl.bind("s", function()
+			hl.dispatch(hl.dsp.submap("reset"))
+			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t es"))
+		end)
+
+		hl.bind("SPACE", hl.dsp.submap("reset"))
+	end)
+
 	-- Toggle cmus format
-	hl.bind("t", function()
+	hl.bind("m", function()
 		local r = exec_capture(scr_qs .. " gcp barWidgets_Cmus_format")
 		r = tonumber(r)
 		local max = 1
