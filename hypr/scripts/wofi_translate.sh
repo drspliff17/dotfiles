@@ -137,7 +137,9 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   -p | paste)
     shift
-    MSG="$(wl-paste)"
+    CV="$(clipvault get --index 1)"
+    [[ -z "$CV" ]] && _notify -a ct -e "Nothing inside Clipvault!" && exit 1
+    MSG="$CV"
     ;;
   -*)
     _notify -a ct -e "Invalid option: $1" && exit 1
