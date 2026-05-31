@@ -15,7 +15,6 @@ local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
 local scr_keybindLauncher = "~/.config/hypr/scripts/wofi_keybind_launcher.sh"
 local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
 local scr_clipvault = "~/.config/hypr/scripts/wofi_clipvault_selector.sh"
-local scr_docctl = "~/.config/hypr/scripts/old/dmenu_doc_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
@@ -181,7 +180,6 @@ hl.bind(
 	hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher .. " ~/dev/data/wofi_command_window.yml")
 )
 hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("timeout 180 " .. scr_keybindLauncher))
-hl.bind(mainMod .. " + F2", hl.dsp.exec_cmd("timeout 120 " .. scr_docctl))
 
 -- -- DEFAULT FN F* Binds
 hl.bind(
