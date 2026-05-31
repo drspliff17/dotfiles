@@ -317,6 +317,32 @@ hl.define_submap("Quickshell", function()
 	end)
 	hl.bind("c", hl.dsp.exec_cmd(scr_qs .. " cbp"))
 
+	-- Toggle cmus format
+	hl.bind("m", function()
+		local r = exec_capture(scr_qs .. " gcp barWidgets_Cmus_format")
+		r = tonumber(r)
+		local max = 1
+		if r >= max then
+			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format 0"))
+		else
+			r = tonumber(r) + 1
+			r = hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format " .. r))
+		end
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+
+	-- Toggle weather widget
+	hl.bind("w", function()
+		local r = exec_capture(scr_qs .. " gcp barWidgets_Weather_enabled")
+		r = tonumber(r)
+		if r == 1 then
+			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Weather_enabled 0"))
+		else
+			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Weather_enabled 1"))
+		end
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
 
@@ -389,6 +415,7 @@ hl.define_submap("Misc", function()
 		hl.bind("SPACE", hl.dsp.submap("reset"))
 	end)
 
+	-- Translate Mode
 	hl.bind("t", hl.dsp.submap("Translate"), { release = true })
 	hl.define_submap("Translate", function()
 		hl.bind("t", function()
@@ -413,20 +440,6 @@ hl.define_submap("Misc", function()
 		end)
 
 		hl.bind("SPACE", hl.dsp.submap("reset"))
-	end)
-
-	-- Toggle cmus format
-	hl.bind("m", function()
-		local r = exec_capture(scr_qs .. " gcp barWidgets_Cmus_format")
-		r = tonumber(r)
-		local max = 1
-		if r >= max then
-			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format 0"))
-		else
-			r = tonumber(r) + 1
-			r = hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format " .. r))
-		end
-		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 
 	hl.bind("u", hl.dsp.submap("Volume"))
