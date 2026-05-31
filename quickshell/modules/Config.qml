@@ -15,6 +15,8 @@ QtObject {
     property int barWidgets_Cmus_format: 1
     property int barWidgets_Weather_format: 1
 
+    property int barWidgets_Weather_enabled: 0
+
     property int barWidgets_Radius: 10
     property real barWidgets_baseOpacity: 0.45
     property real barWidgets_hoverOpacity: 0.9
