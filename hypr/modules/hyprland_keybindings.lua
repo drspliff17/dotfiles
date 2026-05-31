@@ -22,6 +22,7 @@ local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
 local scr_translate = "~/.config/hypr/scripts/wofi_translate.sh"
+local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 
 local function exec_capture(cmd)
 	local handle = io.popen(cmd)
@@ -398,7 +399,7 @@ hl.define_submap("Misc", function()
 
 	-- Emoji Picker
 	hl.bind("e", function()
-    hl.dispatch(hl.dsp.submap("reset"))
+		hl.dispatch(hl.dsp.submap("reset"))
 		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_emoji_picker.sh -c"))
 	end)
 
@@ -472,4 +473,22 @@ hl.define_submap("Volume", function()
 	hl.bind("u", hl.dsp.submap("Misc"))
 
 	hl.bind("SPACE", hl.dsp.submap("reset"))
+end)
+
+-- Window Mode
+hl.bind(mainMod .. " + e", hl.dsp.submap("Window"), { release = true })
+hl.define_submap("Window", function()
+	hl.bind("SPACE", function()
+		hl.dispatch(hl.dsp.exec_cmd(scr_window .. " -r"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+	hl.bind("SHIFT + SPACE", function()
+		hl.dispatch(hl.dsp.exec_cmd(scr_window))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+	hl.bind("e", function()
+		hl.dispatch(hl.dsp.submap("reset"))
+		hl.dispatch(hl.dsp.exec_cmd(scr_window .. " goto"))
+	end)
+	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
