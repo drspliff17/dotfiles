@@ -9,6 +9,8 @@ source "$LIB_NOTIFY" || {
   exit 1
 }
 
+pgrep nsxiv && pkill nsxiv
+
 ### Helper functions
 
 ## Checks/Validation
