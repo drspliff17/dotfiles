@@ -390,9 +390,16 @@ end)
 -- Misc
 hl.bind(mainMod .. " + u", hl.dsp.submap("Misc"))
 hl.define_submap("Misc", function()
+	-- Colour Picker
 	hl.bind("p", function()
 		hl.dispatch(hl.dsp.exec_cmd("hyprpicker | wl-copy"))
 		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+
+	-- Emoji Picker
+	hl.bind("e", function()
+    hl.dispatch(hl.dsp.submap("reset"))
+		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_emoji_picker.sh -c"))
 	end)
 
 	-- Clipboard mode
