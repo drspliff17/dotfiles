@@ -34,7 +34,6 @@ fi
 
 _cleanup() {
   [[ "$STARTED_SERVER" = true ]] && {
-    _notify -a ct "Stopping server $SERVER_PID"
     kill "$SERVER_PID"
   }
 }
@@ -156,5 +155,4 @@ done
 
 Result="$("$HOME/.config/bash/scripts/translate.sh" "$MSG" "$SRC_LANG" "$TRG_LANG")"
 [[ -z "$Result" ]] && _notify -a ct -e "Response Empty!" && exit 1
-echo "$Result" | wl-copy
-_notify -a ct -t 3000 "$Result" && exit 0
+echo "$Result" | wl-copy && _notify -a ct -t 3000 "$Result" && exit 0
