@@ -148,10 +148,17 @@ Scope {
                     anchors.leftMargin: 10
                     spacing: 10
 
-                    WorkspaceWidget {
+                    Weather {
+                        height: 24
                         radius: shellroot.widgetRadius
-                        spacing: 2
                         vertical: false
+                    }
+
+                    WorkspaceWidget {
+                      anchors.verticalCenter: parent.verticalCenter
+                      radius: shellroot.widgetRadius
+                      spacing: 2
+                      vertical: false
                     }
                 }
 

@@ -6,7 +6,7 @@ Rectangle {
     id: root
     property bool vertical: false
     property int wformat: 1
-    property string creq: `wttr.in?format=${wformat}`
+    visible: true
 
     WidgetBehavior_Opacity {
         id: ctl_opacity
@@ -21,12 +21,31 @@ Rectangle {
     implicitHeight: textItem.contentHeight + 14
 
     function triggerUpdate() {
+        root.wformat = Config.barWidgets_Weather_format;
         updateWeatherTimer.restart();
         updateWeatherData.running = true;
     }
 
+    function cycleFormat() {
+        if (root.wformat === 1) {
+            Config.barWidgets_Weather_format = 2;
+        } else {
+            Config.barWidgets_Weather_format = 1;
+        }
+        root.triggerUpdate();
+    }
+
     Component.onCompleted: {
+        root.wformat = Config.barWidgets_Weather_format;
         updateWeatherData.running = true;
+    }
+
+    Connections {
+        target: Config
+        function onWeatherFormatChanged(v) {
+            root.wformat = v;
+            root.triggerUpdate();
+        }
     }
 
     Timer {
@@ -69,14 +88,6 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
         onEntered: ctl_opacity.update(true)
         onExited: ctl_opacity.update(false)
-        onClicked: function (mouse) {
-            switch (mouse) {
-            case Qt.LeftButton:
-                break;
-            case Qt.RightButton:
-                root.triggerUpdate();
-                break;
-            }
-        }
+        onClicked: root.cycleFormat()
     }
 }

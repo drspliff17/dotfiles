@@ -7,11 +7,13 @@ QtObject {
 
     signal saveRequested
     signal cmusFormatChanged(int v)
+    signal weatherFormatChanged(int v)
 
     // Bar Configuration
     property real barPanel_Opacity: 1.0
 
     property int barWidgets_Cmus_format: 1
+    property int barWidgets_Weather_format: 1
 
     property int barWidgets_Radius: 10
     property real barWidgets_baseOpacity: 0.45
@@ -55,5 +57,9 @@ QtObject {
 
     onBarWidgets_Cmus_formatChanged: {
         cmusFormatChanged(barWidgets_Cmus_format);
+    }
+
+    onBarWidgets_Weather_formatChanged: {
+        weatherFormatChanged(barWidgets_Weather_format);
     }
 }
