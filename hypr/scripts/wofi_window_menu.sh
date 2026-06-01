@@ -3,6 +3,8 @@
 #TODO: Convert into the endless loop format
 # Include some kind of tagging mode, and a private tag that gets filtered from selection views (except when modifying tagged windows)
 
+#TODO: Swap from using address in window_menu directly, to grabbing PID of client, and recalling jq to find the address from that
+
 #TODO: Cleanup functions / Mode switch, move per menu wofi setup into respective functions etc
 
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
@@ -17,7 +19,14 @@ source "$LIB_WOFI" || {
   exit 1
 }
 
-MODES=("MOVE_CLIENT" "MOVE_WORKSPACE" "GOTO_WINDOW")
+ORIGIN_CACHE="$HOME/.config/wofi/state/wofi_window_menu_origin_client"
+_cacheOriginClient() {
+  cat <<EOF >"$ORIGIN_CACHE"
+$(hyprctl activewindow -j | jq -r '.address')
+EOF
+}
+
+MODES=("MOVE_CLIENT" "MOVE_WORKSPACE" "GOTO_CLIENT")
 
 MODE=""
 SELECTED_WINDOW=""
@@ -25,16 +34,19 @@ SELECTED_WORKSPACE=""
 SELECTED_MONITOR=""
 
 RETAIN_FOCUS=false
-ORIGIN_WINDOW="$(hyprctl activewindow -j | jq '.address')"
 w_args=()
 
-_returnFocus() {
+_cacheOriginClient
+
+_cleanup() {
+  _notify -a ct -t 5000 "STATS" "ACTIVE = $(hyprctl activewindow -j | jq '.address') | CACHED = $(cat $ORIGIN_CACHE)"
   if $RETAIN_FOCUS; then
-    hyprctl dispatch "hl.dsp.focus({ window = '$ORIGIN_WINDOW' })"
+    hyprctl dispatch "hl.dsp.focus({ window = 'address:$(cat "$ORIGIN_CACHE")' })"
   fi
+  rm "$ORIGIN_CACHE"
 }
 
-trap '_returnFocus' EXIT
+trap '_cleanup' EXIT
 
 # hyprctl workspaces -j | jq "map(select(.monitor == $monitor_name))"
 
@@ -77,8 +89,13 @@ _menuMonitor() {
 
 _menuWorkspaces() {
   local selection
+  local filter="${1:-false}"
   _construct w_args
-  SELECTED_WORKSPACE="$(hyprctl workspaces -j | jq -r '.[] | .name' | wofi -d "${w_args[@]}")"
+  if [[ "$filter" = "false" ]]; then
+    SELECTED_WORKSPACE="$(hyprctl workspaces -j | jq -r '.[] | .name' | wofi -d "${w_args[@]}")"
+  else
+    SELECTED_WORKSPACE="$(hyprctl workspaces -j | jq -r '.[] | select(.name | contains("special:") | not) | .name' | wofi -d "${w_args[@]}")"
+  fi
   [[ -z "$SELECTED_WORKSPACE" ]] && return 1
 }
 
@@ -113,7 +130,7 @@ while [[ "$#" -gt 0 ]]; do
     shift
     ;;
   go | goto)
-    MODE="GOTO_WINDOW"
+    MODE="GOTO_CLIENT"
     shift
     ;;
   -r | retain)
@@ -158,9 +175,9 @@ MOVE_WORKSPACE)
   WOFI_LINES="$(hyprctl workspaces -j | jq 'length')"
   _menuWorkspaces || exit 1
 
-  hyprctl dispatch "hl.dsp.workspace.move({ workspace = '$SELECTED_WORKSPACE', monitor = '$SELECTED_MONITOR' })"
+  hyprctl dispatch "hl.dsp.workspace.move({ workspace = '$SELECTED_WORKSPACE', monitor = '$SELECTED_MONITOR' })" 2>&1 >/dev/null
   ;;
-GOTO_WINDOW)
+GOTO_CLIENT)
   [[ -z "$SELECTED_WINDOW" ]] && {
     WOFI_PROMPT="Select Client"
     WOFI_WIDTH="50%"
