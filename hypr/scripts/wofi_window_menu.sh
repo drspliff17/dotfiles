@@ -3,6 +3,8 @@
 #TODO: Convert into the endless loop format
 # Include some kind of tagging mode, and a private tag that gets filtered from selection views (except when modifying tagged windows)
 
+#TODO: Cleanup functions / Mode switch, move per menu wofi setup into respective functions etc
+
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
   notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
@@ -15,11 +17,13 @@ source "$LIB_WOFI" || {
   exit 1
 }
 
-MODES=("MOVE_WORKSPACE" "GOTO")
+MODES=("MOVE_CLIENT" "MOVE_WORKSPACE" "GOTO_WINDOW")
 
 MODE=""
 SELECTED_WINDOW=""
 SELECTED_WORKSPACE=""
+SELECTED_MONITOR=""
+
 RETAIN_FOCUS=false
 ORIGIN_WINDOW="$(hyprctl activewindow -j | jq '.address')"
 w_args=()
@@ -31,6 +35,8 @@ _returnFocus() {
 }
 
 trap '_returnFocus' EXIT
+
+# hyprctl workspaces -j | jq "map(select(.monitor == $monitor_name))"
 
 _validWorkspace() {
   local target="$1"
@@ -61,6 +67,21 @@ _menuWindow() {
   SELECTED_WINDOW="$(echo "$selection" | cut -f1)"
 }
 
+_menuMonitor() {
+  local selection
+  _construct w_args
+  selection="$(hyprctl monitors -j | jq -r '.[] | "\(.name)\t\(.id)"' | wofi -d "${w_args[@]}")"
+  [[ -z "$selection" ]] && return 1
+  SELECTED_MONITOR="$(echo "$selection" | cut -f2)"
+}
+
+_menuWorkspaces() {
+  local selection
+  _construct w_args
+  SELECTED_WORKSPACE="$(hyprctl workspaces -j | jq -r '.[] | .name' | wofi -d "${w_args[@]}")"
+  [[ -z "$SELECTED_WORKSPACE" ]] && return 1
+}
+
 _menuMode() {
   local selection
   _construct w_args
@@ -84,11 +105,15 @@ _inputPrompt() {
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
   mv | move)
-    MODE="MOVE"
+    MODE="MOVE_CLIENT"
+    shift
+    ;;
+  mvm | monitor)
+    MODE="MOVE_WORKSPACE"
     shift
     ;;
   go | goto)
-    MODE="GOTO"
+    MODE="GOTO_WINDOW"
     shift
     ;;
   -r | retain)
@@ -101,38 +126,49 @@ done
 [[ -z "$MODE" ]] && {
   WOFI_PROMPT="Select Mode"
   WOFI_WIDTH="15%"
-  WOFI_CONFIG="$WOFI_C_CONFIG"
-  if [[ "${#MODES[@]}" -lt 10 ]]; then
-    WOFI_LINES="${#MODES[@]}"
-    WOFI_HEIGHT=""
-  else
-    WOFI_LINES=""
-    WOFI_HEIGHT="35%"
-  fi
+  WOFI_HEIGHT="35%"
+  WOFI_LINES="${#MODES[@]}"
+  WOFI_CONFIG="$WOFI_C_CENTER"
   _menuMode || exit 1
 }
 
-[[ -z "$SELECTED_WINDOW" ]] && {
-  WOFI_PROMPT="Select Client"
-  WOFI_WIDTH="50%"
-  WOFI_CONFIG="$WOFI_C_CONFIG"
-  if [[ "$(hyprctl clients -j | jq 'length')" -lt 5 ]]; then
-    WOFI_LINES="${#MODES[@]}"
-    WOFI_HEIGHT=""
-  else
-    WOFI_LINES=""
-    WOFI_HEIGHT="35%"
-  fi
-  _menuWindow || exit 1
-}
-
 case "$MODE" in
-MOVE_WORKSPACE)
+MOVE_CLIENT)
+  [[ -z "$SELECTED_WINDOW" ]] && {
+    WOFI_PROMPT="Select Client"
+    WOFI_WIDTH="50%"
+    WOFI_HEIGHT="35%"
+    WOFI_LINES=""
+    WOFI_CONFIG="$WOFI_C_CENTER"
+    _menuWindow || exit 1
+  }
   SELECTED_WORKSPACE="$(_inputPrompt "Input Target Workspace")"
   [[ -z "$SELECTED_WORKSPACE" ]] && exit 0
   _moveWindow "$SELECTED_WINDOW" "$SELECTED_WORKSPACE"
   ;;
-GOTO)
+MOVE_WORKSPACE)
+  WOFI_PROMPT="Select Monitor"
+  WOFI_WIDTH="50%"
+  WOFI_HEIGHT="35%"
+  WOFI_LINES="$(hyprctl monitors -j | jq 'length')"
+  WOFI_CONFIG="$WOFI_C_CENTER"
+  _menuMonitor || exit 1
+
+  WOFI_PROMPT="Select Workspace to move ($SELECTED_MONITOR)"
+  WOFI_LINES="$(hyprctl workspaces -j | jq 'length')"
+  _menuWorkspaces || exit 1
+
+  hyprctl dispatch "hl.dsp.workspace.move({ workspace = '$SELECTED_WORKSPACE', monitor = '$SELECTED_MONITOR' })"
+  ;;
+GOTO_WINDOW)
+  [[ -z "$SELECTED_WINDOW" ]] && {
+    WOFI_PROMPT="Select Client"
+    WOFI_WIDTH="50%"
+    WOFI_HEIGHT="35%"
+    WOFI_LINES=""
+    WOFI_CONFIG="$WOFI_C_CENTER"
+    _menuWindow || exit 1
+  }
   hyprctl dispatch "hl.dsp.focus({ window = 'address:$SELECTED_WINDOW' })" 2>&1 >/dev/null
   ;;
 esac
