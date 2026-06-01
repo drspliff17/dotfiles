@@ -19,10 +19,10 @@ source "$LIB_WOFI" || {
   exit 1
 }
 
-ORIGIN_CACHE="$HOME/.config/wofi/state/wofi_window_menu_origin_client"
+ORIGIN_CACHE="$HOME/.config/wofi/state/wofi_window_menu_origin_workspace"
 _cacheOriginClient() {
   cat <<EOF >"$ORIGIN_CACHE"
-$(hyprctl activewindow -j | jq -r '.address')
+$(hyprctl activeworkspace -j | jq -r '.id')
 EOF
 }
 
@@ -41,7 +41,7 @@ _cacheOriginClient
 _cleanup() {
   _notify -a ct -t 5000 "STATS" "ACTIVE = $(hyprctl activewindow -j | jq '.address') | CACHED = $(cat $ORIGIN_CACHE)"
   if $RETAIN_FOCUS; then
-    hyprctl dispatch "hl.dsp.focus({ window = 'address:$(cat "$ORIGIN_CACHE")' })"
+    hyprctl dispatch "hl.dsp.focus({ workspace = '$(cat "$ORIGIN_CACHE")' })"
   fi
   rm "$ORIGIN_CACHE"
 }
@@ -135,6 +135,10 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   -r | retain)
     RETAIN_FOCUS=true
+    shift
+    ;;
+  *)
+    #FIX: Make this into an error or something
     shift
     ;;
   esac

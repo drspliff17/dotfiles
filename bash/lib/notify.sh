@@ -84,6 +84,10 @@ _notify() {
       shift
       doErr=1
       ;;
+    *)
+      #FIX: Make this into an error or something
+      shift
+      ;;
     esac
   done
   message="$1"
