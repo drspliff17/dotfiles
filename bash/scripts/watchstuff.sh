@@ -279,10 +279,10 @@ while $LOOP; do
       .results[]
       | select(.media_type != "person")
       | select($type == "" or .media_type == $type)
-      | "\(.name // .title) [\(.media_type)] (\(.id))"
+      | "(\(.id)) \(.name // .title) [\(.media_type)] [\(.release_date // .first_air_date // "unknown")]"
     ' |
           wofi -d "${W_ARGS[@]}" |
-          sed -E 's/.*\(([^)]+)\)$/\1/'
+          sed -E 's/^\(([^)]+)\).*/\1/'
       )"
       [[ -z "$TMDB_ID_SELECTED" ]] && exit 0
       if $TMDB_DO_STAT; then
