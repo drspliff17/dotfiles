@@ -12,18 +12,9 @@ source "$LIB_WOFI" || {
   exit 1
 }
 
+EMOJI_FILE="$HOME/.local/share/snacks_merged.json"
 MODE=""
-EMOJI_FILE="$HOME/.local/share/emoji.txt"
-
 w_args=()
-WOFI_PROMPT="Pick Emoji"
-WOFI_WIDTH="35%"
-WOFI_HEIGHT="40%"
-WOFI_COLUMNS=15
-_construct w_args
-SELECTED="$(printf '%s\n' "$(cat "$EMOJI_FILE")" | wofi -d "${w_args[@]}" | tr -d '\n')"
-
-[[ -z "$SELECTED" ]] && exit 0
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
@@ -40,7 +31,16 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   esac
 done
+
 [[ -z "$MODE" ]] && _notify -a ct -e "Expected Mode, provide either -c or -p flags to call" && exit 1
+
+WOFI_PROMPT="Pick Emoji"
+WOFI_WIDTH="25%"
+WOFI_HEIGHT="40%"
+WOFI_CONFIG="$WOFI_C_CENTER"
+_construct w_args
+SELECTED="$(printf '%s\n' "$(cat "$EMOJI_FILE" | jq -r '.[] | "\(.icon) | \(.name)"')" | wofi -d "${w_args[@]}" | cut -d'|' -f1 | tr -d ' ')"
+[[ -z "$SELECTED" ]] && exit 0
 
 case "$MODE" in
 COPY)
