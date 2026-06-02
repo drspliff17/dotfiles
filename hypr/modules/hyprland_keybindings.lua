@@ -34,6 +34,8 @@ local function exec_capture(cmd)
 	return (out:gsub("%s+$", ""))
 end
 
+-- hl.bind("a", hl.dsp.exec_cmd(scr_commandLauncher .. " $HOME/thing.yml"))
+
 -- Core Binds
 hl.bind(
 	mainMod .. " + SHIFT + Q",
@@ -176,10 +178,6 @@ hl.bind(mainMod .. " + SHIFT + F1", hl.dsp.exec_cmd("timeout 120 " .. scr_musicS
 hl.bind(mainMod .. " + CTRL + F1", hl.dsp.exec_cmd(scr_musicSelector .. " update"))
 
 hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher))
-hl.bind(
-	mainMod .. " + SHIFT + z",
-	hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher .. " ~/dev/data/wofi_command_window.yml")
-)
 hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("timeout 180 " .. scr_keybindLauncher))
 
 -- -- DEFAULT FN F* Binds
@@ -450,8 +448,6 @@ hl.define_submap("Misc", function()
 		hl.bind("SPACE", hl.dsp.submap("reset"))
 	end)
 
-	hl.bind("u", hl.dsp.submap("Volume"))
-
 	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)
 
@@ -470,13 +466,12 @@ hl.define_submap("Volume", function()
 		hl.dispatch(hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " system"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
-	hl.bind("u", hl.dsp.submap("Misc"))
 
 	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)
 
 -- Window Mode
-hl.bind(mainMod .. " + e", hl.dsp.submap("Window"), { release = true })
+hl.bind(mainMod .. " + d", hl.dsp.submap("Window"))
 hl.define_submap("Window", function()
 	hl.bind("SPACE", function()
 		hl.dispatch(hl.dsp.exec_cmd(scr_window .. " -r"))
