@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 #TODO: Implement a per season/episode stat (?)
-# Allow query to feed into stat, and then into launch / exit
+
+#TODO: Refactor to allow passing from query to stat, with prompt before launch
 
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
@@ -36,7 +37,8 @@ TMDB_QUERY=""
 TMDB_RESULT=""
 TMDB_RESULT_COUNT=0
 
-TMDB_DOSTAT=false
+TMDB_DO_STAT=false
+TMDB_PASS_STAT=false
 
 #
 # Stores tmp path for curl query response
@@ -74,7 +76,12 @@ while [[ "$#" -gt 0 ]]; do
   case "$1" in
 
   -st | --stat)
-    TMDB_DOSTAT=true
+    TMDB_DO_STAT=true
+    shift
+    ;;
+
+  -ps | --pass)
+    TMDB_PASS_STAT=true
     shift
     ;;
 
@@ -149,6 +156,11 @@ _constructEmbedURL() {
   case "$type" in
   tv)
     #TODO: Add some validation of season / episode number
+
+    #NOTE: TEMP ASSERTION
+    [[ -z "$TMDB_EPISODE_SELECTED" ]] && TMDB_EPISODE_SELECTED=1
+    [[ -z "$TMDB_SEASON_SELECTED" ]] && TMDB_SEASON_SELECTED=1
+
     TMDB_EMBED_URL="$VIDSRC_BASE/$type/$TMDB_ID_SELECTED/$TMDB_SEASON_SELECTED-$TMDB_EPISODE_SELECTED"
     ;;
   movie)
@@ -197,13 +209,15 @@ _statID() {
   fi
 
   local statString
+
+  _nextAir() {
+    local nextData="$(echo "$TMDB_RESULT" | jq '.next_episode_to_air')"
+    [[ -z "$nextData" || "$nextData" = "null" ]] && echo "" && return 0
+    echo "Next Episode: $(echo "$nextData" | jq -r '"\(.air_date) [\(.name)]"')"
+  }
+
   case "$TMDB_TYPE" in
   tv)
-    # TMDB_TV_MAX_SEASON="$(echo "$TMDB_RESULT" | jq -r '.number_of_seasons')"
-    # TMDB_TV_MAX_EPISODES="$(echo "$TMDB_RESULT" | jq -r '.number_of_episodes')"
-    # _notify -a ct "TEST:  S$TMDB_TV_MAX_SEASON | E$TMDB_TV_MAX_EPISODES"
-    # statString="$(echo "$TMDB_RESULT" | jq -r '"\(.name)\tS(\(.number_of_seasons))E(\(.number_of_episodes))"')"
-
     statString="$(
       cat <<EOF
 [TV Show]
@@ -213,6 +227,7 @@ Episode Count: $(echo "$TMDB_RESULT" | jq -r '.number_of_episodes // "unknown"')
 First Aired: $(echo "$TMDB_RESULT" | jq -r '.first_air_date // "unknown"')
 Last Aired: $(echo "$TMDB_RESULT" | jq -r '.last_air_date // "unknown"')
 Status: $(echo "$TMDB_RESULT" | jq -r '.status // "unknown"')
+$(_nextAir)
 EOF
     )"
     [[ -t 1 ]] && {
@@ -226,19 +241,19 @@ EOF
 
     ;;
   esac
+
+  # $TMDB_PASS_STAT && MODE="LAUNCH"
+  return 0
 }
 
+[[ "$MODE" != "QUERY" && $TMDB_DO_STAT ]] && MODE="STAT"
 while $LOOP; do
-
-  if $TMDB_DOSTAT; then
-    MODE="STAT"
-  fi
 
   case "$MODE" in
 
   QUERY)
     if ! _curlQuery; then
-      _notify -a ct "No results found for: $TMDB_QUERY ($TMDB_TYPE)"
+      _notify -a ct "No results found for: $TMDB_QUERY ($TMDB_TYPE)" && exit 1
     else
       _cacheQuery
       TMDB_ID_SELECTED="$(
@@ -253,18 +268,24 @@ while $LOOP; do
           sed -E 's/.*\(([^)]+)\)$/\1/'
       )"
       [[ -z "$TMDB_ID_SELECTED" ]] && exit 0
-      MODE="LAUNCH"
+      if $TMDB_DO_STAT; then
+        MODE="STAT"
+      else
+        MODE="LAUNCH"
+      fi
     fi
     ;;
 
   STAT)
-    _statID
+    if ! _statID; then
+      exit 1
+    fi
     LOOP=false
     ;;
 
   LAUNCH)
     _constructEmbedURL
-    firefox --new-window "$TMDB_EMBED_URL"
+    firefox --new-window "$TMDB_EMBED_URL" &
     LOOP=false
     ;;
 
