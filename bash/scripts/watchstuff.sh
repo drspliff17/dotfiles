@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#TODO: Implement a per season/episode stat (?)
+# Allow query to feed into stat, and then into launch / exit
+
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
   notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
@@ -12,36 +15,68 @@ source "$LIB_WOFI" || {
   exit 1
 }
 
+# Main Ctl vars
 MODE=""
 LOOP=true
 
-VIDSRC_BASE="https://vidsrc-embed.ru/embed"
+#
+# Const vars
 
+VIDSRC_BASE="https://vidsrc-embed.ru/embed"
 TMDB_T="$(tr -d '\r\n ' <"$HOME/dev/data/env/.tmdb.env")"
+
+#
+# Mode vars
+
 TMDB_QUERY=""
-TMDB_TYPE=""
+
+#
+# Curl Response vars
+
 TMDB_RESULT=""
 TMDB_RESULT_COUNT=0
 
-TMDB_CACHE_QUERY=""
-TMDB_LOG_OUTPUT="$HOME/dev/data/misc/watchstuff_output.log"
+TMDB_DOSTAT=false
 
+#
+# Stores tmp path for curl query response
+TMDB_CACHE_QUERY=""
+
+#
+# URL Construct vars
+
+TMDB_TYPE=""
 TMDB_ID_SELECTED=""
 TMDB_SEASON_SELECTED=""
 TMDB_EPISODE_SELECTED=""
 
-TMDB_EMBED_URL=""
+#
+# Constructed URLS
 
+TMDB_EMBED_URL=""
+TMDB_POSTER_URL=""
+
+#
+# Stores wofi vars
+W_ARGS=()
+
+#
 # Handle tmp file cleanup
 _cleanup() {
-  # _logOutput
   [[ -e "$TMDB_CACHE_QUERY" ]] && rm "$TMDB_CACHE_QUERY"
 }
 
 trap '_cleanup' EXIT
 
+#
+# Arg Parsing
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
+
+  -st | --stat)
+    TMDB_DOSTAT=true
+    shift
+    ;;
 
   -q | --query)
     MODE="QUERY"
@@ -62,7 +97,6 @@ while [[ "$#" -gt 0 ]]; do
     ;;
 
   -i | --id)
-    #TODO: Add validator for explicit id
     MODE="LAUNCH"
     TMDB_ID_SELECTED="$2"
     shift 2
@@ -93,45 +127,14 @@ while [[ "$#" -gt 0 ]]; do
 done
 [[ -z "$MODE" ]] && _notify -a ct -e "Expected MODE to be set. Exiting" && exit 1
 
-# Store $TMDB_RESULT to $TMDB_CACHE_QUERY for use during script lifecycle
-_cacheQuery() {
-  TMDB_CACHE_QUERY="$(mktemp)"
-  echo "$TMDB_RESULT" | jq >"$TMDB_CACHE_QUERY" && return 0
+# Update $TMDB_POSTER_URL, using TMDB_RESULT.poster_path
+_constructPosterURL() {
+  local p="$(echo "$TMDB_RESULT" | jq -r '.poster_path // .backdrop_path')"
+  local s="w185"
+  TMDB_POSTER_URL="https://image.tmdb.org/t/p/${s}/${p}"
 }
 
-_logOutput() {
-  mkdir -p "$(dirname "$TMDB_LOG_OUTPUT")"
-  echo -e "$(date)\n" >"$TMDB_LOG_OUTPUT" && cat "$TMDB_RESULT" | jq >>"$TMDB_LOG_OUTPUT"
-}
-
-# Updates $TMDB_RESULT, using $TMDB_QUERY
-_curlQuery() {
-  local count
-  TMDB_RESULT="$(curl -s \
-    "https://api.themoviedb.org/3/search/multi?query=$(printf '%s' "$TMDB_QUERY" | jq -sRr @uri)" \
-    -H "Authorization: Bearer $TMDB_T" \
-    -H "Accept: application/json")"
-
-  TMDB_RESULT_COUNT="$(echo "$TMDB_RESULT" | jq -r '.results | length')"
-  [[ "$TMDB_RESULT_COUNT" -eq 0 ]] && return 1
-  return 0
-}
-
-# Updates $TMDB_RESULT, using $TMDB_ID_SELECTED and $TMDB_TYPE
-_curlID() {
-  [[ -z "$TMDB_ID_SELECTED" ]] && _notify -a ct -e "Requires ID to query" && exit 1
-  [[ -z "$TMDB_TYPE" ]] && _notify -a ct -e "Requires Type to query" && exit 1
-
-  TMDB_RESULT="$(curl -s \
-    "https://api.themoviedb.org/3/${TMDB_TYPE}/${TMDB_ID_SELECTED}" \
-    -H "Authorization: Bearer $TMDB_T" \
-    -H "AcceptL application/json")"
-
-  echo "$TMDB_RESULT" | jq -e '.id' >/dev/null 2>&1 || return 1
-  return 0
-}
-
-# Echo
+# Update $TMDB_EMBED_URL, using URL Construct vars
 _constructEmbedURL() {
   local type
   if [[ -z "$TMDB_CACHE_QUERY" ]]; then
@@ -146,16 +149,93 @@ _constructEmbedURL() {
   case "$type" in
   tv)
     #TODO: Add some validation of season / episode number
-    echo "$VIDSRC_BASE/$type/$TMDB_ID_SELECTED/$TMDB_SEASON_SELECTED-$TMDB_EPISODE_SELECTED"
+    TMDB_EMBED_URL="$VIDSRC_BASE/$type/$TMDB_ID_SELECTED/$TMDB_SEASON_SELECTED-$TMDB_EPISODE_SELECTED"
     ;;
   movie)
-    echo "$VIDSRC_BASE/$type/$TMDB_ID_SELECTED"
+    TMDB_EMBED_URL="$VIDSRC_BASE/$type/$TMDB_ID_SELECTED"
+    ;;
+  esac
+}
+
+#
+# Store $TMDB_RESULT to $TMDB_CACHE_QUERY for use during script lifecycle
+_cacheQuery() {
+  TMDB_CACHE_QUERY="$(mktemp)"
+  echo "$TMDB_RESULT" | jq >"$TMDB_CACHE_QUERY" && return 0
+}
+
+#
+# Updates $TMDB_RESULT && $TMDB_RESULT_COUNT, using $TMDB_QUERY. Returns false if no results are found
+_curlQuery() {
+  TMDB_RESULT="$(curl -s \
+    "https://api.themoviedb.org/3/search/multi?query=$(printf '%s' "$TMDB_QUERY" | jq -sRr @uri)" \
+    -H "Authorization: Bearer $TMDB_T" \
+    -H "Accept: application/json")"
+
+  TMDB_RESULT_COUNT="$(echo "$TMDB_RESULT" | jq -r '.results | length')"
+  [[ "$TMDB_RESULT_COUNT" -eq 0 ]] && return 1
+  return 0
+}
+
+# Updates $TMDB_RESULT, using $TMDB_ID_SELECTED and $TMDB_TYPE. Returns false if id is not found
+_curlID() {
+  [[ -z "$TMDB_ID_SELECTED" ]] && _notify -a ct -e "Requires ID to query" && exit 1
+  [[ -z "$TMDB_TYPE" ]] && _notify -a ct -e "Requires Type to query" && exit 1
+
+  TMDB_RESULT="$(curl -s \
+    "https://api.themoviedb.org/3/${TMDB_TYPE}/${TMDB_ID_SELECTED}" \
+    -H "Authorization: Bearer $TMDB_T" \
+    -H "AcceptL application/json")"
+
+  echo "$TMDB_RESULT" | jq -e '.id' >/dev/null 2>&1 || return 1
+  return 0
+}
+
+_statID() {
+  if ! _curlID; then
+    _notify -a ct -e "Could not find result for $TMDB_ID_SELECTED" && return 1
+  fi
+
+  local statString
+  case "$TMDB_TYPE" in
+  tv)
+    # TMDB_TV_MAX_SEASON="$(echo "$TMDB_RESULT" | jq -r '.number_of_seasons')"
+    # TMDB_TV_MAX_EPISODES="$(echo "$TMDB_RESULT" | jq -r '.number_of_episodes')"
+    # _notify -a ct "TEST:  S$TMDB_TV_MAX_SEASON | E$TMDB_TV_MAX_EPISODES"
+    # statString="$(echo "$TMDB_RESULT" | jq -r '"\(.name)\tS(\(.number_of_seasons))E(\(.number_of_episodes))"')"
+
+    statString="$(
+      cat <<EOF
+[TV Show]
+Name: $(echo "$TMDB_RESULT" | jq -r '.name')
+Season Count: $(echo "$TMDB_RESULT" | jq -r '.number_of_seasons // "unknown"')
+Episode Count: $(echo "$TMDB_RESULT" | jq -r '.number_of_episodes // "unknown"')
+First Aired: $(echo "$TMDB_RESULT" | jq -r '.first_air_date // "unknown"')
+Last Aired: $(echo "$TMDB_RESULT" | jq -r '.last_air_date // "unknown"')
+Status: $(echo "$TMDB_RESULT" | jq -r '.status // "unknown"')
+EOF
+    )"
+    [[ -t 1 ]] && {
+      _constructPosterURL
+      kitty +kitten icat --align left "$TMDB_POSTER_URL"
+    }
+    _notify -a ct "$statString"
+    ;;
+
+  movie)
+
     ;;
   esac
 }
 
 while $LOOP; do
+
+  if $TMDB_DOSTAT; then
+    MODE="STAT"
+  fi
+
   case "$MODE" in
+
   QUERY)
     if ! _curlQuery; then
       _notify -a ct "No results found for: $TMDB_QUERY ($TMDB_TYPE)"
@@ -169,17 +249,24 @@ while $LOOP; do
       | select($type == "" or .media_type == $type)
       | "\(.name // .title) [\(.media_type)] (\(.id))"
     ' |
-          wofi -d |
+          wofi -d "${W_ARGS[@]}" |
           sed -E 's/.*\(([^)]+)\)$/\1/'
       )"
       [[ -z "$TMDB_ID_SELECTED" ]] && exit 0
       MODE="LAUNCH"
     fi
     ;;
+
+  STAT)
+    _statID
+    LOOP=false
+    ;;
+
   LAUNCH)
-    TMDB_EMBED_URL="$(_constructEmbedURL)"
+    _constructEmbedURL
     firefox --new-window "$TMDB_EMBED_URL"
     LOOP=false
     ;;
+
   esac
 done
