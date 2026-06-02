@@ -4,6 +4,10 @@
 
 #TODO: Refactor to allow passing from query to stat, with prompt before launch
 
+#TODO: build interactive menu prompts for when required args are not provided (or as a mode?)
+
+#TODO: Cache last query, make mode to jump back to last stat'd ID
+
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
   notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
@@ -221,6 +225,7 @@ _statID() {
     statString="$(
       cat <<EOF
 [TV Show]
+ID: $TMDB_ID_SELECTED
 Name: $(echo "$TMDB_RESULT" | jq -r '.name')
 Season Count: $(echo "$TMDB_RESULT" | jq -r '.number_of_seasons // "unknown"')
 Episode Count: $(echo "$TMDB_RESULT" | jq -r '.number_of_episodes // "unknown"')
@@ -238,11 +243,23 @@ EOF
     ;;
 
   movie)
-
+    statString="$(
+      cat <<EOF
+[Movie]
+ID: $TMDB_ID_SELECTED
+Name: $(echo "$TMDB_RESULT" | jq -r '.name // .title')
+Released: $(echo "$TMDB_RESULT" | jq -r '.release_date // "unknown"')
+Duration: $(echo "$TMDB_RESULT" | jq -r '.runtime // "unknown"')
+EOF
+    )"
+    [[ -t 1 ]] && {
+      _constructPosterURL
+      kitty +kitten icat --align left "$TMDB_POSTER_URL"
+    }
+    _notify -a ct "$statString"
     ;;
   esac
 
-  # $TMDB_PASS_STAT && MODE="LAUNCH"
   return 0
 }
 
