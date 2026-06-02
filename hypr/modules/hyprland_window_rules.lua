@@ -97,3 +97,13 @@ hl.window_rule({
 	},
 	confine_pointer = true,
 })
+
+hl.window_rule({
+	name = "hide-private-tagged",
+	match = {
+		tag = "private",
+	},
+	opaque = true,
+	border_color = { colors = { color6 } },
+	border_size = 4,
+})

@@ -106,6 +106,32 @@ hl.bind(mainMod .. " + f", function()
 end, { submap_universal = true })
 
 hl.bind(mainMod .. " + p", hl.dsp.window.pin(), { submap_universal = true })
+--
+
+-- Toggle window screen share prop + manage window private tag
+hl.bind(mainMod .. " + SHIFT + p", function()
+	local w = hl.get_active_window()
+	if not w then
+		return
+	end
+	local wt = w.tags
+	local function hasPrivate(tags)
+		for _, t in ipairs(tags) do
+			if t == "private" then
+				return true
+			end
+		end
+		return false
+	end
+
+	if hasPrivate(wt) then
+		hl.dispatch(hl.dsp.window.tag({ tag = "-private" }))
+		hl.dispatch(hl.dsp.window.set_prop({ prop = "no_screen_share", value = "off" }))
+	else
+		hl.dispatch(hl.dsp.window.tag({ tag = "+private" }))
+		hl.dispatch(hl.dsp.window.set_prop({ prop = "no_screen_share", value = "on" }))
+	end
+end)
 
 -- Global Window Binds
 hl.bind(mainMod .. " + SPACE", hl.dsp.window.center())
