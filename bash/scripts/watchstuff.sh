@@ -8,6 +8,10 @@
 
 #TODO: Cache last query, make mode to jump back to last stat'd ID
 
+#TODO: Create a state file that can track things such as the $VIDSRC_BASE
+
+#TODO: Add Vidsrc 404 filter to results
+
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
   notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
@@ -22,6 +26,7 @@ source "$LIB_WOFI" || {
 
 # Main Ctl vars
 MODE=""
+NEXT_MODE=""
 LOOP=true
 
 #
@@ -60,7 +65,7 @@ TMDB_EPISODE_SELECTED=""
 # Constructed URLS
 
 TMDB_EMBED_URL=""
-TMDB_POSTER_URL=""
+TMDB_IMAGE_URL=""
 
 #
 # Stores wofi vars
@@ -138,11 +143,11 @@ while [[ "$#" -gt 0 ]]; do
 done
 [[ -z "$MODE" ]] && _notify -a ct -e "Expected MODE to be set. Exiting" && exit 1
 
-# Update $TMDB_POSTER_URL, using TMDB_RESULT.poster_path
-_constructPosterURL() {
+# Update $TMDB_IMAGE_URL, using TMDB_RESULT.poster_path
+_constructImageURL() {
   local p="$(echo "$TMDB_RESULT" | jq -r '.poster_path // .backdrop_path')"
   local s="w185"
-  TMDB_POSTER_URL="https://image.tmdb.org/t/p/${s}/${p}"
+  TMDB_IMAGE_URL="https://image.tmdb.org/t/p/${s}/${p}"
 }
 
 # Update $TMDB_EMBED_URL, using URL Construct vars
@@ -207,6 +212,7 @@ _curlID() {
   return 0
 }
 
+# Attempts to _curlID, constructs type-based statString for _notify. If -t 1, kitten icat $TMDB_IMAGE_URL
 _statID() {
   if ! _curlID; then
     _notify -a ct -e "Could not find result for $TMDB_ID_SELECTED" && return 1
@@ -236,8 +242,8 @@ $(_nextAir)
 EOF
     )"
     [[ -t 1 ]] && {
-      _constructPosterURL
-      kitty +kitten icat --align left "$TMDB_POSTER_URL"
+      _constructImageURL
+      kitty +kitten icat --align left "$TMDB_IMAGE_URL"
     }
     _notify -a ct "$statString"
     ;;
@@ -253,13 +259,21 @@ Duration: $(echo "$TMDB_RESULT" | jq -r '.runtime // "unknown"')
 EOF
     )"
     [[ -t 1 ]] && {
-      _constructPosterURL
-      kitty +kitten icat --align left "$TMDB_POSTER_URL"
+      _constructImageURL
+      kitty +kitten icat --align left "$TMDB_IMAGE_URL"
     }
     _notify -a ct "$statString"
     ;;
   esac
 
+  return 0
+}
+
+# If $NEXT_MODE is set, swallow it into $MODE. $NEXT_MODE is then set to $1
+_consumeNextMode() {
+  [[ -z "$NEXT_MODE" ]] && return 1
+  MODE="$NEXT_MODE"
+  NEXT_MODE="$1"
   return 0
 }
 
@@ -301,6 +315,9 @@ while $LOOP; do
     ;;
 
   LAUNCH)
+    #TEST:
+    echo "$TMDB_RESULT" | jq >"$HOME/test/${TMDB_ID_SELECTED}_${TMDB_TYPE}_result.json"
+
     _constructEmbedURL
     firefox --new-window "$TMDB_EMBED_URL" &
     LOOP=false
