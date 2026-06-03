@@ -161,6 +161,50 @@ _performTransfer() {
 
     ;;
 
+  "REVPARSE")
+
+    shopt -s nullglob
+
+    local directory dname remote_dir
+    local file fname
+    local pc_list phone_file
+    local deleted=0 missing_dirs=0
+
+    for directory in "$SOURCE_PATH"/*; do
+      [[ ! -d "$directory" ]] && continue
+
+      dname="$(basename "$directory")"
+      remote_dir="$DESTINATION/$dname"
+
+      if ! adb shell "[ -d \"$remote_dir\" ]" >/dev/null 2>&1; then
+        _log "Skipping missing remote dir: $remote_dir"
+        ((missing_dirs++))
+        continue
+      fi
+
+      pc_list="$(find "$directory" -type f -name '*.mp3' 2>/dev/null | sed 's|.*/||' || true)"
+
+      phone_list="$(adb shell "find \"$remote_dir\" -type f 2>/dev/null | sed 's|.*/||'" || true)"
+
+      while IFS= read -r fname; do
+        [[ -z "$fname" ]] && continue
+
+        if ! grep -Fxq "$fname" <<<"$pc_list"; then
+          phone_file="$remote_dir/$fname"
+
+          adb shell "rm -f \"$phone_file\"" >/dev/null 2>&1 &&
+            _log "Deleted (revparse): $phone_file"
+
+          ((deleted++))
+        fi
+      done <<<"$phone_list"
+
+    done
+
+    echo "[REVPARSE] Deleted files: $deleted | Missing dirs: $missing_dirs"
+
+    ;;
+
   esac
 }
 
@@ -196,6 +240,11 @@ while [[ $# -gt 0 ]]; do
       SPECIFIED_DIRECTORIES+=("$1")
       shift
     done
+    ;;
+
+  -r | --revparse)
+    MODE="REVPARSE"
+    shift
     ;;
 
   -*)
