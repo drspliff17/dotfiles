@@ -7,10 +7,13 @@
 #TODO: build interactive menu prompts for when required args are not provided (or as a mode?)
 
 #TODO: Cache last query, make mode to jump back to last stat'd ID
+# Cache curled images when selecting an id for the first time
 
 #TODO: Create a state file that can track things such as the $VIDSRC_BASE
 
 #TODO: Add Vidsrc 404 filter to results
+
+#TODO: Create log system, which could then be parsed for history (or just make a history thing by itself)
 
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
@@ -45,9 +48,10 @@ TMDB_QUERY=""
 
 TMDB_RESULT=""
 TMDB_RESULT_COUNT=0
+TMDB_RESULT_IDS=()
 
 TMDB_DO_STAT=false
-TMDB_PASS_STAT=false
+TMDB_TV_STAT_INCLUDE_SEASONS=true
 
 #
 # Stores tmp path for curl query response
@@ -85,12 +89,7 @@ while [[ "$#" -gt 0 ]]; do
   case "$1" in
 
   -st | --stat)
-    TMDB_DO_STAT=true
-    shift
-    ;;
-
-  -ps | --pass)
-    TMDB_PASS_STAT=true
+    NEXT_MODE="STAT"
     shift
     ;;
 
@@ -150,9 +149,70 @@ _constructImageURL() {
   TMDB_IMAGE_URL="https://image.tmdb.org/t/p/${s}/${p}"
 }
 
+# Check return code of curl-ing $1, returns true if code is in [200 301 302], else false
+_validateURL() {
+  local retCode
+  retCode="$(curl -s -L -o /dev/null -w '%{http_code}' --max-time 5 "$1" 2>/dev/null)"
+  case "$retCode" in
+  200 | 301 | 302)
+    return 0
+    ;;
+  *)
+    return 1
+    ;;
+  esac
+}
+
+# Call _validateURL on each entry in TMDB_RESULT
+# _filterResultsByURL() {
+#   local input="$1"
+#   local type="$2"
+#   local season="${3:-1}"
+#   local episode="${4:-1}"
+#
+#   jq -c '.results[]' <<<"$input" |
+#     while IFS= read -r entry; do
+#       local id media_type url
+#
+#       id="$(jq -r '.id' <<<"$entry")"
+#       media_type="$(jq -r '.media_type' <<<"$entry")"
+#
+#       # skip people early
+#       [[ "$media_type" == "person" ]] && continue
+#
+#       url="$(_urlConstruct_FromArgs "$media_type" "$id" "$season" "$episode")"
+#
+#       if _validateURL "$url"; then
+#         printf '%s\n' "$entry"
+#       fi
+#     done |
+#     jq -s '{results: .}'
+# }
+
+# Formats given arguments into embed url
+_urlConstruct_FromArgs() {
+  local type="$1"
+  local id="$2"
+  local season="${3:-1}"
+  local episode="${4:-1}"
+
+  case "$type" in
+  tv)
+    echo "$VIDSRC_BASE/$type/$id/$season-$episode"
+    ;;
+  movie)
+    echo "$VIDSRC_BASE/$type/$id"
+    ;;
+  *)
+    return 1
+    ;;
+  esac
+  return 0
+}
+
 # Update $TMDB_EMBED_URL, using URL Construct vars
 _constructEmbedURL() {
-  local type
+  local type args
   if [[ -z "$TMDB_CACHE_QUERY" ]]; then
     if ! _curlID; then
       _notify -a ct -e "Failed to curl. ID = $TMDB_ID_SELECTED | TYPE = $TMDB_TYPE" && exit 1
@@ -162,20 +222,7 @@ _constructEmbedURL() {
   else
     type="$(cat "$TMDB_CACHE_QUERY" | jq -r --argjson id "$TMDB_ID_SELECTED" '.results[] | select(.id == $id) | .media_type')"
   fi
-  case "$type" in
-  tv)
-    #TODO: Add some validation of season / episode number
-
-    #NOTE: TEMP ASSERTION
-    [[ -z "$TMDB_EPISODE_SELECTED" ]] && TMDB_EPISODE_SELECTED=1
-    [[ -z "$TMDB_SEASON_SELECTED" ]] && TMDB_SEASON_SELECTED=1
-
-    TMDB_EMBED_URL="$VIDSRC_BASE/$type/$TMDB_ID_SELECTED/$TMDB_SEASON_SELECTED-$TMDB_EPISODE_SELECTED"
-    ;;
-  movie)
-    TMDB_EMBED_URL="$VIDSRC_BASE/$type/$TMDB_ID_SELECTED"
-    ;;
-  esac
+  TMDB_EMBED_URL="$(_urlConstruct_FromArgs "$type" "$TMDB_ID_SELECTED" "$TMDB_EPISODE_SELECTED" "$TMDB_SEASON_SELECTED")"
 }
 
 #
@@ -220,10 +267,34 @@ _statID() {
 
   local statString
 
+  # Returns empty if missing next_episode_to_air property
   _nextAir() {
     local nextData="$(echo "$TMDB_RESULT" | jq '.next_episode_to_air')"
     [[ -z "$nextData" || "$nextData" = "null" ]] && echo "" && return 0
     echo "Next Episode: $(echo "$nextData" | jq -r '"\(.air_date) [\(.name)]"')"
+  }
+
+  # Returns empty if missing .seasons property
+  _statTV_Seasons() {
+    ! $TMDB_TV_STAT_INCLUDE_SEASONS && echo "" && return 0
+    local seasons scount entry
+    local finalString=()
+    seasons="$(echo "$TMDB_RESULT" | jq '.seasons')"
+    scount="$(echo "$seasons" | jq 'length')"
+    for ((i = 0; i < "$scount"; i++)); do
+      entry="$(echo "$seasons" | jq --argjson index "$i" '.[$index]')"
+      finalString+=(
+        "$(
+          cat <<EOF
+
+[$(echo "$entry" | jq -r '.name')]
+ID: $(echo "$entry" | jq -r '.id')
+Episode Count: $(echo "$entry" | jq -r '.episode_count')
+EOF
+        )
+      ")
+    done
+    echo -e "${finalString[*]}"
   }
 
   case "$TMDB_TYPE" in
@@ -238,6 +309,7 @@ Episode Count: $(echo "$TMDB_RESULT" | jq -r '.number_of_episodes // "unknown"')
 First Aired: $(echo "$TMDB_RESULT" | jq -r '.first_air_date // "unknown"')
 Last Aired: $(echo "$TMDB_RESULT" | jq -r '.last_air_date // "unknown"')
 Status: $(echo "$TMDB_RESULT" | jq -r '.status // "unknown"')
+$(_statTV_Seasons)
 $(_nextAir)
 EOF
     )"
@@ -270,7 +342,7 @@ EOF
 }
 
 # If $NEXT_MODE is set, swallow it into $MODE. $NEXT_MODE is then set to $1
-_consumeNextMode() {
+_swallowNextMode() {
   [[ -z "$NEXT_MODE" ]] && return 1
   MODE="$NEXT_MODE"
   NEXT_MODE="$1"
@@ -286,6 +358,8 @@ while $LOOP; do
     if ! _curlQuery; then
       _notify -a ct "No results found for: $TMDB_QUERY ($TMDB_TYPE)" && exit 1
     else
+      #NOTE: Filter works but is slow
+      # TMDB_RESULT="$(_filterResultsByURL "$TMDB_RESULT" "$TMDB_TYPE" "$TMDB_SEASON_SELECTED" "$TMDB_EPISODE_SELECTED")"
       _cacheQuery
       TMDB_ID_SELECTED="$(
         echo "$TMDB_RESULT" |
@@ -299,11 +373,11 @@ while $LOOP; do
           sed -E 's/^\(([^)]+)\).*/\1/'
       )"
       [[ -z "$TMDB_ID_SELECTED" ]] && exit 0
-      if $TMDB_DO_STAT; then
-        MODE="STAT"
-      else
-        MODE="LAUNCH"
-      fi
+      #TODO: Replace with some other constructor function that can be reused in other $MODE(s)
+      TMDB_TYPE="$(echo "$TMDB_RESULT" | jq -r --argjson id "$TMDB_ID_SELECTED" '.results[] | select(.id == $id) | .media_type')"
+
+      [[ -z "$NEXT_MODE" ]] && NEXT_MODE="LAUNCH"
+      _swallowNextMode
     fi
     ;;
 
@@ -311,7 +385,13 @@ while $LOOP; do
     if ! _statID; then
       exit 1
     fi
-    LOOP=false
+
+    #TEST:
+    echo "$TMDB_RESULT" | jq >"$HOME/test/${TMDB_ID_SELECTED}_${TMDB_TYPE}_stat_result.json"
+
+    if ! _swallowNextMode; then
+      LOOP=false
+    fi
     ;;
 
   LAUNCH)
@@ -320,7 +400,10 @@ while $LOOP; do
 
     _constructEmbedURL
     firefox --new-window "$TMDB_EMBED_URL" &
-    LOOP=false
+
+    if ! _swallowNextMode; then
+      LOOP=false
+    fi
     ;;
 
   esac
