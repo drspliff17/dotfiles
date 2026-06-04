@@ -15,8 +15,6 @@
 
 #TODO: Create log system, which could then be parsed for history (or just make a history thing by itself)
 
-#TODO: Fix direct launch not working (bouncing to stat, when using -i)
-
 LIB_NOTIFY="$HOME/.config/bash/lib/notify.sh"
 source "$LIB_NOTIFY" || {
   notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
@@ -32,6 +30,7 @@ source "$LIB_WOFI" || {
 # Main Ctl vars
 MODE=""
 NEXT_MODE=""
+USE_CACHE=true
 LOOP=true
 
 #
@@ -39,6 +38,7 @@ LOOP=true
 
 VIDSRC_BASE="https://vidsrc-embed.ru/embed"
 TMDB_T="$(tr -d '\r\n ' <"$HOME/dev/data/env/.tmdb.env")"
+SYNC_SCRIPT="$HOME/dev/python/watchstuff_sync_db.py"
 
 TMDB_CACHE_DIR="$HOME/.cache/watchstuff"
 TMDB_CACHE_DB="$TMDB_CACHE_DIR/database.json"
@@ -123,11 +123,6 @@ while [[ "$#" -gt 0 ]]; do
     shift 2
     ;;
 
-  -fs | --full-sync)
-    MODE="FULL_SYNC"
-    shift
-    ;;
-
   -t | --type)
     [[ -z "$2" ]] && _notify -a ct -e "Type Expected" && exit 1
     case "$2" in
@@ -169,48 +164,21 @@ _constructImageURL() {
 }
 
 # Check return code of curl-ing $1, returns true if code is in [200 301 302], else false
-_validateURL() {
-  local retCode
-  retCode="$(curl -s -L -o /dev/null -w '%{http_code}' --max-time 5 "$1" 2>/dev/null)"
-  case "$retCode" in
-  200 | 301 | 302)
-    _logAdd "_validateURL: URL Valid: $1" "SUCCESS"
-    return 0
-    ;;
-  *)
-    _logAdd "_validateURL: URL Invalid: $1" "FAILED"
-    echo "[$retCode] STAUTS $1"
-    return 1
-    ;;
-  esac
-}
-
-# Call _validateURL on each entry in TMDB_RESULT
-# NOTE: soon to be replaced
-_filterResultsByURL() {
-  local input="$1"
-  local type="$2"
-  local season="${3:-1}"
-  local episode="${4:-1}"
-
-  jq -c '.results[]' <<<"$input" |
-    while IFS= read -r entry; do
-      local id media_type url
-
-      id="$(jq -r '.id' <<<"$entry")"
-      media_type="$(jq -r '.media_type' <<<"$entry")"
-
-      # skip people early
-      [[ "$media_type" == "person" ]] && continue
-
-      url="$(_urlConstruct_FromArgs "$media_type" "$id" "$season" "$episode")"
-
-      if _validateURL "$url"; then
-        printf '%s\n' "$entry"
-      fi
-    done |
-    jq -s '{results: .}'
-}
+# _validateURL() {
+#   local retCode
+#   retCode="$(curl -s -L -o /dev/null -w '%{http_code}' --max-time 5 "$1" 2>/dev/null)"
+#   case "$retCode" in
+#   200 | 301 | 302)
+#     _logAdd "_validateURL: URL Valid: $1" "SUCCESS"
+#     return 0
+#     ;;
+#   *)
+#     _logAdd "_validateURL: URL Invalid: $1" "FAILED"
+#     echo "[$retCode] STAUTS $1"
+#     return 1
+#     ;;
+#   esac
+# }
 
 # Formats given arguments into embed url
 _urlConstruct_FromArgs() {
@@ -233,19 +201,24 @@ _urlConstruct_FromArgs() {
   return 0
 }
 
+#FIX: TYPE NEEDS TO BE DERIVED FROM DB, NOT _CURLID
 # Update $TMDB_EMBED_URL, using URL Construct vars
+# _constructEmbedURL() {
+#   local type args
+#   if [[ -z "$TMDB_CACHE_QUERY" ]]; then
+#     if ! _curlID; then
+#       _notify -a ct -e "Failed to curl. ID = $TMDB_ID_SELECTED | TYPE = $TMDB_TYPE" && exit 1
+#     else
+#       type="$TMDB_TYPE"
+#     fi
+#   else
+#     type="$(cat "$TMDB_CACHE_QUERY" | jq -r --argjson id "$TMDB_ID_SELECTED" '.results[] | select(.id == $id) | .media_type')"
+#   fi
+#   TMDB_EMBED_URL="$(_urlConstruct_FromArgs "$type" "$TMDB_ID_SELECTED" "$TMDB_EPISODE_SELECTED" "$TMDB_SEASON_SELECTED")"
+# }
+
 _constructEmbedURL() {
-  local type args
-  if [[ -z "$TMDB_CACHE_QUERY" ]]; then
-    if ! _curlID; then
-      _notify -a ct -e "Failed to curl. ID = $TMDB_ID_SELECTED | TYPE = $TMDB_TYPE" && exit 1
-    else
-      type="$TMDB_TYPE"
-    fi
-  else
-    type="$(cat "$TMDB_CACHE_QUERY" | jq -r --argjson id "$TMDB_ID_SELECTED" '.results[] | select(.id == $id) | .media_type')"
-  fi
-  TMDB_EMBED_URL="$(_urlConstruct_FromArgs "$type" "$TMDB_ID_SELECTED" "$TMDB_EPISODE_SELECTED" "$TMDB_SEASON_SELECTED")"
+  TMDB_EMBED_URL="$(_urlConstruct_FromArgs "$TMDB_TYPE" "$TMDB_ID_SELECTED" "$TMDB_EPISODE_SELECTED" "$TMDB_SEASON_SELECTED")"
 }
 
 #
@@ -257,34 +230,34 @@ _cacheQuery() {
 
 #
 # Updates $TMDB_RESULT && $TMDB_RESULT_COUNT, using $TMDB_QUERY. Returns false if no results are found
-_curlQuery() {
-  TMDB_RESULT="$(curl -s \
-    "https://api.themoviedb.org/3/search/multi?query=$(printf '%s' "$TMDB_QUERY" | jq -sRr @uri)" \
-    -H "Authorization: Bearer $TMDB_T" \
-    -H "Accept: application/json")"
-
-  TMDB_RESULT_COUNT="$(echo "$TMDB_RESULT" | jq -r '.results | length')"
-  [[ "$TMDB_RESULT_COUNT" -eq 0 ]] && _logAdd "_curlQuery: No results found: Q[$TMDB_QUERY]" "FAILED" && return 1
-  _logAdd "_curlQuery: $TMDB_RESULT_COUNT results found: Q[$TMDB_QUERY]" "SUCCESS" && return 0
-}
+# _curlQuery() {
+#   TMDB_RESULT="$(curl -s \
+#     "https://api.themoviedb.org/3/search/multi?query=$(printf '%s' "$TMDB_QUERY" | jq -sRr @uri)" \
+#     -H "Authorization: Bearer $TMDB_T" \
+#     -H "Accept: application/json")"
+#
+#   TMDB_RESULT_COUNT="$(echo "$TMDB_RESULT" | jq -r '.results | length')"
+#   [[ "$TMDB_RESULT_COUNT" -eq 0 ]] && _logAdd "_curlQuery: No results found: Q[$TMDB_QUERY]" "FAILED" && return 1
+#   _logAdd "_curlQuery: $TMDB_RESULT_COUNT results found: Q[$TMDB_QUERY]" "SUCCESS" && return 0
+# }
 
 # Updates $TMDB_RESULT, using $TMDB_ID_SELECTED and $TMDB_TYPE. Returns false if id is not found
-_curlID() {
-  [[ -z "$TMDB_ID_SELECTED" ]] && _notify -a ct -e "Requires ID to query" && exit 1
-  [[ -z "$TMDB_TYPE" ]] && _notify -a ct -e "Requires Type to query" && exit 1
-
-  TMDB_RESULT="$(curl -s \
-    "https://api.themoviedb.org/3/${TMDB_TYPE}/${TMDB_ID_SELECTED}" \
-    -H "Authorization: Bearer $TMDB_T" \
-    -H "AcceptL application/json")"
-
-  echo "$TMDB_RESULT" | jq -e '.id' >/dev/null 2>&1 || {
-    _logAdd "_curlID: Failed to find: $TMDB_ID_SELECTED" "FAILED"
-    return 1
-  }
-  _logAdd "_curlID: Found: $TMDB_ID_SELECTED" "SUCCESS"
-  return 0
-}
+# _curlID() {
+#   [[ -z "$TMDB_ID_SELECTED" ]] && _notify -a ct -e "Requires ID to query" && exit 1
+#   [[ -z "$TMDB_TYPE" ]] && _notify -a ct -e "Requires Type to query" && exit 1
+#
+#   TMDB_RESULT="$(curl -s \
+#     "https://api.themoviedb.org/3/${TMDB_TYPE}/${TMDB_ID_SELECTED}" \
+#     -H "Authorization: Bearer $TMDB_T" \
+#     -H "AcceptL application/json")"
+#
+#   echo "$TMDB_RESULT" | jq -e '.id' >/dev/null 2>&1 || {
+#     _logAdd "_curlID: Failed to find: $TMDB_ID_SELECTED" "FAILED"
+#     return 1
+#   }
+#   _logAdd "_curlID: Found: $TMDB_ID_SELECTED" "SUCCESS"
+#   return 0
+# }
 
 # Attempts to _curlID, constructs type-based statString for _notify. If -t 1, kitten icat $TMDB_IMAGE_URL
 _statID() {
@@ -380,85 +353,107 @@ _swallowNextMode() {
   return 0
 }
 
-# Pulls data from themoviedb, stores entry in $TMDB_CACHE_DB
-_db_add() {
-  local type="$1" id="$2"
-  local data
-  data="$(curl -s \
-    "https://api.themoviedb.org/3/${type}/${id}" \
-    -H "Authorization: Bearer $TMDB_T" \
-    -H "AcceptL application/json")"
-
-  echo "$data" | jq -e '.id' >/dev/null 2>&1 || {
-    _logAdd "_db_add: Failed to find data for: $id" "FAILED"
-    return 1
+# Creates database, if it does not alreay exist
+_db_init() {
+  [[ ! -f "$TMDB_CACHE_DB" ]] && {
+    cat <<EOF >"$TMDB_CACHE_DB"
+{
+  "tv" : {
+    "data": []
+  },
+  "movie" : {
+    "data": []
   }
+}
+EOF
+  }
+}
+
+# Replaces _curlQuery
+_db_query() {
+  local qmode="${1:-Wofi}"
+  local type="${2:-any}"
+  local query="${3:-$TMDB_QUERY}"
+  local found filter selected selID
   case "$type" in
   tv)
-    tmp="$(mktemp)"
-    jq --argjson data "$data" \
-      '.tv.data += [{id: $data.id, name: $data.name}]' \
-      "$TMDB_CACHE_DB" >"$tmp" && mv "$tmp" "$TMDB_CACHE_DB"
-    _logAdd "_db_add: Added [$type] $id" "SUCCESS"
+    filter='.tv.data'
     ;;
   movie)
-    tmp="$(mktemp)"
-    jq --argjson data "$data" \
-      '.movie.data += [{id: $data.id, title: ($data.title // $data.name)}]' \
-      "$TMDB_CACHE_DB" >"$tmp" && mv "$tmp" "$TMDB_CACHE_DB"
-    _logAdd "_db_add: Added [$type] $id" "SUCCESS"
+    filter='.movie.data'
+    ;;
+  any)
+    #NOTE: Temp remopved until solution to identifying type from mixed can be divined
+    return 1
+    # filter='.tv.data + .movie.data'
     ;;
   *)
-    _logAdd "_db_add: Invalid .media_type in data. ID [$id]" "FAILED"
+    _logAdd "_db_query Invalid type given: $type" "ERROR"
+    return 1
     ;;
   esac
-}
-
-# Update contents of $TMDB_CACHE_DB
-_db_sync() {
-  local type="$1"
-  local base_url="$VIDSRC_BASE/$type"
-  local url="$VIDSRC_BASE/$type"
-  case "$type" in
-  tv | movie)
+  case "$qmode" in
+  Wofi)
+    found="$(jq -r "$filter | .[] | \"\(.id) - \(.title)\"" "$TMDB_CACHE_DB")"
+    if [[ -n "$query" ]]; then
+      found="$(printf '%s\n' "$found" | rg -i "$query")"
+    fi
+    selected="$(printf '%s\n' "$found" | wofi -d "${W_ARGS[@]}")"
+    [[ -z "$selected" ]] && return 1
+    selID="$(echo "$selected" | cut -f1 -d' ')"
+    #TODO: IMP Data gather(?) for extended menu but for now::
+    TMDB_ID_SELECTED="$selID"
+    TMDB_TYPE="$type"
+    MODE="LAUNCH"
+    ;;
+  Tty)
+    #TODO:
     ;;
   *)
     return 1
     ;;
   esac
-  local eid=0 failed=0 limit=2000
-
-  while true; do
-    if [[ "$type" = "movie" ]]; then
-      url="$base_url/$eid"
-    else
-      url="${base_url}/${eid}/1-1"
-    fi
-
-    if jq -e --arg type "$type" --argjson id "$eid" \
-      '.[$type].data[] | select(.id == $id)' \
-      "$TMDB_CACHE_DB" >/dev/null; then
-      echo "[INFO] Skipping $eid (Already Present)"
-      ((eid++))
-      continue
-    fi
-
-    if _validateURL "$url"; then
-      _db_add "$type" "$eid"
-      echo "[INFO] Added <$type> $eid"
-    else
-      ((failed++))
-      echo "[FAILED] <$type> $eid (T = $failed/$limit)"
-    fi
-    sleep 5 #TEST: Hopefully bypasses temp 1015 block ERR
-    [[ $failed -eq $limit ]] && {
-      _logAdd "_db_sync: Failed limit reached, exiting"
-      return 0
-    }
-    ((eid++))
-  done
-  return 0
 }
+
+# _db_query() {
+#   [[ ! -f "$TMDB_CACHE_DB" ]] && {
+#     _logAdd "_curlQuery: DB not found at $TMDB_CACHE_DB" "FAILED"
+#     return 1
+#   }
+#   local q="${1:=$TMDB_QUERY}" t="${2:-$TMDB_TYPE}"
+#
+#   TMDB_RESULT="$(jq --arg q "$q" --arg type "$t" '
+#     def match:
+#       (
+#         (.title // "") |
+#         ascii_downcase
+#       ),
+#       (
+#         (.name // "") |
+#         ascii_downcase
+#       );
+#
+#     (.movie.data + .tv.data)
+#     | map(
+#         select(
+#           ($type == "" or .media_type == $type)
+#           and (
+#             ((.title // .name // "") | ascii_downcase | contains($q | ascii_downcase))
+#           )
+#         )
+#       )
+#   ' "$TMDB_CACHE_DB")"
+#
+#   TMDB_RESULT_COUNT="$(echo "$TMDB_RESULT" | jq 'length')"
+#
+#   [[ "$TMDB_RESULT_COUNT" -eq 0 ]] && {
+#     _logAdd "_curlQuery: No results found: Q[$TMDB_QUERY]" "FAILED"
+#     return 1
+#   }
+#
+#   _logAdd "_curlQuery: $TMDB_RESULT_COUNT results found: Q[$TMDB_QUERY]" "SUCCESS"
+#   return 0
+# }
 
 # [[ "$MODE" != "QUERY" && $TMDB_DO_STAT ]] && MODE="STAT"
 while $LOOP; do
@@ -468,30 +463,29 @@ while $LOOP; do
   QUERY)
     _logAdd "Entered Query Mode" "STATUS"
 
-    if ! _curlQuery; then
-      _notify -a ct "No results found for: $TMDB_QUERY ($TMDB_TYPE)" && exit 1
-    else
-      #NOTE: Filter works but is slow
-      #TMDB_RESULT="$(_filterResultsByURL "$TMDB_RESULT" "$TMDB_TYPE" "$TMDB_SEASON_SELECTED" "$TMDB_EPISODE_SELECTED")"
-      _cacheQuery
-      TMDB_ID_SELECTED="$(
-        echo "$TMDB_RESULT" |
-          jq -r --arg type "$TMDB_TYPE" '
-      .results[]
-      | select(.media_type != "person")
-      | select($type == "" or .media_type == $type)
-      | "(\(.id)) \(.name // .title) [\(.media_type)] [\(.release_date // .first_air_date // "unknown")]"
-    ' |
-          wofi -d "${W_ARGS[@]}" |
-          sed -E 's/^\(([^)]+)\).*/\1/'
-      )"
-      [[ -z "$TMDB_ID_SELECTED" ]] && exit 0
-      #TODO: Replace with some other constructor function that can be reused in other $MODE(s)
-      TMDB_TYPE="$(echo "$TMDB_RESULT" | jq -r --argjson id "$TMDB_ID_SELECTED" '.results[] | select(.id == $id) | .media_type')"
+    _db_query "Wofi" "$TMDB_TYPE" "$TMDB_QUERY"
 
-      [[ -z "$NEXT_MODE" ]] && NEXT_MODE="LAUNCH"
-      _swallowNextMode
-    fi
+    #TEST:
+    # if ! _curlQuery; then
+    #   _notify -a ct "No results found for: $TMDB_QUERY ($TMDB_TYPE)" && exit 1
+    # else
+    #   _cacheQuery
+    #   TMDB_ID_SELECTED="$(
+    #     echo "$TMDB_RESULT" |
+    #       jq -r --arg type "$TMDB_TYPE" '
+    #   .results[]
+    #   | select(.media_type != "person")
+    #   | select($type == "" or .media_type == $type)
+    #   | "(\(.id)) \(.name // .title) [\(.media_type)] [\(.release_date // .first_air_date // "unknown")]"
+    # ' |
+    #       wofi -d "${W_ARGS[@]}" |
+    #       sed -E 's/^\(([^)]+)\).*/\1/'
+    #   )"
+    #
+    # fi
+    #
+    # [[ -z "$NEXT_MODE" ]] && NEXT_MODE="LAUNCH"
+    # _swallowNextMode
     ;;
 
   STAT)
@@ -514,38 +508,6 @@ while $LOOP; do
     _constructEmbedURL
     firefox --new-window "$TMDB_EMBED_URL" &
 
-    if ! _swallowNextMode; then
-      LOOP=false
-    fi
-    ;;
-
-  FULL_SYNC)
-    mkdir -p "$TMDB_CACHE_DIR"
-    [[ ! -f "$TMDB_CACHE_DB" ]] && {
-      cat <<EOF >"$TMDB_CACHE_DB"
-{
-  "tv" : {
-    "data": []
-  },
-  "movie" : {
-    "data": []
-  }
-}
-EOF
-      _logAdd "Created: $TMDB_CACHE_DB"
-    }
-
-    _notify -a ct "Starting sync for type: TV Series"
-    _db_sync "tv" || {
-      _notify -a ct -e "Failed to sync"
-      _logAdd "_db_sync: Failed to sync [TV]" "ERROR"
-    }
-
-    _notify -a ct "Starting sync for type: Movie"
-    _db_sync "movie" || {
-      _notify -a ct -e "Failed to sync"
-      _logAdd "_db_sync: Failed to sync [Movie]" "ERROR"
-    }
     if ! _swallowNextMode; then
       LOOP=false
     fi
