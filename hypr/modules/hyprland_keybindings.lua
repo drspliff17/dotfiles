@@ -417,7 +417,9 @@ hl.bind(mainMod .. " + u", hl.dsp.submap("Misc"))
 hl.define_submap("Misc", function()
 	-- Colour Picker
 	hl.bind("p", function()
-		hl.dispatch(hl.dsp.exec_cmd("hyprpicker | wl-copy"))
+		hl.dispatch(
+			hl.dsp.exec_cmd('hyprpicker | wl-copy && notify-send -u low -t 2000 -a center-text "Copied: $(wl-paste)" ')
+		)
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 
@@ -425,6 +427,12 @@ hl.define_submap("Misc", function()
 	hl.bind("e", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_emoji_picker.sh -c"))
+	end)
+
+	-- Watch Stuff
+	hl.bind("w", function()
+		hl.dispatch(hl.dsp.exec_cmd("~/.config/bash/scripts/watchstuff.sh -w"))
+		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 
 	-- Clipboard mode
