@@ -41,7 +41,7 @@ LOOP=true
 
 # Const vars
 
-VIDSRC_BASE="https://vidsrc-embed.ru/embed"
+VIDSRC_BASE="https://vidsrc-embed.su/embed"
 TMDB_T="$(tr -d '\r\n ' <"$HOME/dev/data/env/.tmdb.env")"
 SYNC_SCRIPT="$HOME/dev/python/watchstuff_sync_db.py"
 
@@ -377,19 +377,20 @@ _dbQuery() {
 
 # Query the $TMDB_CACHE_RECENT_STAT file
 _dbRecents() {
-  local found selection type
+  local found selection type w_args
   local file="$TMDB_CACHE_RECENT_STAT"
-  [[ "$(jq '.data | length' "$file")" -eq 0 ]] && return 1
+  local count="$(jq '.data | length' "$file")"
+  [[ "$count" -eq 0 ]] && return 1
 
-  found="$(jq -r ' .data.[] | "[\(if has("number_of_episodes") then "tv" else "movie" end)] \(.id) - \(.title // .name)" ' "$file")"
-  selection="$(printf '%s\n' "$found" | wofi -d)"
+  _wofiConstructFromArgs w_args -p "Select from Recents" -w "30%" -h "30%" -cf "$WOFI_C_CENTER"
+  found="$(jq -r ' .data.[] | "[\(if has("number_of_episodes") then "tv" else "movie" end)] \(.id) - \(.title // .name)" ' "$file" | sort -u)"
+  selection="$(printf '%s\n' "$found" | wofi -d "${w_args[@]}")"
   [[ -z "$selection" ]] && return 1
+
   type="$(echo "$selection" | cut -f1 -d ' ')"
   type="${type//[\[\]]/}"
   TMDB_ID_SELECTED="$(echo "$selection" | cut -f2 -d ' ')"
   TMDB_TYPE="$type"
-  _notify "ID: $TMDB_ID_SELECTED | TYPE: $TMDB_TYPE"
-  exit 0
 }
 
 # Main function to handle wofi interactive menu
@@ -415,14 +416,20 @@ _wofiInteractiveMenu() {
       ;;
 
     type)
-      _wofiConstructFromArgs w_args -p "What would you like to watch?" -w "10%" -l 2 -cf "$WOFI_C_CENTER"
-      selection="$(echo -e "TV Series\nMovie" | wofi -d "${w_args[@]}")"
+      _wofiConstructFromArgs w_args -p "Pick Mode" -w "10%" -l 3 -cf "$WOFI_C_CENTER"
+      selection="$(echo -e "TV Series\nMovie\nRecents" | wofi -d "${w_args[@]}")"
       case "$selection" in
       "TV Series") type="tv" ;;
       "Movie") type="movie" ;;
+      "Recents") mode="recent" && continue ;;
       *) return 1 ;;
       esac
       mode="menu"
+      ;;
+
+    recent)
+      _dbRecents || exit 1
+      NEXT_MODE="LAUNCH" && return 0
       ;;
 
     season)
@@ -451,8 +458,6 @@ _wofiInteractiveMenu() {
 ## Init
 _dbInit
 _cacheInit
-
-_dbRecents
 
 ## Arg Parsing
 while [[ "$#" -gt 0 ]]; do
