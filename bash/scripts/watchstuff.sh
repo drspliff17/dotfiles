@@ -83,8 +83,7 @@ W_ARGS=()
 #
 # Handle tmp file cleanup
 _cleanup() {
-  # [[ -e "$TMDB_CACHE_QUERY" ]] && rm "$TMDB_CACHE_QUERY"
-  echo "ENDED"
+  echo "[ENDED]"
 }
 
 trap '_cleanup' EXIT
@@ -92,6 +91,7 @@ trap '_cleanup' EXIT
 ## Cache Dir Helpers
 
 _cacheInit() {
+  [[ -f "$TMDB_CACHE_RECENT_STAT" ]] && return 1
   cat <<EOF >"$TMDB_CACHE_RECENT_STAT"
 {
   "data": []
@@ -104,6 +104,7 @@ EOF
   # }
   # EOF
 
+  return 1
 }
 
 # Create entry into log file
@@ -300,7 +301,7 @@ EOF
 
 # Replaces _curlQuery
 _dbQuery() {
-  local qmode type query file
+  local qmode type query
   local echoResult=false
   local found filter selected selID
 
@@ -345,29 +346,51 @@ _dbQuery() {
     return 1
     ;;
   esac
+
   case "$qmode" in
   Wofi)
     found="$(jq -r "$filter | .[] | \"\(.id) - \(.title)\"" "$TMDB_CACHE_DB")"
+
     if [[ -n "$query" ]]; then
       found="$(printf '%s\n' "$found" | rg -i "$query")"
     fi
+
     selected="$(printf '%s\n' "$found" | wofi -d "${W_ARGS[@]}")"
     [[ -z "$selected" ]] && return 1
     selID="$(echo "$selected" | cut -f1 -d' ')"
+
     $echoResult && echo "$selected" && return 0
     TMDB_ID_SELECTED="$selID"
     TMDB_TYPE="$type"
     ;;
+
   Tty)
     #TODO:
     ;;
+
   *)
     return 1
     ;;
+
   esac
 }
 
-_dbRecents
+# Query the $TMDB_CACHE_RECENT_STAT file
+_dbRecents() {
+  local found selection type
+  local file="$TMDB_CACHE_RECENT_STAT"
+  [[ "$(jq '.data | length' "$file")" -eq 0 ]] && return 1
+
+  found="$(jq -r ' .data.[] | "[\(if has("number_of_episodes") then "tv" else "movie" end)] \(.id) - \(.title // .name)" ' "$file")"
+  selection="$(printf '%s\n' "$found" | wofi -d)"
+  [[ -z "$selection" ]] && return 1
+  type="$(echo "$selection" | cut -f1 -d ' ')"
+  type="${type//[\[\]]/}"
+  TMDB_ID_SELECTED="$(echo "$selection" | cut -f2 -d ' ')"
+  TMDB_TYPE="$type"
+  _notify "ID: $TMDB_ID_SELECTED | TYPE: $TMDB_TYPE"
+  exit 0
+}
 
 # Main function to handle wofi interactive menu
 _wofiInteractiveMenu() {
@@ -381,10 +404,10 @@ _wofiInteractiveMenu() {
       [[ -z "$type" ]] && mode="type" && continue
       [[ -z "$query" ]] && mode="query" && continue
 
-      [[ "$type" = "tv" ]] && {
-        [[ -z "$TMDB_SEASON_SELECTED" ]] && mode="season" && continue
-        [[ -z "$TMDB_EPISODE_SELECTED" ]] && mode="episode" && continue
-      }
+      # [[ "$type" = "tv" ]] && {
+      #   [[ -z "$TMDB_SEASON_SELECTED" ]] && mode="season" && continue
+      #   [[ -z "$TMDB_EPISODE_SELECTED" ]] && mode="episode" && continue
+      # }
 
       _dbQuery -t "$type" -q "$query" -m Wofi -f
       [[ -z "$TMDB_ID_SELECTED" ]] && return 1
@@ -428,6 +451,8 @@ _wofiInteractiveMenu() {
 ## Init
 _dbInit
 _cacheInit
+
+_dbRecents
 
 ## Arg Parsing
 while [[ "$#" -gt 0 ]]; do
