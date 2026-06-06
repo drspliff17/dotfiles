@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#TODO: Set about renaming functions to prefix with _wofi, and their usages when i can be bothered
+
+WOFI_LOG="$HOME/.config/wofi/state/wofi_lib.log"
+
 WOFI_C_DEFAULT="$HOME/.config/wofi/config"
 WOFI_C_CENTER="$HOME/.config/wofi/center-align-config"
 
@@ -10,6 +14,11 @@ WOFI_SORT=""
 WOFI_CONFIG=""
 WOFI_LINES=""
 WOFI_COLUMNS=""
+
+_wofiLog() {
+  local msg="$1" level="${2:-INFO}" ts="$(date)"
+  echo "[$ts] <$level> $msg" >>"$WOFI_LOG"
+}
 
 _captureMonitor() {
   local monitor="$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')"
@@ -37,4 +46,71 @@ _construct() {
   [[ -n $WOFI_CONFIG ]] && _out+=("--conf" "$WOFI_CONFIG")
 
   _captureMonitor
+}
+
+# Like construct, except not explicitly tied to WOFI_** variables
+_wofiConstructFromArgs() {
+  [[ "$#" -lt 2 ]] && _wofiLog "$0::bash/lib/wofi_construct.sh::_constructFromArg: Not enough arguments provided" "ERROR" && return 1
+  local -n _out="$1"
+  shift
+  local prompt width height columns lines sort config
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+    -p | --prompt)
+      prompt="$2"
+      shift 2
+      ;;
+
+    -w | --width)
+      width="$2"
+      shift 2
+      ;;
+
+    -h | --height)
+      height="$2"
+      shift 2
+      ;;
+
+    -c | --columns)
+      columns="$2"
+      shift 2
+      ;;
+
+    -l | --lines)
+      lines="$2"
+      shift 2
+      ;;
+
+    -s | --sort)
+      sort="$2"
+      shift 2
+      ;;
+
+    -cf | --config)
+      config="$2"
+      shift 2
+      ;;
+
+    -*)
+      _wofiLog "$0::bash/lib/wofi_construct.sh::_constructFromArg: Invalid option given: $1" "ERROR"
+      shift
+      ;;
+    *)
+      _wofiLog "$0::bash/lib/wofi_construct.sh::_constructFromArg: Invalid value given: $1" "ERROR"
+      shift
+      ;;
+    esac
+  done
+
+  _out=()
+  [[ -n $prompt ]] && _out+=("--prompt" "$prompt")
+  [[ -n $width ]] && _out+=("--width" "$width")
+  [[ -n $height ]] && _out+=("--height" "$height")
+  [[ -n $columns ]] && _out+=("--columns" "$columns")
+  [[ -n $lines ]] && _out+=("--lines" "$lines")
+  [[ -n $sort ]] && _out+=("-O" "$sort")
+  [[ -n $conf ]] && _out+=("--conf" "$conf")
+
+  _captureMonitor
+  return 0
 }
