@@ -6,6 +6,7 @@ require("modules.hyprland_permissions")
 require("modules.hyprland_monitors")
 require("modules.hyprland_workspace_rules")
 require("modules.hyprland_window_rules")
+require("modules.hyprland_layer_rules")
 require("modules.hyprland_visuals")
 
 require("modules.hyprland_input")
