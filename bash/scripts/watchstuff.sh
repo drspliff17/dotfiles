@@ -48,6 +48,8 @@ SYNC_SCRIPT="$HOME/dev/python/watchstuff_sync_db.py"
 TMDB_CACHE_DIR="$HOME/.cache/watchstuff"
 TMDB_CACHE_DB="$TMDB_CACHE_DIR/database.json"
 TMDB_CACHE_LOG="$TMDB_CACHE_DIR/watchstuff.log"
+TMDB_CACHE_RECENT_STAT="$TMDB_CACHE_DIR/recent_stat.json"
+TMDB_CACHE_HISTORY="$TMDB_CACHE_DIR/history.json"
 
 # Parameter vars
 
@@ -89,11 +91,44 @@ trap '_cleanup' EXIT
 
 ## Cache Dir Helpers
 
+_cacheInit() {
+  cat <<EOF >"$TMDB_CACHE_RECENT_STAT"
+{
+  "data": []
+}
+EOF
+
+  #   cat <<EOF >"$TMDB_CACHE_HISTORY"
+  # {
+  #   "data": []
+  # }
+  # EOF
+
+}
+
 # Create entry into log file
 _logAdd() {
   local msg="$1" level="${2:-INFO}" file="${3:-$TMDB_CACHE_LOG}" ts="$(date)"
   [[ -z "$msg" ]] && _notify "Log called, but no content given. You silly spoon." && return 1
   echo "[$ts] - ($level) :: $msg" >>"$file"
+}
+
+# Ensures a max number of entries
+_cacheStatPurge() {
+  local max=50
+  local min=25
+  [[ "$(jq '.data | length')" -ge $max ]] && {
+    #TODO: this + same for history
+    return 0
+  }
+  return 1
+}
+
+# Append stat results to $TMDB_CACHE_RECENT_STAT
+_cacheStat() {
+  local tmp="$(mktemp)"
+  jq --argjson entry "$TMDB_RESULT" '.data += [$entry]' "$TMDB_CACHE_RECENT_STAT" >tmp && mv tmp "$TMDB_CACHE_RECENT_STAT"
+  _logAdd "Cached $TMDB_ID_SELECTED to $TMDB_CACHE_RECENT_STAT" "STATUS"
 }
 
 ## Main Helpers
@@ -209,7 +244,7 @@ EOF
       _constructImageURL
       kitty +kitten icat --align left "$TMDB_IMAGE_URL"
     }
-    _notify -a ct "$statString"
+    echo "$statString"
     ;;
 
   movie)
@@ -226,7 +261,7 @@ EOF
       _constructImageURL
       kitty +kitten icat --align left "$TMDB_IMAGE_URL"
     }
-    _notify -a ct "$statString"
+    echo "$statString"
     ;;
   esac
 
@@ -246,7 +281,7 @@ _swallowNextMode() {
 ## Database Helpers
 
 # Creates database, if it does not alreay exist
-_db_init() {
+_dbInit() {
   [[ ! -f "$TMDB_CACHE_DB" ]] && {
     cat <<EOF >"$TMDB_CACHE_DB"
 {
@@ -264,8 +299,8 @@ EOF
 #TODO: Upgrade to none positional-based args and add a echo mode so it may be used elsewhere
 
 # Replaces _curlQuery
-_db_query() {
-  local qmode type query
+_dbQuery() {
+  local qmode type query file
   local echoResult=false
   local found filter selected selID
 
@@ -306,7 +341,7 @@ _db_query() {
     # filter='.tv.data + .movie.data'
     ;;
   *)
-    _logAdd "_db_query Invalid type given: $type" "ERROR"
+    _logAdd "_dbQuery Invalid type given: $type" "ERROR"
     return 1
     ;;
   esac
@@ -332,23 +367,32 @@ _db_query() {
   esac
 }
 
+_dbRecents
+
 # Main function to handle wofi interactive menu
 _wofiInteractiveMenu() {
   local mode="menu"
   local w_args=()
   local type query selection
+  local file="$TMDB_CACHE_DB"
   while true; do
     case "$mode" in
     menu)
       [[ -z "$type" ]] && mode="type" && continue
       [[ -z "$query" ]] && mode="query" && continue
-      _db_query -t "$type" -q "$query" -m Wofi
+
+      [[ "$type" = "tv" ]] && {
+        [[ -z "$TMDB_SEASON_SELECTED" ]] && mode="season" && continue
+        [[ -z "$TMDB_EPISODE_SELECTED" ]] && mode="episode" && continue
+      }
+
+      _dbQuery -t "$type" -q "$query" -m Wofi -f
       [[ -z "$TMDB_ID_SELECTED" ]] && return 1
       NEXT_MODE="LAUNCH" && return 0
       ;;
 
     type)
-      _wofiConstructFromArgs w_args -p "What would you like to watch?" -w "20%" -l 2 -cf "$WOFI_C_CENTER"
+      _wofiConstructFromArgs w_args -p "What would you like to watch?" -w "10%" -l 2 -cf "$WOFI_C_CENTER"
       selection="$(echo -e "TV Series\nMovie" | wofi -d "${w_args[@]}")"
       case "$selection" in
       "TV Series") type="tv" ;;
@@ -356,6 +400,14 @@ _wofiInteractiveMenu() {
       *) return 1 ;;
       esac
       mode="menu"
+      ;;
+
+    season)
+      #TODO:
+      ;;
+
+    episode)
+      #TODO:
       ;;
 
     #TODO: Implement a view latest thing here, maybe like !latest !new or something
@@ -373,8 +425,11 @@ _wofiInteractiveMenu() {
   done
 }
 
-#
-# Arg Parsing
+## Init
+_dbInit
+_cacheInit
+
+## Arg Parsing
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
 
@@ -453,7 +508,7 @@ while $LOOP; do
     _logAdd "Entered Query Mode" "STATUS"
 
     _wofiConstructFromArgs W_ARGS -p "Enter Search Query" -cf "$WOFI_C_CENTER" -w "40%" -h "5%"
-    _db_query -m "Wofi" -t "$TMDB_TYPE" -q "$TMDB_QUERY" || exit 1
+    _dbQuery -m "Wofi" -t "$TMDB_TYPE" -q "$TMDB_QUERY" || exit 1
 
     [[ -z "$NEXT_MODE" ]] && NEXT_MODE="LAUNCH"
     _swallowNextMode
@@ -463,6 +518,7 @@ while $LOOP; do
     if ! _statID; then
       exit 1
     fi
+    _cacheStat "$TMDB_RESULT"
 
     if ! _swallowNextMode; then
       LOOP=false
@@ -473,6 +529,13 @@ while $LOOP; do
   LAUNCH)
     _constructEmbedURL
     firefox --new-window "$TMDB_EMBED_URL" &
+
+    [[ -z "$TMDB_RESULT" ]] && {
+      if ! _statID; then
+        exit 1
+      fi
+      _cacheStat "$TMDB_RESULT"
+    }
 
     if ! _swallowNextMode; then
       LOOP=false
