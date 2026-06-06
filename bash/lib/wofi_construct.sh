@@ -109,7 +109,7 @@ _wofiConstructFromArgs() {
   [[ -n $columns ]] && _out+=("--columns" "$columns")
   [[ -n $lines ]] && _out+=("--lines" "$lines")
   [[ -n $sort ]] && _out+=("-O" "$sort")
-  [[ -n $conf ]] && _out+=("--conf" "$conf")
+  [[ -n $config ]] && _out+=("--conf" "$config")
 
   _captureMonitor
   return 0
