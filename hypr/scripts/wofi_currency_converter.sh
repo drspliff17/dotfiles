@@ -154,10 +154,14 @@ _validateArg() {
 }
 
 # Main
-
-if _calculateTS_Diff; then
+if [[ ! -f "$CACHE" ]]; then
   _cacheData
+else
+  if _calculateTS_Diff; then
+    _cacheData
+  fi
 fi
+
 mapfile -t VALID_CURS < <(jq -r '.rates | keys_unsorted[]' "$CACHE")
 
 # Parse arguments
@@ -170,7 +174,7 @@ while [[ "$#" -gt 0 ]]; do
 
   -s | --src | source)
     _validateArg "cur" "$2" || {
-      _notify -a ct -e "Source: Invalid Currency Given: $SOURCE_CUR"
+      _notify -a ct -e "Source: Invalid Currency Given: $2"
       exit 1
     }
     SOURCE_CUR="$2"
@@ -179,7 +183,7 @@ while [[ "$#" -gt 0 ]]; do
 
   -t | --trg | target)
     _validateArg "cur" "$2" || {
-      _notify -a ct -e "Target: Invalid Currency Given: $TARG_CUR"
+      _notify -a ct -e "Target: Invalid Currency Given: $2"
       exit 1
     }
     TARG_CUR="$2"
@@ -188,7 +192,7 @@ while [[ "$#" -gt 0 ]]; do
 
   -a | --amt | amount)
     _validateArg "amt" "$2" || {
-      _notify -a ct -e "Amount: Invalid Currency Given: $AMOUNT_CUR"
+      _notify -a ct -e "Amount: Invalid Currency Given: $2"
       exit 1
     }
     AMOUNT_CUR="$2"
