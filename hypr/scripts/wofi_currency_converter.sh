@@ -122,7 +122,7 @@ _loopPrompt() {
       amt_str="($SOURCE_CUR -> $TARG_CUR)"
       _wofiConstructFromArgs w_args -p "Enter Amount" -w "15%" -h "5%" -l 1 -cf "$WOFI_C_CENTER"
       selection="$(echo "$amt_str" | wofi -d "${w_args[@]}")"
-      [[ -z "$selection" || "$selection" = "$amt_str" ]] && return 1
+      [[ -z "$selection" ]] && return 1
       [[ ! "$selection" =~ ^[0-9]+(\.[0-9]+)?$ ]] && return 1
       AMOUNT_CUR="$selection" && mode="main" && continue
       ;;
@@ -210,7 +210,7 @@ prompt)
   _doConversion "$SOURCE_CUR" "$TARG_CUR" "$AMOUNT_CUR"
   CONVERTED="$(echo "$CONVERTED" | jq '.result')"
   CONVERTED="$(printf '%.2f\n' "$CONVERTED")"
-  _notify -a ct -t 2500 "$AMOUNT_CUR [$SOURCE_CUR] ➡️ $CONVERTED [$TARG_CUR]" && wl-copy "$CONVERTED" && exit 0
+  _notify -a ct -t 2500 "💸 $AMOUNT_CUR [$SOURCE_CUR] ➡️ $CONVERTED [$TARG_CUR] 💰" && wl-copy "$CONVERTED" && exit 0
   ;;
 update)
   _promptCache && _cacheData
