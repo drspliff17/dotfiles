@@ -14,6 +14,8 @@ source "$LIB_WOFI" || {
 
 MODE=""
 CACHE="$HOME/.config/wofi/state/currencyCache.json"
+CACHE_TS_DIFF=""
+CACHE_TS_THRES=43250 #12 hours 3 mins ish or some shit
 SOURCE_CUR=""
 TARG_CUR=""
 AMOUNT_CUR=""
@@ -33,10 +35,11 @@ _test_time() {
 _calculateTS_Diff() {
   [[ ! -f "$CACHE" ]] && return 0
   local now cache diff
-  local threshold=43250 #12 hours 3 mins ish or some shit
+  local threshold=$CACHE_TS_THRES
   now=$(date +%s)
   cache=$(jq -r '.timestamp // 0' "$CACHE")
   diff=$((now - cache))
+  CACHE_TS_DIFF=$diff
   if ((diff < threshold)); then
     return 1
   fi
@@ -46,6 +49,7 @@ _calculateTS_Diff() {
 # Handle prompt for calling _cacheData. Returns bool value
 _promptCache() {
   local hours minutes seconds confirm
+  local diff="$1"
 
   hours=$((diff / 3600))
   minutes=$(((diff % 3600) / 60))
@@ -56,8 +60,7 @@ _promptCache() {
       "Last cached ${hours}h ${minutes}m ${seconds}s ago. Confirm recache [Y/n]: " \
       confirm
   else
-    _wofiConfirmationPrompt -m "Confirm recache?" || return 1
-    confirm="Y"
+    _wofiConfirmationPrompt -m "Last: ${hours}h ${minutes}m ${seconds}s" && confirm="Y"
   fi
 
   case "$confirm" in
@@ -74,7 +77,6 @@ _cacheData() {
   }
   local tmp=$(mktemp)
   jq --argjson t "$ts" '.timestamp = $t' "$CACHE" >"$tmp" && mv "$tmp" "$CACHE"
-
   _notify -a ct "Cached fxratesapi/latest to $CACHE" && return 0
 }
 
@@ -213,7 +215,10 @@ prompt)
   _notify -a ct -t 2500 "💸 $AMOUNT_CUR [$SOURCE_CUR] ➡️ $CONVERTED [$TARG_CUR] 💰" && wl-copy "$CONVERTED" && exit 0
   ;;
 update)
-  _promptCache && _cacheData
-  exit 0
+  if [[ $CACHE_TS_DIFF -ge $CACHE_TS_THRES ]]; then
+    _cacheData && exit 0
+  fi
+  _promptCache $CACHE_TS_DIFF && _cacheData && exit 0
+  exit 1
   ;;
 esac
