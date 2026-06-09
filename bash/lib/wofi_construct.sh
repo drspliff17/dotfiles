@@ -114,3 +114,34 @@ _wofiConstructFromArgs() {
   _captureMonitor
   return 0
 }
+
+_wofiConfirmationPrompt() {
+  local msg="Are You Sure?"
+  local opts="Yes\nNo"
+
+  while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+    -m | --msg | message)
+      msg="$2"
+      shift 2
+      ;;
+    -o | --opts | options)
+      opts="$2"
+      shift 2
+      ;;
+    -*)
+      echo "[ERROR] _wofiConfirmationPrompt: Invalid Argument: $1" >&2 && return 1
+      ;;
+    *)
+      echo "[ERROR] _wofiConfirmationPrompt: Invalid Option: $1" >&2 && return 1
+      ;;
+    esac
+  done
+
+  local selection w_args optCount
+  optCount="${#opts[@]}"
+  _wofiConstructFromArgs w_args -p "$msg" -w "10%" -l "$optCount" -E -cf "$WOFI_C_CENTER"
+  selection="$(echo -e "$opts" | wofi -d "${w_args[@]}")"
+  [[ -z "$selection" ]] && return 1
+  return 0
+}
