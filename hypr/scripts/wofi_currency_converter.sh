@@ -73,7 +73,7 @@ _promptCache() {
 _cacheData() {
   local ts="$(date +%s)"
   curl -s https://api.fxratesapi.com/latest >"$CACHE" || {
-    _notify -a ct -e "Failed to cache fxratesapi/latest" && return 1
+    _notify -a ct -e "❌ Failed to cache fxratesapi/latest" && return 1
   }
   local tmp=$(mktemp)
   jq --argjson t "$ts" '.timestamp = $t' "$CACHE" >"$tmp" && mv "$tmp" "$CACHE"
@@ -174,7 +174,7 @@ while [[ "$#" -gt 0 ]]; do
 
   -s | --src | source)
     _validateArg "cur" "$2" || {
-      _notify -a ct -e "Source: Invalid Currency Given: $2"
+      _notify -a ct -e "❌ Source: Invalid Currency Given: $2"
       exit 1
     }
     SOURCE_CUR="$2"
@@ -183,7 +183,7 @@ while [[ "$#" -gt 0 ]]; do
 
   -t | --trg | target)
     _validateArg "cur" "$2" || {
-      _notify -a ct -e "Target: Invalid Currency Given: $2"
+      _notify -a ct -e "❌ Target: Invalid Currency Given: $2"
       exit 1
     }
     TARG_CUR="$2"
@@ -192,7 +192,7 @@ while [[ "$#" -gt 0 ]]; do
 
   -a | --amt | amount)
     _validateArg "amt" "$2" || {
-      _notify -a ct -e "Amount: Invalid Currency Given: $2"
+      _notify -a ct -e "❌ Amount: Invalid Currency Given: $2"
       exit 1
     }
     AMOUNT_CUR="$2"
@@ -200,11 +200,11 @@ while [[ "$#" -gt 0 ]]; do
     ;;
 
   -*)
-    _notify -a ct -e "Unrecognized argument: $1" && exit 1
+    _notify -a ct -e "❌ Unrecognized argument: $1" && exit 1
     ;;
 
   *)
-    _notify -a ct -e "Unrecognized option: $1" && exit 1
+    _notify -a ct -e "❌ Unrecognized option: $1" && exit 1
     ;;
   esac
 done
