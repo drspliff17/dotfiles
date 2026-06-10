@@ -1,0 +1,11 @@
+max-history=10
+sort=+time
+include=~/.cache/wal/colors-mako
+anchor=top-center
+
+[app-name="theme_selector"]
+anchor=top-right
+text-alignment=center
+
+[app-name="center-text"]
+text-alignment=center
