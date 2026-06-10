@@ -75,6 +75,9 @@ _notify() {
       ct | center-text)
         appname="center-text"
         ;;
+      ts | theme_selector)
+        appname="theme_selector"
+        ;;
       *)
         appname=""
         ;;
