@@ -23,6 +23,7 @@ local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
 local scr_translate = "~/.config/hypr/scripts/wofi_translate.sh"
 local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
+local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 
 local function exec_capture(cmd)
 	local handle = io.popen(cmd)
@@ -46,21 +47,16 @@ hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("hyprlock"))
 
 -- Screenshots
-hl.bind(
-	"PRINT",
-	hl.dsp.exec_cmd([[
-    grim -g "$(slurp)" -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png &&
-    notify-send -u low -t 1000 -a center-text "Screenshot taken"
-  ]])
-)
+hl.bind("PRINT", hl.dsp.exec_cmd(scr_screenshot .. " slurp"))
+hl.bind(mainMod .. " + PRINT", hl.dsp.exec_cmd(scr_screenshot .. " global"))
 
-hl.bind(
-	mainMod .. " + PRINT",
-	hl.dsp.exec_cmd([[
-    grim -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png &&
-    notify-send -u low -t 1000 -a center-text "Screenshot taken"
-  ]])
-)
+-- hl.bind(
+-- 	"PRINT",
+-- 	hl.dsp.exec_cmd([[
+--     grim -g "$(slurp)" -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png &&
+--     notify-send -u low -t 1000 -a center-text "Screenshot taken"
+--   ]])
+-- )
 
 -- Universal Binds
 hl.bind(mainMod .. " + escape", hl.dsp.submap("reset"), { submap_universal = true })
