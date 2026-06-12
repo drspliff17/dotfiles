@@ -80,6 +80,15 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "discord-move-special",
+	match = {
+		initial_class = "vesktop",
+	},
+	no_initial_focus = true,
+	workspace = "special:discord",
+})
+
+hl.window_rule({
 	name = "theme-switcher",
 	match = {
 		initial_class = "Nsxiv",

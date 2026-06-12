@@ -156,7 +156,8 @@ hl.bind(mainMod .. " + SHIFT + d", function()
 			return
 		end
 	end
-	hl.exec_cmd("/opt/Discord/discord")
+	-- hl.exec_cmd("/opt/Discord/discord")
+	hl.exec_cmd("vesktop")
 end)
 
 -- Swap Workspace Between Two Monitors
@@ -297,15 +298,17 @@ hl.define_submap("Cursor", function()
 	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)
 
+--TODO: FIX INTEGRATION WITH MAKO FROM DUNST
+
 -- Notification Mode
 hl.bind(mainMod .. " + n", hl.dsp.submap("Notification"))
 hl.define_submap("Notification", function()
-	hl.bind("r", hl.dsp.exec_cmd("dunstctl reload"))
-	hl.bind("p", hl.dsp.exec_cmd("dunstctl history-pop"))
-	hl.bind("n", hl.dsp.exec_cmd("dunstctl close-all"))
-	hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_fzf.sh"))
-	hl.bind("c", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_clear.sh"))
-	hl.bind("g", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_get.sh"))
+	-- hl.bind("r", hl.dsp.exec_cmd("dunstctl reload"))
+	-- hl.bind("p", hl.dsp.exec_cmd("dunstctl history-pop"))
+	-- hl.bind("n", hl.dsp.exec_cmd("dunstctl close-all"))
+	-- hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_fzf.sh"))
+	-- hl.bind("c", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_clear.sh"))
+	-- hl.bind("g", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_get.sh"))
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
 
