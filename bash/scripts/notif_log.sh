@@ -69,7 +69,7 @@ dbus-monitor "interface='org.freedesktop.Notifications'" | while read -r line; d
         0)
           app_name="$value"
           case "$app_name" in
-          nh | no-history | view-notification-details)
+          nh | no-history | view-notification-details | nh-center-text)
             skip=1
             break
             ;;

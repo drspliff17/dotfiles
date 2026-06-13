@@ -31,11 +31,15 @@ default-timeout=4000
 
 # Custom app-names
 
+
 [app-name="theme_selector"]
 anchor=top-right
 text-alignment=center
 
 [app-name="center-text"]
+text-alignment=center
+
+[app-name="nh-center-text"]
 text-alignment=center
 
 [app-name="view-notification-details"]
