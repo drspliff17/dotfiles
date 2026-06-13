@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+LOCKFILE="/tmp/notif_log.lock"
+if [[ -e "$LOCKFILE" ]]; then
+  PID="$(cat "$LOCKFILE")"
+  if kill -0 "$PID" 2>/dev/null; then
+    echo "Script already running (PID: $PID), stopping old instance..."
+    kill "$PID"
+    sleep 1
+  fi
+fi
+echo $$ >"$LOCKFILE"
+trap 'rm -f "$LOCKFILE"' EXIT
+
 LOGFILE="${1:-$HOME/dev/data/notifications.json}"
 DEBUG=false
 
