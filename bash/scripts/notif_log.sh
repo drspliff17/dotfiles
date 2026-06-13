@@ -38,6 +38,7 @@ dbus-monitor "interface='org.freedesktop.Notifications'" | while read -r line; d
     title=""
     body=""
     state=0
+    skip=0
 
     while read -r line; do
       if $DEBUG; then
@@ -54,6 +55,12 @@ dbus-monitor "interface='org.freedesktop.Notifications'" | while read -r line; d
         case $state in
         0)
           app_name="$value"
+          case "$app_name" in
+          nh | no-history)
+            skip=1
+            break
+            ;;
+          esac
           state=1
           ;;
         1)
@@ -73,7 +80,7 @@ dbus-monitor "interface='org.freedesktop.Notifications'" | while read -r line; d
       fi
 
     done
-
+    [[ "$skip" -eq 1 ]] && continue
     ts=$(date -Iseconds)
 
     append "$ts" "$app_name" "$icon" "$title" "$body"
