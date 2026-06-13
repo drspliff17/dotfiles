@@ -1,7 +1,35 @@
-max-history=10
-sort=+time
 include=~/.cache/wal/colors-mako
+
+# Default Config
+
+max-history=0
+sort=+time
 anchor=top-center
+max-icon-size=32
+
+
+# Urgency Durations
+
+[urgency="low"]
+default-timeout=2000
+
+[urgency="normal"]
+default-timeout=5000
+
+[urgency="critical"]
+default-timeout=0
+
+
+# App overrides
+
+[app-name="discord"]
+default-timeout=4000
+
+[app-name="vesktop"]
+default-timeout=4000
+
+
+# Custom app-names
 
 [app-name="theme_selector"]
 anchor=top-right
@@ -9,3 +37,8 @@ text-alignment=center
 
 [app-name="center-text"]
 text-alignment=center
+
+[app-name="view-notification-details"]
+anchor=center
+text-alignment=center
+height=1000
