@@ -50,6 +50,7 @@ dbus-monitor "interface='org.freedesktop.Notifications'" | while read -r line; d
     title=""
     body=""
     state=0
+
     skip=0
 
     while read -r line; do
@@ -68,7 +69,7 @@ dbus-monitor "interface='org.freedesktop.Notifications'" | while read -r line; d
         0)
           app_name="$value"
           case "$app_name" in
-          nh | no-history)
+          nh | no-history | view-notification-details)
             skip=1
             break
             ;;
