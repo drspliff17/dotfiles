@@ -6,6 +6,8 @@ max-history=0
 sort=+time
 anchor=top-center
 max-icon-size=32
+width=350
+border-radius=10
 
 
 # Urgency Durations
