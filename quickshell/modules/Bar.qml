@@ -148,12 +148,12 @@ Scope {
                     anchors.leftMargin: 10
                     spacing: 10
 
-                    Weather {
-                        visible: Config.barWidgets_Weather_enabled
-                        height: 24
-                        radius: shellroot.widgetRadius
-                        vertical: false
-                    }
+                    // Weather {
+                    //     visible: Config.barWidgets_Weather_enabled
+                    //     height: 24
+                    //     radius: shellroot.widgetRadius
+                    //     vertical: false
+                    // }
 
                     WorkspaceWidget {
                         anchors.verticalCenter: parent.verticalCenter

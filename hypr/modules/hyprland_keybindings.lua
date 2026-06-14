@@ -223,7 +223,7 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true 
 hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { repeating = true })
 
--- -- Resize Mode (Active Window)
+-- Resize Mode (Active Window)
 
 hl.bind(mainMod .. " + r", hl.dsp.submap("Resize"))
 hl.define_submap("Resize", function()
@@ -303,12 +303,15 @@ end)
 -- Notification Mode
 hl.bind(mainMod .. " + n", hl.dsp.submap("Notification"))
 hl.define_submap("Notification", function()
-	-- hl.bind("r", hl.dsp.exec_cmd("dunstctl reload"))
-	-- hl.bind("p", hl.dsp.exec_cmd("dunstctl history-pop"))
-	-- hl.bind("n", hl.dsp.exec_cmd("dunstctl close-all"))
-	-- hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_fzf.sh"))
-	-- hl.bind("c", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_clear.sh"))
-	-- hl.bind("g", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/dunst_history_get.sh"))
+	hl.bind("o", hl.dsp.exec_cmd("kitty fish -c 'n ~/dev/data/notifications.json'"))
+	hl.bind("r", hl.dsp.exec_cmd("makoctl reload && notify-send -a nh-center-text -u low 'Mako Reloaded'"))
+	hl.bind(
+		"w",
+		hl.dsp.exec_cmd(
+			[[sh -c 'weather=$(curl -s "wttr.in/?format=2"); notify-send -a nh-center-text -u normal -t 2500 "$weather"']]
+		)
+	)
+	-- hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/mako_history.sh"))
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
 
@@ -356,16 +359,16 @@ hl.define_submap("Quickshell", function()
 	end)
 
 	-- Toggle weather widget
-	hl.bind("w", function()
-		local r = exec_capture(scr_qs .. " gcp barWidgets_Weather_enabled")
-		r = tonumber(r)
-		if r == 1 then
-			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Weather_enabled 0"))
-		else
-			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Weather_enabled 1"))
-		end
-		hl.dispatch(hl.dsp.submap("reset"))
-	end)
+	-- hl.bind("w", function()
+	-- 	local r = exec_capture(scr_qs .. " gcp barWidgets_Weather_enabled")
+	-- 	r = tonumber(r)
+	-- 	if r == 1 then
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Weather_enabled 0"))
+	-- 	else
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Weather_enabled 1"))
+	-- 	end
+	-- 	hl.dispatch(hl.dsp.submap("reset"))
+	-- end)
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
 end)
