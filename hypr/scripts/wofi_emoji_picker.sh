@@ -45,10 +45,10 @@ SELECTED="$(printf '%s\n' "$(cat "$EMOJI_FILE" | jq -r '.[] | "\(.icon) | \(.nam
 case "$MODE" in
 COPY)
   wl-copy "$SELECTED"
-  _notify -a ct "Copied: $SELECTED"
+  _notify -a nhc "Copied: $SELECTED"
   ;;
 PASTE)
   wl-copy "$SELECTED" && wl-paste
-  _notify -a ct "Pasted: $SELECTED"
+  _notify -a nhc "Pasted: $SELECTED"
   ;;
 esac

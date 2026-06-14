@@ -30,11 +30,14 @@ done
 cp "$HOME/.cache/wal/waypaper.css" \
   "$HOME/.config/waypaper/style.css"
 
-# Dunst
-cp "$HOME/.cache/wal/dunstrc" \
-  "$HOME/.config/dunst/dunstrc"
+# Mako
+makoctl reload
 
-dunstctl reload
+# Dunst
+# cp "$HOME/.cache/wal/dunstrc" \
+#   "$HOME/.config/dunst/dunstrc"
+#
+# dunstctl reload
 
 # Firefox
 pywalfox update

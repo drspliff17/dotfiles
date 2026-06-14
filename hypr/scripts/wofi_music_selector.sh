@@ -107,7 +107,7 @@ _menuArtistSelection() {
   WOFI_PROMPT="$selectedArtist"
   selectedArtist="$(echo $selectedArtist | sed 's/ /_/g')"
 
-  [[ ! -d "$musicPath/$selectedArtist" ]] && _notify -a ct -u normal -e "Invalid Artist" && exit 1
+  [[ ! -d "$musicPath/$selectedArtist" ]] && _notify -a nhc -u normal -e "Invalid Artist" && exit 1
   return 0
 }
 
@@ -123,7 +123,7 @@ _menuArtistFileSelection() {
 
   selectedArtist="$(echo "$selectedArtist" | sed 's/ /_/g')"
   selectedFile="$(echo $selectedFile | sed 's/ /_/g').mp3"
-  [[ ! -f "$musicPath/$selectedArtist/$selectedFile" ]] && _notify -a ct -u normal -e "Invalid Song" && exit 1
+  [[ ! -f "$musicPath/$selectedArtist/$selectedFile" ]] && _notify -a nhc -u normal -e "Invalid Song" && exit 1
   return 0
 }
 
@@ -144,14 +144,14 @@ artist)
   _menuArtistSelection
   _menuArtistFileSelection
   [[ -z "$selectedArtist" || -z "$selectedFile" ]] && exit 1
-  cmus-remote -f "$musicPath/$selectedArtist/$selectedFile" && _notify -a ct -t 2000 "Now Playing: $selectedName"
+  cmus-remote -f "$musicPath/$selectedArtist/$selectedFile" && _notify -a nhc -t 2000 "🎶 $selectedName"
   exit 0
   ;;
 
 files)
   _menuFromCache
   [[ -z "$selectedFile" ]] && exit 1
-  cmus-remote -f "$selectedFile" && _notify -a ct -t 2000 "Now Playing: $selectedName"
+  cmus-remote -f "$selectedFile" && _notify -a nhc -t 2000 "🎶 $selectedName"
   exit 0
   ;;
 
@@ -160,12 +160,12 @@ update)
     cmus-remote -C 'add Music'
     cmus-remote -C 'update-cache'
   fi
-  _notify -a ct "Starting Cache Update..." && _updateMusicSelectorCache && _notify -a ct "Cache Updated: $cacheFile"
+  _notify -a nhc "Starting Cache Update..." && _updateMusicSelectorCache && _notify -a ct "Music Cache Updated: $cacheFile"
   exit 0
   ;;
 
 *)
-  _notify -a ct -u urgent "[ERROR] wofi_music_selector.sh" " Invalid mode! Valid = [ artist files update ] | Got: $mode "
+  _notify -a ct -u urgent -e "wofi_music_selector.sh: Invalid mode! Valid = [ artist files update ] | Got: $mode "
   exit 1
   ;;
 esac
