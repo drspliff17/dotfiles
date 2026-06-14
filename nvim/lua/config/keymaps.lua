@@ -24,3 +24,8 @@ vim.keymap.set("n", "<leader>O", "<cmd>Oil /home/drspliff<CR>", { desc = "Open O
 vim.keymap.set("n", "-", function()
   require("oil").toggle_float()
 end)
+
+-- toggle.nvim
+vim.keymap.set({ "n", "v" }, "<leader>t", require("toggle").toggle, {
+  desc = "Toggle word under cursor",
+})
