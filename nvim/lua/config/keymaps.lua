@@ -29,3 +29,7 @@ end)
 vim.keymap.set({ "n", "v" }, "<leader>t", require("toggle").toggle, {
   desc = "Toggle word under cursor",
 })
+
+-- Bufferline
+vim.keymap.set("n", "<A-h>", "<cmd>BufferLineMovePrev<CR>", { desc = "Move Buffer Left" })
+vim.keymap.set("n", "<A-l>", "<cmd>BufferLineMoveNext<CR>", { desc = "Move Buffer Right" })
