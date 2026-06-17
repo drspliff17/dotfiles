@@ -9,5 +9,8 @@ return {
     --   { 'yes', 'no' },
     --   { 'foo', 'bar', 'baz' },  -- cycles: foo → bar → baz → foo
     -- },
+    mappings = {
+      { "connected", "disconnected" },
+    },
   },
 }
