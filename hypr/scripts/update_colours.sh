@@ -110,5 +110,8 @@ mv "$tmp" "$input"
 
 cmus-remote -C "source $input"
 
+pgrep omusic && kill -USR1 $(pgrep omusic)
+pgrep ds_calc && kill -USR1 $(pgrep ds_calc)
+
 # BTOP
 # cp ~/.cache/wal/btop.theme ~/.config/btop/themes/pywal.theme
