@@ -425,6 +425,12 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 
+	-- Calculator
+	hl.bind("m", function()
+		hl.dispatch(hl.dsp.submap("reset"))
+		hl.dispatch(hl.dsp.exec_cmd("dcalc"))
+	end)
+
 	-- Emoji Picker
 	hl.bind("e", function()
 		hl.dispatch(hl.dsp.submap("reset"))
