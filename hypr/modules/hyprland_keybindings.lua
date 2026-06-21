@@ -327,36 +327,36 @@ end)
 hl.bind(mainMod .. " + q", hl.dsp.submap("Quickshell"))
 hl.define_submap("Quickshell", function()
 	hl.bind("k", function()
-		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barPreset top"))
+		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'top' "))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 	hl.bind("j", function()
-		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barPreset bottom"))
+		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'bottom' "))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 	hl.bind("h", function()
-		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barPreset left"))
+		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'left' "))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 	hl.bind("l", function()
-		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barPreset right"))
+		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'right' "))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
-	hl.bind("c", hl.dsp.exec_cmd(scr_qs .. " cbp"))
+	-- hl.bind("c", hl.dsp.exec_cmd(scr_qs .. " cbp"))
 
-	-- Toggle cmus format
-	hl.bind("m", function()
-		local r = exec_capture(scr_qs .. " gcp barWidgets_Cmus_format")
-		r = tonumber(r)
-		local max = 1
-		if r >= max then
-			hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format 0"))
-		else
-			r = tonumber(r) + 1
-			r = hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format " .. r))
-		end
-		hl.dispatch(hl.dsp.submap("reset"))
-	end)
+	-- -- Toggle cmus format
+	-- hl.bind("m", function()
+	-- 	local r = exec_capture(scr_qs .. " gcp barWidgets_Cmus_format")
+	-- 	r = tonumber(r)
+	-- 	local max = 1
+	-- 	if r >= max then
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format 0"))
+	-- 	else
+	-- 		r = tonumber(r) + 1
+	-- 		r = hl.dispatch(hl.dsp.exec_cmd(scr_qs .. " scp barWidgets_Cmus_format " .. r))
+	-- 	end
+	-- 	hl.dispatch(hl.dsp.submap("reset"))
+	-- end)
 
 	-- Toggle weather widget
 	-- hl.bind("w", function()
