@@ -1,6 +1,6 @@
 -- Autostart
 hl.on("hyprland.start", function()
-	hl.exec_cmd("qs")
+	hl.exec_cmd("qs -c noctalia-shell")
 	hl.exec_cmd("waypaper --restore")
 	hl.exec_cmd("wal -R")
 	hl.exec_cmd("wl-paste --watch clipvault store")
@@ -36,3 +36,18 @@ hl.on("window.open", function(win)
 		hl.dispatch(hl.dsp.workspace.toggle_special("discord"))
 	end
 end)
+
+-- hl.on("workspace.created", function(w)
+-- 	if not w then
+-- 		return
+-- 	end
+-- 	local mon1 = "ENTER_NAME"
+-- 	local mon2 = "ENTER_NAME"
+-- 	local mon1_thres = 5
+-- 	local id = w.id
+-- 	if id <= mon1_thres then
+-- 		hl.dispatch(hl.dsp.workspace.move({ monitor = mon1 }))
+-- 	else
+-- 		hl.dispatch(hl.dsp.workspace.move({ monitor = mon2 }))
+-- 	end
+-- end)
