@@ -5,7 +5,7 @@ local mainMod = "SUPER"
 local terminal = "kitty"
 local fileManager = "y"
 local menu = "wofi --show drun --columns 3"
-local status = "qs"
+-- local status = "qs"
 
 -- My Scripts
 local scr_toggleProgram = "~/.config/hypr/scripts/toggle_program.sh"
@@ -193,7 +193,7 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- My Scripts
 hl.bind(mainMod .. " + SHIFT + c", hl.dsp.exec_raw("kitty fish -c cursor_swap"))
-hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
+-- hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
 
 -- Wofi Music Selector
 hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " artist"))
@@ -269,7 +269,8 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"))
 	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"))
 	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"))
-	hl.bind("m", hl.dsp.exec_cmd("kitty --class cmus fish -c cmus"))
+	-- hl.bind("m", hl.dsp.exec_cmd("kitty --class cmus fish -c cmus"))
+	hl.bind("m", hl.dsp.exec_cmd("exec /storage/Caprine-2.61.0.AppImage"))
 	hl.bind("v", hl.dsp.exec_cmd("/opt/vintagestory/Vintagestory"))
 
 	hl.bind("catchall", hl.dsp.submap("reset"))
