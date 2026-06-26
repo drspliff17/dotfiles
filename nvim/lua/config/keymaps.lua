@@ -33,3 +33,6 @@ vim.keymap.set({ "n", "v" }, "<leader>t", require("toggle").toggle, {
 -- Bufferline
 vim.keymap.set("n", "<A-h>", "<cmd>BufferLineMovePrev<CR>", { desc = "Move Buffer Left" })
 vim.keymap.set("n", "<A-l>", "<cmd>BufferLineMoveNext<CR>", { desc = "Move Buffer Right" })
+
+-- Terminal mode
+vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], { noremap = true })

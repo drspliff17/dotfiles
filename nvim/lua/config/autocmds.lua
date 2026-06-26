@@ -45,6 +45,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Manage cursorline on active/inactive buffers
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
   group = vim.api.nvim_create_augroup("manage_cursorline_on_active_window", { clear = true }),
   callback = function()
@@ -56,5 +57,14 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
   group = "manage_cursorline_on_active_window",
   callback = function()
     vim.opt_local.cursorline = false
+  end,
+})
+
+-- Auto Term when moving to a.. terminal..
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+  group = vim.api.nvim_create_augroup("auto_enter_term_mode_on_move_to_terminal", { clear = true }),
+  pattern = "term://*",
+  callback = function()
+    vim.cmd("startinsert")
   end,
 })
