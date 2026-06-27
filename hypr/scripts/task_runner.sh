@@ -120,6 +120,23 @@ _executeTaskIndex() {
   bash -c "$command"
 }
 
+_dumpTaskFile() {
+  [[ ! -f "$1" ]] && _notify -a nhc -u low -t 2000 "Taskfile does not exist: $1" && exit 1
+  local file="$1"
+  local count="$(jq -r 'length' "$file")"
+  [[ "$count" -eq 0 ]] && _notify -a nhc -u low -t 2000 "Taskfile is empty: $file"
+
+  local str=() title command
+  for ((i = 0; i < count; i++)); do
+    title="$(jq -r --argjson i "$i" '.[$i].title' "$file")"
+    command="$(jq -r --argjson i "$i" '.[$i].command' "$file")"
+    str+=("[$i] $title - $command")
+  done
+  local final="$(printf '%s\n' "${str[@]}")"
+  _notify -a nhc -u low -t 5000 "$final"
+  exit 0
+}
+
 _printHelp() {
   cat <<EOF
     Task Runner
@@ -136,6 +153,7 @@ Flags:
 
 Alt Mode:
 -w | --wofi         | Run in Wofi mode (* use --wofi help for more info)
+-df| --dump-file    | Attempts to dump task file in <dir>
 
 Information:
 --run can optionally be given a target title / index. Without one, is the same as doing:
@@ -202,9 +220,11 @@ while [[ "$#" -gt 0 ]]; do
     -a | --add | add)
       [[ ! -f "$TARGET_DIR/$TASK_FILE" ]] && _notify -a nhc -u low -t 2000 "Task file does not exist in: $TARGET_DIR" && exit 1
       [[ "$SKIP_PROMPT" -eq 1 ]] && {
-        ADD_TITLE="Title"
-        ADD_COMMAND="Command"
+        [[ -z "$ADD_TITLE" ]] && ADD_TITLE="Title"
+        [[ -z "$ADD_COMMAND" ]] && ADD_COMMAND="Command"
       }
+      [[ -n "$2" ]] && ADD_TITLE="$2"
+      [[ -n "$3" ]] && ADD_COMMAND="$3"
 
       [[ -z "$ADD_TITLE" ]] && {
         read -rp "[ADD TASK] Enter Title: " ADD_TITLE
@@ -273,6 +293,10 @@ while [[ "$#" -gt 0 ]]; do
       -*) _notify -a nhc -u low -t 2000 "Invalid option: $3" && exit 1 ;;
       *) _notify -a nhc -u low -t 2000 "Invalid value: $3" && exit 1 ;;
       esac
+      ;;
+
+    -df | --dump-file | dump)
+      _dumpTaskFile "$TARGET_DIR/$TASK_FILE"
       ;;
 
     -*) _notify -a nhc -u low -t 2000 "Invalid Option Provided: $1" && exit 1 ;;

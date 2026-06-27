@@ -16,6 +16,8 @@ vim.keymap.set("n", "<leader>D", function()
   Snacks.dashboard()
 end, { desc = "Open Snacks Dashboard" })
 
+vim.keymap.set("n", "<leader>xs", "<cmd>source %<CR>", { desc = "Source Current File" })
+
 -- Lsp
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
 vim.keymap.set("n", "<leader>so", "<cmd>lsp restart<CR>", { desc = "Run lsp restart" })
