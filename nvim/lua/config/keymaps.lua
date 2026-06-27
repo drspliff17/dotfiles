@@ -39,19 +39,8 @@ vim.keymap.set("n", "<A-l>", "<cmd>BufferLineMoveNext<CR>", { desc = "Move Buffe
 -- Terminal mode
 vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], { noremap = true })
 
--- Task Script
-vim.keymap.set("n", "<C-i>", function()
-  local task = vim.fn.input("Task: ")
-  local runMode = "-t"
-  if task:match("^%d+$") then
-    runMode = "-i"
-  end
-  vim.system({
-    "task",
-    "-t",
-    vim.fn.getcwd(),
-    "-r",
-    runMode,
-    task,
-  })
-end, { desc = "Run Task In CWD" })
+-- Command mode cancel
+vim.keymap.set("c", "<C-q>", "<C-c>", {
+  noremap = true,
+  silent = true,
+})
