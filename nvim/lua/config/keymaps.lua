@@ -16,9 +16,11 @@ vim.keymap.set("n", "<leader>D", function()
   Snacks.dashboard()
 end, { desc = "Open Snacks Dashboard" })
 
+-- Lsp
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
 vim.keymap.set("n", "<leader>so", "<cmd>lsp restart<CR>", { desc = "Run lsp restart" })
 
+-- Oil
 vim.keymap.set("n", "<leader>o", "<cmd>Oil<CR>", { desc = "Open Oil (CWD)" })
 vim.keymap.set("n", "<leader>O", "<cmd>Oil /home/drspliff<CR>", { desc = "Open Oil (~)" })
 vim.keymap.set("n", "-", function()
@@ -36,3 +38,20 @@ vim.keymap.set("n", "<A-l>", "<cmd>BufferLineMoveNext<CR>", { desc = "Move Buffe
 
 -- Terminal mode
 vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], { noremap = true })
+
+-- Task Script
+vim.keymap.set("n", "<C-i>", function()
+  local task = vim.fn.input("Task: ")
+  local runMode = "-t"
+  if task:match("^%d+$") then
+    runMode = "-i"
+  end
+  vim.system({
+    "task",
+    "-t",
+    vim.fn.getcwd(),
+    "-r",
+    runMode,
+    task,
+  })
+end, { desc = "Run Task In CWD" })
