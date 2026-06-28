@@ -170,7 +170,7 @@ _performTransfer() {
     local pc_list phone_file
     local deleted=0 missing_dirs=0
 
-    for directory in "$SOURCE_PATH"/*; do
+    for directory in "${SPECIFIED_DIRECTORIES[@]}"; do
       [[ ! -d "$directory" ]] && continue
 
       dname="$(basename "$directory")"
@@ -217,6 +217,27 @@ _performTransfer() {
 # ARGS
 while [[ $# -gt 0 ]]; do
   case "$1" in
+  -f | --from)
+    [[ ! -d "$2" ]] && {
+      echo "[ERROR] Source path invalid: $2" >&2
+      exit 1
+    }
+    SOURCE_PATH="$2"
+    shift 2
+    ;;
+
+  -t | --to)
+    [[ -z "$2" ]] && {
+      echo "[ERROR] Destination path required: $2" >&2
+      exit 1
+    }
+    read -rp "Are you sure you want to transfer to: $2" confirm
+    [[ ! "$confirm" =~ ^[Yy]$ ]] && echo "[ABORTED]" && exit 1
+
+    DESTINATION="$2"
+    shift 2
+    ;;
+
   -v | --verbose)
     VERBOSE=1
     shift
