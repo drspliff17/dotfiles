@@ -10,6 +10,11 @@ alias ff="fastfetch"
 alias csh="curl cheat.sh"
 alias rqs="ps -o pid,rss,vsz,cmd -C qs"
 
+alias gms="npx @gamemaker/gm-cli@latest"
+
+alias ou="omusic -u"
+alias om="omake"
+
 #Music stuff because am lazy ja
 alias fm="$HOME/.config/bash/scripts/fmp3.sh"
 alias sm="$HOME/.config/bash/scripts/syncPhoneMusic.sh -v"
