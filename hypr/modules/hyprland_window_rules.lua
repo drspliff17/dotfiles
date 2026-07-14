@@ -11,6 +11,15 @@
 -- 	surpress_event = "maximize",
 -- })
 
+-- hl.window_rule({
+-- 	name = "lock-cursor-gamescope",
+-- 	match = {
+-- 		initial_class = "gamescope",
+-- 	},
+--
+-- 	confine_pointer = true,
+-- })
+
 hl.window_rule({
 	name = "fix-xwayland-drags",
 	match = {

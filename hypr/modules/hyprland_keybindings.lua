@@ -408,6 +408,46 @@ hl.define_submap("Wallpaper", function()
 	hl.bind("SPACE", hl.dsp.submap("reset"))
 end)
 
+-- Cursor Zoom
+hl.bind(mainMod .. " + z", hl.dsp.submap("Zoom"))
+hl.define_submap("Zoom", function()
+	---@param offset number
+	---@return nil
+	local function zoom(offset)
+		local MAX_ZOOM = 5
+		local MIN_ZOOM = 1
+		local ZOOM_TOGGLE_FACTOR = 1.5
+		local current = hl.get_config("cursor.zoom_factor")
+		if offset ~= nil then
+			current = current + offset
+		elseif current ~= MIN_ZOOM then
+			current = MIN_ZOOM
+		else
+			current = ZOOM_TOGGLE_FACTOR
+		end
+		current = math.max(MIN_ZOOM, math.min(MAX_ZOOM, current))
+		hl.config({ cursor = { zoom_factor = current } })
+	end
+
+	hl.bind("i", function()
+		zoom(0.5)
+	end, { repeating = true })
+
+	hl.bind("o", function()
+		zoom(-0.5)
+	end, { repeating = true })
+
+	hl.bind("r", function()
+		hl.config({ cursor = { zoom_factor = 1 } })
+	end)
+
+	-- hl.bind("SPACE", hl.dsp.submap("reset"))
+	hl.bind("SPACE", function()
+		hl.config({ cursor = { zoom_factor = 1 } })
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+end)
+
 -- Misc
 hl.bind(mainMod .. " + u", hl.dsp.submap("Misc"))
 hl.define_submap("Misc", function()
