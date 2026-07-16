@@ -8,11 +8,11 @@ local menu = "wofi --show drun --columns 3"
 -- local status = "qs"
 
 -- My Scripts
-local scr_toggleProgram = "~/.config/hypr/scripts/toggle_program.sh"
+-- local scr_toggleProgram = "~/.config/hypr/scripts/toggle_program.sh"
 local scr_volumeController = "~/.config/hypr/scripts/wofi_volume_controller.sh"
 local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
 local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
-local scr_keybindLauncher = "~/.config/hypr/scripts/wofi_keybind_launcher.sh"
+-- local scr_keybindLauncher = "~/.config/hypr/scripts/wofi_keybind_launcher.sh"
 local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
 local scr_clipvault = "~/.config/hypr/scripts/wofi_clipvault_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
@@ -20,20 +20,20 @@ local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
-local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
+-- local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
 local scr_translate = "~/.config/hypr/scripts/wofi_translate.sh"
 local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 
-local function exec_capture(cmd)
-	local handle = io.popen(cmd)
-	if not handle then
-		return nil
-	end
-	local out = handle:read("*a")
-	handle:close()
-	return (out:gsub("%s+$", ""))
-end
+-- local function exec_capture(cmd)
+-- 	local handle = io.popen(cmd)
+-- 	if not handle then
+-- 		return nil
+-- 	end
+-- 	local out = handle:read("*a")
+-- 	handle:close()
+-- 	return (out:gsub("%s+$", ""))
+-- end
 
 -- hl.bind("a", hl.dsp.exec_cmd(scr_commandLauncher .. " $HOME/thing.yml"))
 
@@ -269,7 +269,8 @@ hl.bind(
 )
 
 hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher), { description = "Command Launcher" })
-hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("hyprbind"), { description = "Hyprbind" })
+hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("hyprbind mode subkey"), { description = "Hyprbind - Subkey" })
+hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind mode key"), { description = "Hyprbind - Key" })
 
 -- -- DEFAULT FN F* Binds
 hl.bind(
@@ -652,7 +653,7 @@ hl.define_submap("Zoom", function()
 		hl.config({ cursor = { zoom_factor = 1 } })
 	end, { description = "Reset Cursor Zoom" })
 
-	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	-- hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 
 	hl.bind("SPACE", function()
 		hl.config({ cursor = { zoom_factor = 1 } })
