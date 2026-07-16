@@ -649,6 +649,14 @@ hl.define_submap("Zoom", function()
 		zoom(-0.5)
 	end, { repeating = true, description = "Decrease Cursor Zoom" })
 
+	hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true, description = "Move Cursor Left" })
+
+	hl.bind("j", hl.dsp.exec_cmd(scr_moveCursor .. " 0 1"), { repeating = true, description = "Move Cursor Down" })
+
+	hl.bind("k", hl.dsp.exec_cmd(scr_moveCursor .. " 0 -1"), { repeating = true, description = "Move Cursor Up" })
+
+	hl.bind("l", hl.dsp.exec_cmd(scr_moveCursor .. " 1 0"), { repeating = true, description = "Move Cursor Right" })
+
 	hl.bind("r", function()
 		hl.config({ cursor = { zoom_factor = 1 } })
 	end, { description = "Reset Cursor Zoom" })
