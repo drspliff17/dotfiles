@@ -269,8 +269,8 @@ hl.bind(
 )
 
 hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher), { description = "Command Launcher" })
-hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("hyprbind mode subkey"), { description = "Hyprbind - Subkey" })
-hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind mode key"), { description = "Hyprbind - Key" })
+hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("hyprbind menu subkey"), { description = "Hyprbind - Subkey" })
+hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind menu key"), { description = "Hyprbind - Key" })
 
 -- -- DEFAULT FN F* Binds
 hl.bind(
@@ -673,6 +673,18 @@ end)
 -- Misc
 hl.bind(mainMod .. " + u", hl.dsp.submap("Misc"), { description = "Submap Misc" })
 hl.define_submap("Misc", function()
+	--HTOP
+	hl.bind("h", function()
+		hl.dispatch(hl.dsp.exec_cmd("kitty htop"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "BTOP" })
+
+	--BTOP
+	hl.bind("b", function()
+		hl.dispatch(hl.dsp.exec_cmd("kitty btop"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "BTOP" })
+
 	-- Colour Picker
 	hl.bind("p", function()
 		hl.dispatch(
@@ -702,11 +714,20 @@ hl.define_submap("Misc", function()
 	-- Discord Mode
 	hl.bind("d", hl.dsp.submap("Discord"), { description = "Submap Discord" })
 	hl.define_submap("Discord", function()
-		-- Toggle Discord Mute
 		hl.bind("m", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "M", window = "class:^(vesktop)$" }))
 			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Toggle Mute" })
+		end, { description = "Toggle Mute [CTRL+SHIFT+M]" })
+
+		hl.bind("a", function()
+			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Accept Incoming Call [CTRL+RETURN]" })
+
+		hl.bind("d", function()
+			hl.dispatch(hl.dsp.send_shortcut({ mods = "", key = "Escape", window = "class:^(vesktop)$" }))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Decline Incoming Call [ESC]" })
 
 		hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 		--
