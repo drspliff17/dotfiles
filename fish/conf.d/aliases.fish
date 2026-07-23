@@ -1,4 +1,6 @@
 # Other
+alias cream="WEBKIT_DISABLE_DMABUF_RENDERER=1 exec /storage/Creamlinux_1.7.1_amd64.AppImage"
+
 alias nvim="n"
 alias sw="sw >/dev/null"
 alias b="bash -lc"
@@ -27,6 +29,7 @@ alias q="exit"
 alias a="alias"
 alias c="clear"
 alias cls="clear && ls"
+alias cla="clear && la"
 alias ..="cd .."
 alias cdt="cd -"
 alias sof="source ~/.config/fish/config.fish"
