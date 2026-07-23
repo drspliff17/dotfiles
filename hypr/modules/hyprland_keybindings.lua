@@ -445,20 +445,20 @@ end)
 -- Cursor Mode
 hl.bind(mainMod .. " + g", hl.dsp.submap("Cursor"), { description = "Submap Cursor" })
 hl.define_submap("Cursor", function()
-	hl.bind("SHIFT + 1", hl.dsp.exec_cmd(scr_spdCursor .. " -s 5"), { description = "Set Speed 5" })
+	hl.bind("1", hl.dsp.exec_cmd(scr_spdCursor .. " -s 5"), { description = "Set Speed 5" })
 
-	hl.bind("SHIFT + 2", hl.dsp.exec_cmd(scr_spdCursor .. " -s 10"), { description = "Set Speed 10" })
+	hl.bind("2", hl.dsp.exec_cmd(scr_spdCursor .. " -s 10"), { description = "Set Speed 10" })
 
-	hl.bind("SHIFT + 3", hl.dsp.exec_cmd(scr_spdCursor .. " -s 20"), { description = "Set Speed 20" })
+	hl.bind("3", hl.dsp.exec_cmd(scr_spdCursor .. " -s 20"), { description = "Set Speed 20" })
 
 	hl.bind(
-		"SHIFT + j",
+		"CTRL + d",
 		hl.dsp.exec_cmd(scr_spdCursor .. " -d 10"),
 		{ repeating = true, description = "Decrease Speed 10" }
 	)
 
 	hl.bind(
-		"SHIFT + k",
+		"CTRL + u",
 		hl.dsp.exec_cmd(scr_spdCursor .. " -i 10"),
 		{ repeating = true, description = "Increase Speed 10" }
 	)
@@ -469,18 +469,24 @@ hl.define_submap("Cursor", function()
 		{ description = "Notify - Cursor Speed" }
 	)
 
-	hl.bind("SHIFT + h", hl.dsp.exec_cmd("wlrctl pointer click left"), { description = "WLRCTL Left Click" })
+	hl.bind("CTRL + j", hl.dsp.exec_cmd("wlrctl pointer click left"), { description = "WLRCTL Left Click" })
 
-	hl.bind("SHIFT + l", hl.dsp.exec_cmd("wlrctl pointer click right"), { description = "WLRCTL Right Click" })
+	hl.bind("CTRL + k", hl.dsp.exec_cmd("wlrctl pointer click right"), { description = "WLRCTL Right Click" })
 
-	hl.bind("SHIFT + m", hl.dsp.exec_cmd("wlrctl pointer click middle"), { description = "WLRCTL Middle Click" })
+	hl.bind("CTRL + m", hl.dsp.exec_cmd("wlrctl pointer click middle"), { description = "WLRCTL Middle Click" })
 
-	--BROKEN until wlkbptr updates, or i find / make replacement
-	-- hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/wlkbptr.sh"), { description = "" })
+	hl.bind("u", hl.dsp.exec_cmd("wlrctl pointer scroll -20 0"), { description = "WLRCTL Scroll Up" })
+
+	hl.bind("d", hl.dsp.exec_cmd("wlrctl pointer scroll 20 0"), { description = "WLRCTL Scroll Down" })
+
+	hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/wlkbptr.sh"), { description = "Activate wl-kbptr" })
 
 	hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true, description = "Move Cursor Left" })
+
 	hl.bind("j", hl.dsp.exec_cmd(scr_moveCursor .. " 0 1"), { repeating = true, description = "Move Cursor Down" })
+
 	hl.bind("k", hl.dsp.exec_cmd(scr_moveCursor .. " 0 -1"), { repeating = true, description = "Move Cursor Up" })
+
 	hl.bind("l", hl.dsp.exec_cmd(scr_moveCursor .. " 1 0"), { repeating = true, description = "Move Cursor Right" })
 
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
