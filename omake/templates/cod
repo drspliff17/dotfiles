@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+PD="$PWD"
+DID=0
+BD="{{path}}"
+SL="$HOME/.local/bin/{{bin}}"
+
+[[ "$PD" != "$BD" ]] && cd "$BD" && DID=1
+
+echo "[INFO] Compiling Now ..."
+time odin build {{target}} -out:{{bin}}
+echo "[FINISHED]"
+
+[[ -e "$SL" ]] && rm "$SL" && echo -e "[INFO] Removed Symlink\n"
+ln -s "$BD/{{bin}}" "$SL" && echo "[INFO] Created Symlink: $BD/{{bin}} ➡️ $SL"
+
+[[ "$DID" -eq 1 ]] && cd "$PD"

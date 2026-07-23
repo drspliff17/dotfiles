@@ -1,0 +1,35 @@
+{
+  "submap_menu_runner": {
+    "program": "wofi",
+    "arguments": [
+      "--conf $HOME/.config/wofi/config",
+      "-d",
+      "-E",
+      "-W 40%",
+      "-p Submap",
+      "--column 3",
+      "--line 6"
+    ]
+  },
+  "subkey_menu_runner": {
+    "program": "wofi",
+    "arguments": [
+      "--conf $HOME/.config/wofi/center-align-config",
+      "-d",
+      "-E",
+      "-W 40%",
+      "-H 30%",
+      "-p Keybinds"
+    ]
+  },
+  "allkey_menu_runner": {
+    "program": "wofi",
+    "arguments": [
+      "-d",
+      "-E",
+      "-W 50%",
+      "-H 30%",
+      "-p All-Keybinds"
+    ]
+  }
+}

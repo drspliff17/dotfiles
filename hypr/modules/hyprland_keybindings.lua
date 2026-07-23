@@ -711,11 +711,17 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_emoji_picker.sh -c"))
 	end, { description = "Emoji Picker" })
 
-	-- Watch Stuff
+	-- Wayscriber
 	hl.bind("w", function()
-		hl.dispatch(hl.dsp.exec_cmd("~/.config/bash/scripts/watchstuff.sh -w"))
 		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Watch Stuff" })
+		hl.dispatch(hl.dsp.exec_cmd("wayscriber --daemon-toggle"))
+	end)
+
+	-- -- Watch Stuff
+	-- hl.bind("w", function()
+	-- 	hl.dispatch(hl.dsp.exec_cmd("~/.config/bash/scripts/watchstuff.sh -w"))
+	-- 	hl.dispatch(hl.dsp.submap("reset"))
+	-- end, { description = "Watch Stuff" })
 
 	-- Discord Mode
 	hl.bind("d", hl.dsp.submap("Discord"), { description = "Submap Discord" })

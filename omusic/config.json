@@ -1,0 +1,28 @@
+{
+  "use_pywal": true,
+  "win_bg": [
+    0,
+    0,
+    0,
+    255
+  ],
+  "gui_default_base_col": 0,
+  "gui_default_border_col": 0,
+  "default_dir": "/home/drspliff/Music/Songs",
+  "trim_from_filename": [
+    ".",
+    ",",
+    "/",
+    "?",
+    "!",
+    "\"",
+    "'",
+    "`"
+  ],
+  "allow_make_destination": false,
+  "always_use_filename": true,
+  "always_use_dirname": true,
+  "always_use_working_dir": true,
+  "do_log_downloads": true,
+  "download_log_path": "/home/drspliff/.config/omusic/downloads.log"
+}
