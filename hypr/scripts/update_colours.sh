@@ -33,12 +33,6 @@ cp "$HOME/.cache/wal/waypaper.css" \
 # Mako
 makoctl reload
 
-# Dunst
-# cp "$HOME/.cache/wal/dunstrc" \
-#   "$HOME/.config/dunst/dunstrc"
-#
-# dunstctl reload
-
 # Firefox
 pywalfox update
 
@@ -110,12 +104,13 @@ mv "$tmp" "$input"
 
 cmus-remote -C "source $input"
 
+# BTOP
+pgrep btop && kill -USR2 $(pgrep btop)
+
+# My programs
 pgrep omusic && kill -USR1 $(pgrep omusic)
 pgrep dcalc && kill -USR1 $(pgrep dcalc)
 pgrep ds_pet && kill -USR1 $(pgrep ds_pet)
 pgrep oofi && kill -USR1 $(pgrep oofi)
 pgrep colourSort && kill -USR1 $(pgrep colourSort)
 pgrep ds_menu && kill -USR1 $(pgrep ds_menu)
-
-# BTOP
-# cp ~/.cache/wal/btop.theme ~/.config/btop/themes/pywal.theme
