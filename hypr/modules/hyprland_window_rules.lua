@@ -21,6 +21,16 @@
 -- })
 
 hl.window_rule({
+	name = "kitty-fetch",
+	match = {
+		class = "fetch",
+	},
+	float = true,
+	size = { 1000, 540 },
+	center = true,
+})
+
+hl.window_rule({
 	name = "fix-xwayland-drags",
 	match = {
 		class = "^$",

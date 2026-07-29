@@ -691,6 +691,12 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "BTOP" })
 
+	--FETCH (custom size)
+	hl.bind("f", function()
+		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Open Fetch (with custom float size)" })
+
 	-- Colour Picker
 	hl.bind("p", function()
 		hl.dispatch(

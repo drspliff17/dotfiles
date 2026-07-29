@@ -9,6 +9,7 @@ alias nbrc="n ~/.bashrc"
 alias nas="n ~/.config/fish/conf.d/aliases.fish"
 alias ssd="df -h | head -n 1; df -h | rg home; df -h | rg storage"
 alias ff="fastfetch"
+alias f="fetch --box -l arch --infinite"
 alias csh="curl cheat.sh"
 alias rqs="ps -o pid,rss,vsz,cmd -C qs"
 
