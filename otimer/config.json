@@ -1,0 +1,20 @@
+{
+  "state_filepath": "/home/drspliff/.cache/otimer/state.json",
+  "default_notification_settings": {
+    "app_name": "otimer",
+    "urgency": "",
+    "time": "10000",
+    "icon": "",
+    "app_icon": "",
+    "category": "timer"
+  },
+  "custom_actions": [
+    {
+      "title": "custom_example",
+      "command": [
+        "notify-send",
+        "hello you spoon"
+      ]
+    }
+  ]
+}
