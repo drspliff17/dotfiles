@@ -62,14 +62,6 @@ hl.bind(
 	{ description = "Screenshot (Multi-Monitor)" }
 )
 
--- hl.bind(
--- 	"PRINT",
--- 	hl.dsp.exec_cmd([[
---     grim -g "$(slurp)" -c ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png &&
---     notify-send -u low -t 1000 -a center-text "Screenshot taken"
---   ]])
--- )
-
 -- Universal Binds
 hl.bind(mainMod .. " + escape", hl.dsp.submap("reset"), { submap_universal = true, description = "Submap Escape Key" })
 
@@ -837,16 +829,10 @@ hl.define_submap("Window", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Wofi Menu" })
 
-	-- hl.bind("SHIFT + SPACE", function()
-	-- 	hl.dispatch(hl.dsp.exec_cmd(scr_window))
-	-- 	hl.dispatch(hl.dsp.submap("reset"))
-	-- end, {  })
-
 	hl.bind("e", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 		hl.dispatch(hl.dsp.exec_cmd(scr_window .. " goto"))
 	end, { description = "Goto Client" })
 
-	--	hl.bind(mainMod .. " + e", hl.dsp.submap("reset"))
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)

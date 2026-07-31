@@ -16,7 +16,6 @@ cpu
 gpu
 memory
 swap
-disk=/home
 disk=/storage
 #ip
 #battery
@@ -29,7 +28,7 @@ colors
 
 # appearance
 # label_color=magenta   (red, green, yellow, blue, magenta, cyan, white)
-# separator=─           (character for the title separator)
+#separator=─           (character for the title separator)
 shading_mode=blocks    (ascii, or opt into blocks / sextants)
 # shading=.,-~:;=!*#$@  (characters for 3D shading, supports UTF-8)
 box=1 #                (adds a box around the system-data, 0 = off, 1 = on)
@@ -40,7 +39,7 @@ box=1 #                (adds a box around the system-data, 0 = off, 1 = on)
 
 # 3d
 # light=top-left        (top-left, top-right, top, left, right, front, bottom-left, bottom-right)
-light=top
+light=front
 # spin=xy               (x, y, or xy)
 # speed=1.0             (rotation speed)
 size=2.0
