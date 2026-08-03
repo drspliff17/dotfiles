@@ -671,6 +671,13 @@ end)
 -- Misc
 hl.bind(mainMod .. " + u", hl.dsp.submap("Misc"), { description = "Submap Misc" })
 hl.define_submap("Misc", function()
+	-- Rice Mode
+	hl.bind("r", function()
+		hl.dispatch(hl.dsp.exec_cmd("kitty cmatrix"))
+		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Open Rice" })
+
 	--HTOP
 	hl.bind("h", function()
 		hl.dispatch(hl.dsp.exec_cmd("kitty htop"))
