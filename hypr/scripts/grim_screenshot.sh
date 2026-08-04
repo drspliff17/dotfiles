@@ -12,4 +12,9 @@ g | global)
   grim -c "$scrPath/$scrFilename" && notify-send -u low -t 1000 -a center-text "Screenshot taken" "File Name: $scrFilename"
   cat "$scrPath/$scrFilename" | wl-copy
   ;;
+
+m | main)
+  grim -g "0,0 1920x1080" -c "$scrPath/$scrFilename" && notify-send -u low -t 1000 -a center-text "Screenshot taken" "File Name: $scrFilename"
+  cat "$scrPath/$scrFilename" | wl-copy
+  ;;
 esac

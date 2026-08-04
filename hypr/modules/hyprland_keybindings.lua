@@ -56,6 +56,8 @@ hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("hyprlock"), { description = "Hyprl
 -- Screenshots
 hl.bind("PRINT", hl.dsp.exec_cmd(scr_screenshot .. " slurp"), { description = "Screenshot (Slurp)" })
 
+hl.bind("SHIFT + PRINT", hl.dsp.exec_cmd(scr_screenshot .. " main"), { description = "Screenshot (Main)" })
+
 hl.bind(
 	mainMod .. " + PRINT",
 	hl.dsp.exec_cmd(scr_screenshot .. " global"),
