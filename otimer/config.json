@@ -8,13 +8,9 @@
     "app_icon": "",
     "category": "timer"
   },
-  "custom_actions": [
-    {
-      "title": "custom_example",
-      "command": [
-        "notify-send",
-        "hello you spoon"
-      ]
-    }
-  ]
+  "sound_settings": {
+    "enabled": false,
+    "data": []
+  },
+  "custom_actions": []
 }

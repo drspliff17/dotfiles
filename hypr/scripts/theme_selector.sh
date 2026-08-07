@@ -29,20 +29,20 @@ _addFav() {
   local path="$1"
   _favExists "$path" && return 0
   yq -i ".wallpapers += [\"$path\"]" "$FAV_DB"
-  _notify -a ct "Added to favourites: $(basename "$path")"
+  _notify -a nhc "Added to favourites: $(basename "$path")"
 }
 
 _removeFav() {
   local path="$1"
   yq -i "del(.wallpapers[] | select(. == \"$path\"))" "$FAV_DB"
-  _notify -a ct "Removed from favourites: $(basename "$path")"
+  _notify -a nhc "Removed from favourites: $(basename "$path")"
 }
 
 _loadFavs() {
   FILES=()
   [[ ! -f "$FAV_DB" ]] && _notify -a ct -e "Favourites file not found: $FAV_DB" && return 1
   mapfile -t FILES < <(yq -r '.wallpapers[]' "$FAV_DB")
-  [[ "${#FILES[@]}" -eq 0 ]] && _notify -a ct "No entires in favourites file" && return 1
+  [[ "${#FILES[@]}" -eq 0 ]] && _notify -a nhc "No entires in favourites file" && return 1
   return 0
 }
 
@@ -51,7 +51,7 @@ _clearFavs() {
   cat <<EOF >"$FAV_DB"
 wallpapers: []
 EOF
-  _notify -a ct "Cleared Favourites!"
+  _notify -a nhc "Cleared Favourites!"
 }
 
 ## Main logic
@@ -67,11 +67,10 @@ _handleOutput() {
 # Remove all pngs inside of $GIF_CACHE_DIR and clear nsxiv cache
 _clearGifCache() {
   rm -r "$GIF_CACHE_DIR"/* || {
-    _notify -a ct "GIF Cache already empty"
+    _notify -a nhc "GIF Cache already empty"
     return 1
   }
-  nsxiv --clean-cache
-  _notify -a ct "Cleared GIF Cache"
+  nsxiv --clean-cache && _notify -a nhc "Cleared GIF Cache"
   return 0
 }
 
@@ -82,18 +81,18 @@ _updateGifCache() {
 
   local gifs=("$GIF_DIR"/*.gif)
   [[ ${#gifs[@]} -eq 0 ]] && {
-    [[ "$VERBOSE" -eq 1 ]] && _notify -a ct "[INFO] No GIFs found in $GIF_DIR, exiting cache update"
+    [[ "$VERBOSE" -eq 1 ]] && _notify -a nhc "[INFO] No GIFs found in $GIF_DIR, exiting cache update"
     shopt -u nullglob
     return 0
   }
 
-  _notify -a ct "Beginning cache update"
+  _notify -a nhc "Beginning cache update"
 
   for f in "${gifs[@]}"; do
     fname="$(basename "$f")"
     cname="${fname%.gif}.png"
     if _filenameInCache "$cname"; then
-      [[ "$VERBOSE" -eq 1 ]] && _notify -a ct "[INFO] Skipping cache processing for file: $fname - $cname already exists"
+      [[ "$VERBOSE" -eq 1 ]] && _notify -a nhc "[INFO] Skipping cache processing for file: $fname - $cname already exists"
     else
       ffmpeg -i "$f" -frames:v 1 "$GIF_CACHE_DIR/$cname" 2>&1 >/dev/null || {
         _notify -a ct -e "Failed to cache $fname"
@@ -102,7 +101,7 @@ _updateGifCache() {
   done
 
   nsxiv --update-cache
-  _notify -a ct "[FINISHED]"
+  _notify -a nhc "[FINISHED]"
   shopt -u nullglob
   return 0
 }
@@ -129,11 +128,11 @@ _selectAndApply() {
     selection="${selection%.png}.gif"
     [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a ct -e "Could not find $selection" && exit 1
     _handleOutput "$GIF_DIR/$selection"
-    _notify -a ct "Set theme $selection"
+    _notify -a nhc "Set theme $selection"
     exit 0
   }
   _handleOutput "$PNG_DIR/$selection"
-  _notify -a ct "Set theme $selection"
+  _notify -a nhc "Set theme $selection"
 }
 
 PNG_DIR="$HOME/Pictures/Selectable/image-wallpapers"
@@ -174,7 +173,7 @@ while [[ "$#" -gt 0 ]]; do
       continue
       ;;
     esac
-    [[ -z "$MODE" ]] && _notify -a ct -e "Expected CLEAR mode: valid modes = [ gif fav ]" && exit 1
+    [[ -z "$MODE" ]] && _notify -a nhc -e "Expected CLEAR mode: valid modes = [ gif fav ]" && exit 1
     ;;
   -w | wipe)
     _clearGifCache
@@ -217,10 +216,10 @@ while [[ "$#" -gt 0 ]]; do
     esac
     ;;
   -*)
-    _notify -a ct -e "Unknown option: $1" && exit 1
+    _notify -a nhc -e "Unknown option: $1" && exit 1
     ;;
   *)
-    _notify -a ct -e "Unknown value: $1" && exit 1
+    _notify -a nhc -e "Unknown value: $1" && exit 1
     ;;
   esac
 done
@@ -289,15 +288,15 @@ case "$MODE" in
   selection="$(basename "$selection")"
   [[ ! -f "$PNG_DIR/$selection" ]] && {
     selection="${selection%.png}.gif"
-    [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a ct -e "Could not find $selection" && exit 1
+    [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a nhc -e "Could not find $selection" && exit 1
     _handleOutput "$GIF_DIR/$selection"
-    _notify -a ct "Set theme $selection"
+    _notify -a nhc "Set theme $selection"
     exit 0
   }
   _handleOutput "$PNG_DIR/$selection"
-  _notify -a ct "Set theme $selection"
+  _notify -a nhc "Set theme $selection"
   ;;
 *)
-  _notify -a ct -e "Invalid mode: $MODE" && exit 1
+  _notify -a nhc -e "Invalid mode: $MODE" && exit 1
   ;;
 esac

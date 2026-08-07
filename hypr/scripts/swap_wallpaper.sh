@@ -15,12 +15,12 @@ esac
     notify-send -a center-text -t 1500 -u normal "Error" "Could not source required lib: $LIB_NOTIFY"
     exit 1
   }
-  [[ ! -f "$1" ]] && _notify -a ct -e "Given wallpaper source could not be found: $1" && exit 1
+  [[ ! -f "$1" ]] && notify -a nhc -e "Given wallpaper source could not be found: $1" && exit 1
   ALLOWED_EXT=("png" "gif")
   for ext in "${ALLOWED_EXT[@]}"; do
     [[ "$1" == *."$ext" ]] && WALLPAPER="$1"
   done
-  [[ -z "$WALLPAPER" ]] && _notify -a ct -e "Given wallpaper source is an invalid filetype. Supported: ${ALLOWED_EXT[*]}" && exit 1
+  [[ -z "$WALLPAPER" ]] && notify -a nhc -e "Given wallpaper source is an invalid filetype. Supported: ${ALLOWED_EXT[*]}" && exit 1
 }
 
 [[ -z "$WALLPAPER" ]] && {

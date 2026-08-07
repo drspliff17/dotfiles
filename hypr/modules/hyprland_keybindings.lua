@@ -684,7 +684,7 @@ hl.define_submap("Misc", function()
 	hl.bind("h", function()
 		hl.dispatch(hl.dsp.exec_cmd("kitty htop"))
 		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "BTOP" })
+	end, { description = "HTOP" })
 
 	--BTOP
 	hl.bind("b", function()
