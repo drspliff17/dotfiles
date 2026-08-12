@@ -190,6 +190,16 @@ hl.bind(mainMod .. " + SHIFT + m", function()
 	end
 end, { description = "Special Workspace: Music" })
 
+hl.bind(mainMod .. " + SHIFT + g", function()
+	local ws = hl.get_workspaces()
+	for _, w in ipairs(ws) do
+		if w.name == "special:steam" then
+			hl.dispatch(hl.dsp.workspace.toggle_special("steam"))
+			return
+		end
+	end
+end, { description = "Special Workspace: Steam" })
+
 -- Launch Discord, and toggle it's special workspace
 hl.bind(mainMod .. " + SHIFT + d", function()
 	local ws = hl.get_workspaces()

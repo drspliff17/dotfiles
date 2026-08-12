@@ -82,6 +82,14 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "steam-move-special",
+	match = {
+		class = "steam",
+	},
+	workspace = "special:steam",
+})
+
+hl.window_rule({
 	name = "wofi-monitor0-on-open",
 	match = {
 		class = "wofi",
@@ -116,6 +124,14 @@ hl.window_rule({
 	float = true,
 	center = true,
 	size = "1200 600",
+})
+
+hl.window_rule({
+	name = "arma3",
+	match = {
+		initial_class = "steam_app_107409",
+	},
+	confine_pointer = true,
 })
 
 hl.window_rule({

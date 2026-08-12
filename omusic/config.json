@@ -1,28 +1,29 @@
 {
-  "use_pywal": true,
-  "win_bg": [
-    0,
-    0,
-    0,
-    255
-  ],
-  "gui_default_base_col": 0,
-  "gui_default_border_col": 0,
-  "default_dir": "/home/drspliff/Music/Songs",
-  "trim_from_filename": [
-    ".",
-    ",",
-    "/",
-    "?",
-    "!",
-    "\"",
-    "'",
-    "`"
-  ],
   "allow_make_destination": false,
-  "always_use_filename": true,
-  "always_use_dirname": true,
-  "always_use_working_dir": true,
-  "do_log_downloads": true,
-  "download_log_path": "/home/drspliff/.config/omusic/downloads.log"
+  "enable_logging": true,
+  "send_browser_cookies": false,
+  "default_download_directory": "/home/drspliff/Music",
+  "log_filepath": "/home/drspliff/.config/omusic/omusic.log",
+  "browser_for_cookies": "",
+  "custom_temp_location": "",
+  "meta_tag_config": {
+    "always_use_file_name": true,
+    "always_use_directory_name": true,
+    "always_use_working_directory": true,
+    "replace_underscores_for_spaces": true
+  },
+  "file_cleanup_config": {
+    "enable_file_name_cleanup": true,
+    "strip_from_file_name": [
+      ".",
+      ",",
+      "/",
+      "?",
+      "!",
+      "\"",
+      "'",
+      "`"
+    ],
+    "use_underscore_for_spaces": true
+  }
 }
