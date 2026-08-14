@@ -1,10 +1,10 @@
 {
   "allow_make_destination": false,
   "enable_logging": true,
-  "send_browser_cookies": false,
+  "send_browser_cookies": true,
   "default_download_directory": "/home/drspliff/Music",
   "log_filepath": "/home/drspliff/.config/omusic/omusic.log",
-  "browser_for_cookies": "",
+  "browser_for_cookies": "firefox",
   "custom_temp_location": "",
   "meta_tag_config": {
     "always_use_file_name": true,
