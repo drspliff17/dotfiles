@@ -1,0 +1,7 @@
+[
+  {
+    "title": "r",
+    "command": "hyprctl dispatch 'hl.dsp.send_shortcut({ mods = \"\", key = \"F5\", window = \"class:(Godot)$\" })'",
+    "enabled": true
+  }
+]
