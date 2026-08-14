@@ -434,6 +434,7 @@ hl.define_submap("Open", "reset", function()
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 
 	hl.bind("b", hl.dsp.exec_cmd("firefox"), { description = "Firefox" })
+	-- hl.bind("b", hl.dsp.exec_cmd("qutebrowser"), { description = "Qutebrowser" })
 
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"), { description = "Steam" })
 
