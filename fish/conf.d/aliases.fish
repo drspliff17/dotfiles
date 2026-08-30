@@ -1,6 +1,7 @@
 # Other
 alias cream="WEBKIT_DISABLE_DMABUF_RENDERER=1 exec /storage/Creamlinux_1.7.1_amd64.AppImage"
 
+alias pacs="sudo pacman -Syu"
 alias nvim="n"
 alias sw="sw >/dev/null"
 alias b="bash -lc"
@@ -13,7 +14,11 @@ alias f="fetch --box -l arch --infinite"
 alias csh="curl cheat.sh"
 alias rqs="ps -o pid,rss,vsz,cmd -C qs"
 
-alias gms="npx @gamemaker/gm-cli@latest"
+alias otd="otimer -d"
+alias ots="otimer -s"
+
+alias wlc="wl-copy"
+alias wlp="wl-paste"
 
 alias ou="omusic -u"
 alias om="omake"
@@ -22,7 +27,6 @@ alias om="omake"
 alias fm="$HOME/.config/bash/scripts/fmp3.sh"
 alias sm="$HOME/.config/bash/scripts/syncPhoneMusic.sh -v"
 alias rmmp3="$HOME/.config/bash/scripts/fixYoutubeMusic_Duplicates.sh"
-alias gm="getmusic"
 
 # Builtin Shorthands
 alias Q="exit"
@@ -41,11 +45,10 @@ alias bat="bat --color=always"
 
 # Git / GH
 alias gs="git status"
+alias gl="git log"
 alias gb="git branch"
 alias gc="git checkout"
 alias gr="git remote -v"
 alias ghl="gh repo list"
 
 alias lg="lazygit"
-
-alias getmusic="$HOME/.config/bash/scripts/automatic_ytdlp.sh"

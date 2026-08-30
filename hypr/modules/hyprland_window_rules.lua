@@ -81,13 +81,13 @@ hl.window_rule({
 	workspace = "special:music",
 })
 
-hl.window_rule({
-	name = "steam-move-special",
-	match = {
-		class = "steam",
-	},
-	workspace = "special:steam",
-})
+-- hl.window_rule({
+-- 	name = "steam-move-special",
+-- 	match = {
+-- 		class = "steam",
+-- 	},
+-- 	workspace = "special:steam",
+-- })
 
 hl.window_rule({
 	name = "wofi-monitor0-on-open",

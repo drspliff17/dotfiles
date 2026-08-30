@@ -433,6 +433,10 @@ hl.define_submap("Open", "reset", function()
 
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 
+	hl.bind("y", hl.dsp.exec_cmd("firefox --new-window https://www.youtube.com"), { description = "Youtube" })
+
+	hl.bind("c", hl.dsp.exec_cmd("firefox --new-window https://www.chess.com"), { description = "Chess" })
+
 	hl.bind("b", hl.dsp.exec_cmd("firefox"), { description = "Firefox" })
 	-- hl.bind("b", hl.dsp.exec_cmd("qutebrowser"), { description = "Qutebrowser" })
 
@@ -729,11 +733,17 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_emoji_picker.sh -c"))
 	end, { description = "Emoji Picker" })
 
-	-- Wayscriber
+	-- OTV
 	hl.bind("w", function()
 		hl.dispatch(hl.dsp.submap("reset"))
-		hl.dispatch(hl.dsp.exec_cmd("wayscriber --daemon-toggle"))
+		hl.dispatch(hl.dsp.exec_cmd("otv -g"))
 	end)
+
+	-- -- Wayscriber
+	-- hl.bind("w", function()
+	-- 	hl.dispatch(hl.dsp.submap("reset"))
+	-- 	hl.dispatch(hl.dsp.exec_cmd("wayscriber --daemon-toggle"))
+	-- end)
 
 	-- -- Watch Stuff
 	-- hl.bind("w", function()
