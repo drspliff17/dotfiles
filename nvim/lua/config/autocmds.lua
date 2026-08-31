@@ -15,6 +15,14 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "odin",
+  callback = function()
+    vim.opt_local.foldmethod = "marker"
+    vim.opt_local.foldmarker = "{,}"
+  end,
+})
+
 vim.filetype.add({
   extension = {
     gd = "gdscript",
