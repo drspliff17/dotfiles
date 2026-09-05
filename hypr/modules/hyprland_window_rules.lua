@@ -19,6 +19,23 @@
 --
 -- 	confine_pointer = true,
 -- })
+hl.window_rule({
+	name = "lock-cursor-avorion",
+	match = {
+		class = "steam_app_445220",
+	},
+
+	confine_pointer = true,
+})
+
+hl.window_rule({
+	name = "lock-cursor-stardew",
+	match = {
+		class = "steam_app_413150",
+	},
+
+	confine_pointer = true,
+})
 
 hl.window_rule({
 	name = "kitty-fetch",

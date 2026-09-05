@@ -7,7 +7,7 @@ return {
     local dashboard_config = require("config.my_dashboard_config")
 
     opts.dashboard = opts.dashboard or {}
-    opts.dashboard.enabled = true
+    opts.dashboard.enabled = false
     opts.dashboard.preset = opts.dashboard.preset or {}
 
     opts.dashboard.preset.header = dashboard_config.dashboard_header

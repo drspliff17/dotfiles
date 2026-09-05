@@ -431,6 +431,8 @@ hl.bind(mainMod .. " + o", hl.dsp.submap("Open"), { description = "Submap Open" 
 hl.define_submap("Open", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu), { description = "Wofi (Run)" })
 
+	hl.bind("a", hl.dsp.exec_cmd("kitty fish -c aerc"), { description = "Aerc Email" })
+
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 
 	hl.bind("y", hl.dsp.exec_cmd("firefox --new-window https://www.youtube.com"), { description = "Youtube" })
@@ -757,17 +759,17 @@ hl.define_submap("Misc", function()
 		hl.bind("m", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "M", window = "class:^(vesktop)$" }))
 			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Toggle Mute [CTRL+SHIFT+M]" })
+		end, { description = "Toggle Mute" })
 
 		hl.bind("a", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))
 			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Accept Incoming Call [CTRL+RETURN]" })
+		end, { description = "Accept Incoming Call" })
 
 		hl.bind("d", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "", key = "Escape", window = "class:^(vesktop)$" }))
 			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Decline Incoming Call [ESC]" })
+		end, { description = "Decline Incoming Call" })
 
 		hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 		--
