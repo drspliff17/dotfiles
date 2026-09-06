@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 LOCKFILE="/tmp/notif_log.lock"
+
 if [[ -e "$LOCKFILE" ]]; then
   PID="$(cat "$LOCKFILE")"
   if kill -0 "$PID" 2>/dev/null; then
@@ -9,6 +10,7 @@ if [[ -e "$LOCKFILE" ]]; then
     sleep 1
   fi
 fi
+
 echo $$ >"$LOCKFILE"
 trap 'rm -f "$LOCKFILE"' EXIT
 
@@ -50,53 +52,69 @@ dbus-monitor "interface='org.freedesktop.Notifications'" | while read -r line; d
     title=""
     body=""
     state=0
-
     skip=0
 
     while read -r line; do
+
       if $DEBUG; then
-        echo "[DEBUG] $line | $value"
+        echo "[DEBUG] $line"
       fi
 
       if [[ "$line" =~ string\ \"(.*)\" ]]; then
+
         value="${BASH_REMATCH[1]}"
 
-        value="${value//\\n/
-}"
-        value="${value//\\t/    }"
+        value="${value//\\n/$'\n'}"
+        value="${value//\\t/$'\t'}"
 
         case $state in
+
         0)
           app_name="$value"
+
           case "$app_name" in
           nh | no-history | view-notification-details | nh-center-text | ts | theme_selector)
             skip=1
             break
             ;;
           esac
+
           state=1
           ;;
+
         1)
           icon="$value"
           state=2
           ;;
+
         2)
           title="$value"
           state=3
           ;;
-        3) body+="$value " ;;
+
+        3)
+          body="$value"
+          state=4
+          ;;
+
         esac
       fi
 
-      if [[ "$line" == *"]"* ]]; then
+      # Don't break based on "]".
+      # The body/strings may contain arbitrary characters.
+
+      # Once we've captured the body, we're done.
+      if [[ "$state" -eq 4 ]]; then
         break
       fi
 
     done
-    [[ "$skip" -eq 1 ]] && continue
-    ts=$(date -Iseconds)
 
-    append "$ts" "$app_name" "$icon" "$title" "$body"
+    [[ "$skip" -eq 1 ]] && continue
+
+    ts="$(date -Iseconds)"
+
+    append "$ts" "$app_name" "$icon" "$title" "$body" ""
 
   fi
 
