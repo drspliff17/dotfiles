@@ -213,6 +213,19 @@ hl.bind(mainMod .. " + SHIFT + d", function()
 	hl.exec_cmd("vesktop")
 end, { description = "Special Workspace: Discord" })
 
+-- Launch aerc, and toggle it's special workspace
+hl.bind(mainMod .. " + SHIFT + a", function()
+	local ws = hl.get_workspaces()
+	for _, w in ipairs(ws) do
+		if w.name == "special:email" then
+			hl.dispatch(hl.dsp.workspace.toggle_special("email"))
+			return
+		end
+	end
+	hl.exec_cmd("aerc")
+	hl.exec_cmd("kitty --class aerc fish -c aerc")
+end, { description = "Special Workspace: Email" })
+
 -- Swap Workspace Between Two Monitors
 hl.bind(mainMod .. " + CTRL + s", function()
 	local m = hl.get_active_monitor().id
@@ -430,8 +443,6 @@ end)
 hl.bind(mainMod .. " + o", hl.dsp.submap("Open"), { description = "Submap Open" })
 hl.define_submap("Open", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu), { description = "Wofi (Run)" })
-
-	hl.bind("a", hl.dsp.exec_cmd("kitty fish -c aerc"), { description = "Aerc Email" })
 
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 

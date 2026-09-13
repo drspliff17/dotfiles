@@ -19,6 +19,22 @@
 --
 -- 	confine_pointer = true,
 -- })
+
+hl.window_rule({
+	name = "silece kitty bell",
+	match = { initial_class = "kitty" },
+	suppress_event = "bell",
+})
+
+hl.window_rule({
+	name = "aerc-move-special",
+	match = {
+		class = "aerc",
+	},
+
+	workspace = "special:email",
+})
+
 hl.window_rule({
 	name = "lock-cursor-avorion",
 	match = {
