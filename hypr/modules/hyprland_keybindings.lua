@@ -14,6 +14,7 @@ local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
 local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
 -- local scr_keybindLauncher = "~/.config/hypr/scripts/wofi_keybind_launcher.sh"
 local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
+local scr_browserSearch = "~/.config/hypr/scripts/wofi_browser_search.sh"
 local scr_clipvault = "~/.config/hypr/scripts/wofi_clipvault_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
@@ -720,11 +721,23 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "BTOP" })
 
+	--Browser Search Script
+	hl.bind("SHIFT + b", function()
+		hl.dispatch(hl.dsp.exec_cmd(scr_browserSearch))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Browser Quick-Search" })
+
 	--FETCH (custom size)
 	hl.bind("f", function()
 		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Open Fetch (with custom float size)" })
+
+	-- Cmatrix
+	hl.bind("SHIFT + c", function()
+		hl.dispatch(hl.dsp.exec_cmd("kitty --class cmatrix fish -c cmatrix"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "CMatrix" })
 
 	-- Colour Picker
 	hl.bind("p", function()

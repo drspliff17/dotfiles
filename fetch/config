@@ -18,7 +18,7 @@ memory
 swap
 disk=/storage
 #ip
-#battery
+battery
 #locale
 colors
 
