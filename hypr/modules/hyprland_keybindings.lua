@@ -823,35 +823,35 @@ hl.define_submap("Misc", function()
 	end)
 
 	-- Translate Mode
-	hl.bind("t", hl.dsp.submap("Translate"), { release = true, description = "Submap Translate" })
-	hl.define_submap("Translate", function()
-		hl.bind("t", function()
-			hl.dispatch(hl.dsp.submap("reset"))
-			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en"))
-		end, { description = "Translate (S:en)" })
-
-		hl.bind("f", function()
-			hl.dispatch(hl.dsp.submap("reset"))
-			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t fr"))
-		end, { description = "Translate (S:en T:fr)" })
-
-		hl.bind("g", function()
-			hl.dispatch(hl.dsp.submap("reset"))
-			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t de"))
-		end, { description = "Translate (S:en T:de)" })
-
-		hl.bind("s", function()
-			hl.dispatch(hl.dsp.submap("reset"))
-			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t es"))
-		end, { description = "Translate (S:en T:es)" })
-
-		hl.bind("p", function()
-			hl.dispatch(hl.dsp.submap("reset"))
-			hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -p"))
-		end, { description = "Wofi Translate" })
-
-		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
-	end)
+	-- hl.bind("t", hl.dsp.submap("Translate"), { release = true, description = "Submap Translate" })
+	-- hl.define_submap("Translate", function()
+	-- 	hl.bind("t", function()
+	-- 		hl.dispatch(hl.dsp.submap("reset"))
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en"))
+	-- 	end, { description = "Translate (S:en)" })
+	--
+	-- 	hl.bind("f", function()
+	-- 		hl.dispatch(hl.dsp.submap("reset"))
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t fr"))
+	-- 	end, { description = "Translate (S:en T:fr)" })
+	--
+	-- 	hl.bind("g", function()
+	-- 		hl.dispatch(hl.dsp.submap("reset"))
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t de"))
+	-- 	end, { description = "Translate (S:en T:de)" })
+	--
+	-- 	hl.bind("s", function()
+	-- 		hl.dispatch(hl.dsp.submap("reset"))
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t es"))
+	-- 	end, { description = "Translate (S:en T:es)" })
+	--
+	-- 	hl.bind("p", function()
+	-- 		hl.dispatch(hl.dsp.submap("reset"))
+	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -p"))
+	-- 	end, { description = "Wofi Translate" })
+	--
+	-- 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	-- end)
 
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
