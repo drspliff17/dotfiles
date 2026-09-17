@@ -22,7 +22,7 @@ local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 -- local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
-local scr_translate = "~/.config/hypr/scripts/wofi_translate.sh"
+-- local scr_translate = "~/.config/hypr/scripts/wofi_translate.sh"
 local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 
@@ -784,6 +784,11 @@ hl.define_submap("Misc", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "M", window = "class:^(vesktop)$" }))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Toggle Mute" })
+
+		hl.bind("d", function()
+			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Toggle Deafen" })
 
 		hl.bind("a", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))

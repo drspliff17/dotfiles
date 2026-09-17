@@ -41,6 +41,25 @@ vim.keymap.set("n", "<A-l>", "<cmd>BufferLineMoveNext<CR>", { desc = "Move Buffe
 -- Terminal mode
 vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], { noremap = true })
 
+-- Opening Terminal Buffers
+vim.keymap.set({ "n", "t" }, "<c-/>", function()
+  Snacks.terminal(nil, { cwd = vim.fn.getcwd() })
+  vim.cmd("wincmd L")
+  vim.cmd("vertical resize 75")
+end, { desc = "Terminal (CWD)" })
+
+vim.keymap.set("n", "<leader>ft", function()
+  Snacks.terminal(nil, { cwd = LazyVim.root() })
+  vim.cmd("wincmd L")
+  vim.cmd("vertical resize 75")
+end, { desc = "Terminal (Root)" })
+
+vim.keymap.set("n", "<leader>fT", function()
+  Snacks.terminal(nil, { cwd = vim.env.HOME })
+  vim.cmd("wincmd L")
+  vim.cmd("vertical resize 75")
+end, { desc = "Terminal (Home)" })
+
 -- Command mode cancel
 vim.keymap.set("c", "<C-q>", "<C-c>", {
   noremap = true,

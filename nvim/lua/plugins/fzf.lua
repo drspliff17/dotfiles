@@ -88,6 +88,7 @@ return {
             preview = {
               layout = "horizontal",
               horizontal = "up:65%",
+              width = "60%",
             },
           },
         })

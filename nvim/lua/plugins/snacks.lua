@@ -29,5 +29,7 @@ return {
     { "<leader>fE", false },
     { "<leader>S", false },
     { "<leader>.", false },
+    { "<leader>ft", false },
+    { "<leader>fT", false },
   },
 }
