@@ -45,6 +45,8 @@ hl.bind(
 	{ description = "Log out of Hyprland" }
 )
 
+hl.bind("CTRL + RETURN", hl.dsp.exec_cmd("kitty fish -c n"), { description = "Neovim" })
+
 hl.bind(
 	mainMod .. " + SHIFT + RETURN",
 	hl.dsp.exec_cmd(terminal, { float = true, size = "1000 400" }, { description = "Floating Terminal" })
@@ -552,55 +554,55 @@ hl.define_submap("Todo", "reset", function()
 end)
 
 -- Quickshell Mode
-hl.bind(mainMod .. " + q", hl.dsp.submap("Quickshell"), { description = "Submap Quickshell" })
-hl.define_submap("Quickshell", function()
-	hl.bind("i", function()
-		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_noctalia_icp.sh"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Wofi Noctalia ICP" })
-
-	hl.bind("c", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call controlCenter toggle"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Toggle Control Center" })
-
-	hl.bind("d", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call calendar toggle"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Toggle Calendar" })
-
-	hl.bind("m", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call systemMonitor toggle"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Toggle System Monitor" })
-
-	hl.bind("s", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call settings open"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Toggle Settings" })
-
-	hl.bind("k", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'top' "))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Set Bar Top" })
-
-	hl.bind("j", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'bottom' "))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Set Bar Bottom" })
-
-	hl.bind("h", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'left' "))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Set Bar Left" })
-
-	hl.bind("l", function()
-		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'right' "))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Set Bar Right" })
-
-	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
-end)
+-- hl.bind(mainMod .. " + q", hl.dsp.submap("Quickshell"), { description = "Submap Quickshell" })
+-- hl.define_submap("Quickshell", function()
+-- 	hl.bind("i", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_noctalia_icp.sh"))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Wofi Noctalia ICP" })
+--
+-- 	hl.bind("c", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call controlCenter toggle"))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Toggle Control Center" })
+--
+-- 	hl.bind("d", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call calendar toggle"))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Toggle Calendar" })
+--
+-- 	hl.bind("m", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call systemMonitor toggle"))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Toggle System Monitor" })
+--
+-- 	hl.bind("s", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call settings open"))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Toggle Settings" })
+--
+-- 	hl.bind("k", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'top' "))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Set Bar Top" })
+--
+-- 	hl.bind("j", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'bottom' "))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Set Bar Bottom" })
+--
+-- 	hl.bind("h", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'left' "))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Set Bar Left" })
+--
+-- 	hl.bind("l", function()
+-- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'right' "))
+-- 		hl.dispatch(hl.dsp.submap("reset"))
+-- 	end, { description = "Set Bar Right" })
+--
+-- 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
+-- end)
 
 -- Wallpaper
 hl.bind(mainMod .. " + w", hl.dsp.submap("Wallpaper"), { description = "Submap Wallpaper" })
