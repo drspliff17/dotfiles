@@ -5,14 +5,11 @@ local mainMod = "SUPER"
 local terminal = "kitty"
 local fileManager = "y"
 local menu = "wofi --show drun --columns 3"
--- local status = "qs"
 
 -- My Scripts
--- local scr_toggleProgram = "~/.config/hypr/scripts/toggle_program.sh"
 local scr_volumeController = "~/.config/hypr/scripts/wofi_volume_controller.sh"
 local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
 local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
--- local scr_keybindLauncher = "~/.config/hypr/scripts/wofi_keybind_launcher.sh"
 local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
 local scr_browserSearch = "~/.config/hypr/scripts/wofi_browser_search.sh"
 local scr_clipvault = "~/.config/hypr/scripts/wofi_clipvault_selector.sh"
@@ -21,8 +18,6 @@ local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
--- local scr_qs = "~/.config/bash/scripts/quickshell_command_dispatcher.sh"
--- local scr_translate = "~/.config/hypr/scripts/wofi_translate.sh"
 local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 
@@ -35,8 +30,6 @@ local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 -- 	handle:close()
 -- 	return (out:gsub("%s+$", ""))
 -- end
-
--- hl.bind("a", hl.dsp.exec_cmd(scr_commandLauncher .. " $HOME/thing.yml"))
 
 -- Core Binds
 hl.bind(
@@ -553,56 +546,35 @@ hl.define_submap("Todo", "reset", function()
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
--- Quickshell Mode
--- hl.bind(mainMod .. " + q", hl.dsp.submap("Quickshell"), { description = "Submap Quickshell" })
--- hl.define_submap("Quickshell", function()
--- 	hl.bind("i", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_noctalia_icp.sh"))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Wofi Noctalia ICP" })
---
--- 	hl.bind("c", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call controlCenter toggle"))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Toggle Control Center" })
---
--- 	hl.bind("d", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call calendar toggle"))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Toggle Calendar" })
---
--- 	hl.bind("m", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call systemMonitor toggle"))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Toggle System Monitor" })
---
--- 	hl.bind("s", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call settings open"))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Toggle Settings" })
---
--- 	hl.bind("k", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'top' "))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Set Bar Top" })
---
--- 	hl.bind("j", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'bottom' "))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Set Bar Bottom" })
---
--- 	hl.bind("h", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'left' "))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Set Bar Left" })
---
--- 	hl.bind("l", function()
--- 		hl.dispatch(hl.dsp.exec_cmd("qs -c noctalia-shell ipc call bar setPosition 'right' "))
--- 		hl.dispatch(hl.dsp.submap("reset"))
--- 	end, { description = "Set Bar Right" })
---
--- 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
--- end)
+-- Oshell Mode
+hl.bind(mainMod .. " + q", hl.dsp.submap("oshell"), { description = "Submap Oshell" })
+hl.define_submap("oshell", function()
+	hl.bind("h", function()
+		hl.dispatch(hl.dsp.exec_cmd("oshell monitor hide"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Hide oshell" })
+
+	hl.bind("1", function()
+		hl.dispatch(hl.dsp.exec_cmd("oshell monitor 1"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Preferred monitor" })
+
+	hl.bind("2", function()
+		hl.dispatch(hl.dsp.exec_cmd("oshell monitor 2"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Inverted monitor" })
+
+	hl.bind("3", function()
+		hl.dispatch(hl.dsp.exec_cmd("oshell monitor all"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "All Monitors" })
+
+	hl.bind("r", function()
+		hl.dispatch(hl.dsp.exec_cmd("kill -USR2 oshell"))
+		hl.dispatch(hl.dsp.exec_cmd("notify-send -a nh-center-text -t 1200 'oshell config reloaded'"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Reload Config" })
+end)
 
 -- Wallpaper
 hl.bind(mainMod .. " + w", hl.dsp.submap("Wallpaper"), { description = "Submap Wallpaper" })
@@ -767,18 +739,6 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.exec_cmd("otv -g"))
 	end)
 
-	-- -- Wayscriber
-	-- hl.bind("w", function()
-	-- 	hl.dispatch(hl.dsp.submap("reset"))
-	-- 	hl.dispatch(hl.dsp.exec_cmd("wayscriber --daemon-toggle"))
-	-- end)
-
-	-- -- Watch Stuff
-	-- hl.bind("w", function()
-	-- 	hl.dispatch(hl.dsp.exec_cmd("~/.config/bash/scripts/watchstuff.sh -w"))
-	-- 	hl.dispatch(hl.dsp.submap("reset"))
-	-- end, { description = "Watch Stuff" })
-
 	-- Discord Mode
 	hl.bind("d", hl.dsp.submap("Discord"), { description = "Submap Discord" })
 	hl.define_submap("Discord", function()
@@ -828,37 +788,6 @@ hl.define_submap("Misc", function()
 
 		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 	end)
-
-	-- Translate Mode
-	-- hl.bind("t", hl.dsp.submap("Translate"), { release = true, description = "Submap Translate" })
-	-- hl.define_submap("Translate", function()
-	-- 	hl.bind("t", function()
-	-- 		hl.dispatch(hl.dsp.submap("reset"))
-	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en"))
-	-- 	end, { description = "Translate (S:en)" })
-	--
-	-- 	hl.bind("f", function()
-	-- 		hl.dispatch(hl.dsp.submap("reset"))
-	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t fr"))
-	-- 	end, { description = "Translate (S:en T:fr)" })
-	--
-	-- 	hl.bind("g", function()
-	-- 		hl.dispatch(hl.dsp.submap("reset"))
-	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t de"))
-	-- 	end, { description = "Translate (S:en T:de)" })
-	--
-	-- 	hl.bind("s", function()
-	-- 		hl.dispatch(hl.dsp.submap("reset"))
-	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -s en -t es"))
-	-- 	end, { description = "Translate (S:en T:es)" })
-	--
-	-- 	hl.bind("p", function()
-	-- 		hl.dispatch(hl.dsp.submap("reset"))
-	-- 		hl.dispatch(hl.dsp.exec_cmd(scr_translate .. " -p"))
-	-- 	end, { description = "Wofi Translate" })
-	--
-	-- 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
-	-- end)
 
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
