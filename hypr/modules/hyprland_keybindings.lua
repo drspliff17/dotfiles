@@ -515,14 +515,8 @@ hl.bind(mainMod .. " + n", hl.dsp.submap("Notification"), { description = "Subma
 hl.define_submap("Notification", function()
 	hl.bind(
 		"o",
-		hl.dsp.exec_cmd("kitty fish -c 'n ~/dev/data/notifications.json'"),
+		hl.dsp.exec_cmd("kitty fish -c 'n ~/dev/data/notifications.jsonl'"),
 		{ description = "Open Notification History" }
-	)
-
-	hl.bind(
-		"r",
-		hl.dsp.exec_cmd("makoctl reload && notify-send -a nh-center-text -u low 'Mako Reloaded'"),
-		{ description = "Reload Mako" }
 	)
 
 	hl.bind(
@@ -570,7 +564,7 @@ hl.define_submap("oshell", function()
 	end, { description = "All Monitors" })
 
 	hl.bind("r", function()
-		hl.dispatch(hl.dsp.exec_cmd("kill -USR2 oshell"))
+		hl.dispatch(hl.dsp.exec_cmd("pkill -USR2 oshell"))
 		hl.dispatch(hl.dsp.exec_cmd("notify-send -a nh-center-text -t 1200 'oshell config reloaded'"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Reload Config" })
