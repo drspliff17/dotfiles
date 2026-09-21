@@ -290,11 +290,11 @@ case "$MODE" in
     selection="${selection%.png}.gif"
     [[ ! -f "$GIF_DIR/$selection" ]] && _notify -a nhc -e "Could not find $selection" && exit 1
     _handleOutput "$GIF_DIR/$selection"
-    _notify -a nhc "Set theme $selection"
+    _notify -a nhc -t 2000 "Set theme $selection"
     exit 0
   }
   _handleOutput "$PNG_DIR/$selection"
-  _notify -a nhc "Set theme $selection"
+  _notify -a nhc -t 2000 "Set theme $selection"
   ;;
 *)
   _notify -a nhc -e "Invalid mode: $MODE" && exit 1

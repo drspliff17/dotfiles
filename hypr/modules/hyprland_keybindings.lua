@@ -20,6 +20,7 @@ local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
+local scr_openNotif = "~/.config/hypr/scripts/open_notif_log.sh"
 
 -- local function exec_capture(cmd)
 -- 	local handle = io.popen(cmd)
@@ -513,18 +514,14 @@ end)
 -- Notification Mode
 hl.bind(mainMod .. " + n", hl.dsp.submap("Notification"), { description = "Submap Notification" })
 hl.define_submap("Notification", function()
-	hl.bind(
-		"o",
-		hl.dsp.exec_cmd("kitty fish -c 'n ~/dev/data/notifications.jsonl'"),
-		{ description = "Open Notification History" }
-	)
+	hl.bind("o", hl.dsp.exec_cmd(scr_openNotif), { description = "Open Notification Log" })
 
 	hl.bind(
-		"w",
+		"c",
 		hl.dsp.exec_cmd(
-			[[sh -c 'weather=$(curl -s "wttr.in/?format=2"); notify-send -a nh-center-text -u normal -t 2500 "$weather"']]
+			[[rm /home/drspliff/dev/data/notifications.jsonl; notify-send -a nhc -u normal -t 2500 "cleared notifications log"]]
 		),
-		{ description = "Notify Weather" }
+		{ description = "Clear Notification Log" }
 	)
 
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })

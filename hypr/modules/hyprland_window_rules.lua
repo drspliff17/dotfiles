@@ -31,7 +31,6 @@ hl.window_rule({
 	match = {
 		class = "aerc",
 	},
-
 	workspace = "special:email",
 })
 
@@ -40,7 +39,6 @@ hl.window_rule({
 	match = {
 		class = "steam_app_445220",
 	},
-
 	confine_pointer = true,
 })
 
@@ -49,7 +47,6 @@ hl.window_rule({
 	match = {
 		class = "steam_app_413150",
 	},
-
 	confine_pointer = true,
 })
 
@@ -114,29 +111,12 @@ hl.window_rule({
 	workspace = "special:music",
 })
 
--- hl.window_rule({
--- 	name = "steam-move-special",
--- 	match = {
--- 		class = "steam",
--- 	},
--- 	workspace = "special:steam",
--- })
-
 hl.window_rule({
 	name = "wofi-monitor0-on-open",
 	match = {
 		class = "wofi",
 	},
 	monitor = "0",
-})
-
-hl.window_rule({
-	name = "discord-move-special",
-	match = {
-		initial_class = "discord",
-	},
-	no_initial_focus = true,
-	workspace = "special:discord",
 })
 
 hl.window_rule({
