@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-
-#NOTE: Temp here because im lazy
-DISABLED_GIF=1
-
 WALLPAPER=""
 FAV_MODE=0
 case "$1" in
@@ -21,9 +17,6 @@ esac
   [[ ! -f "$1" ]] && notify -a nhc -e "Given wallpaper source could not be found: $1" && exit 1
   ALLOWED_EXT=("png" "gif")
 
-  #NOTE: my lazy patch
-  [[ $DISABLED_GIF -eq 1 ]] && ALLOWED_EXT=("png")
-
   for ext in "${ALLOWED_EXT[@]}"; do
     [[ "$1" == *."$ext" ]] && WALLPAPER="$1"
   done
@@ -39,11 +32,5 @@ esac
 }
 /usr/bin/waypaper --wallpaper "$WALLPAPER" >/dev/null
 
-# t="$(basename "$WALLPAPER")"
-# t=${t%.*}
-# [[ -e "/home/drspliff/.cache/themectl/colour_schemes/$name" ]] && {
-#   bash /home/drspliff/.config/hypr/scripts/update_colours.sh "/home/drspliff/.cache/themectl/colour_schemes/$name"
-#   exit 0
-# }
 /usr/bin/wal -i "$WALLPAPER" >/dev/null 2>&1
 bash /home/drspliff/.config/hypr/scripts/update_colours.sh

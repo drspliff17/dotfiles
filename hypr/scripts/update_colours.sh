@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-cp "$HOME/.cache/wal/hyprland_colors" \
-  "$HOME/.config/hypr/modules/hyprland_colors.lua"
-
-if [[ -f "$HOME/.cache/wal/hyprlock.conf" ]]; then
-  cp "$HOME/.cache/wal/hyprlock.conf" \
-    "$HOME/.config/hypr/hyprlock.conf"
-fi
-
 # Kitty Sockets (specifically needed for tab bar pywal update)
 for paw in /tmp/kitty-*; do
   [[ -S "$paw" ]] || continue
@@ -25,13 +17,6 @@ for sock in /tmp/nvim-*; do
       --remote-expr "execute ('colorscheme pywal')"
   fi
 done
-
-# Waypaper
-cp "$HOME/.cache/wal/waypaper.css" \
-  "$HOME/.config/waypaper/style.css"
-
-# Mako
-makoctl reload
 
 # Firefox
 pywalfox update
