@@ -25,9 +25,9 @@ esac
 
 [[ -z "$WALLPAPER" ]] && {
   if [[ "$FAV_MODE" -eq 0 ]]; then
-    WALLPAPER="$(/usr/local/bin/theme_selector -o random)"
+    WALLPAPER="$(/usr/local/bin/theme_selector -o random -p)"
   else
-    WALLPAPER="$(/usr/local/bin/theme_selector -o random -f)"
+    WALLPAPER="$(/usr/local/bin/theme_selector -o random -f -p)"
   fi
 }
 /usr/bin/waypaper --wallpaper "$WALLPAPER" >/dev/null
