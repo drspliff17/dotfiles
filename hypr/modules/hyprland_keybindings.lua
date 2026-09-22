@@ -102,7 +102,22 @@ hl.bind(
 	{ submap_universal = true, description = "Cycle Floating Window" }
 )
 
-hl.bind(mainMod .. " + c", hl.dsp.window.close(), { submap_universal = true, description = "Close Window" })
+hl.bind(mainMod .. " + c", function()
+	local w = hl.get_active_window()
+
+	if w ~= nil and w.class == "wofi" then
+		hl.dispatch(hl.dsp.window.signal({
+			window = w,
+			signal = 2,
+		}))
+		return
+	end
+
+	hl.dispatch(hl.dsp.window.close({ window = w }))
+end, {
+	submap_universal = true,
+	description = "Close Window",
+})
 
 hl.bind(
 	mainMod .. " + a",
