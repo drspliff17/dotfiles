@@ -283,8 +283,7 @@ hl.bind(
 )
 
 hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher), { description = "Command Launcher" })
-hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("hyprbind menu subkey"), { description = "Hyprbind - Subkey" })
-hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind menu key"), { description = "Hyprbind - Key" })
+hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind menu subkey"), { description = "Hyprbind - Subkey" })
 
 -- -- DEFAULT FN F* Binds
 hl.bind(
@@ -436,6 +435,24 @@ hl.define_submap("MoveFloat", function()
 	hl.bind(" + SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
+-- Browser Mode
+hl.bind(mainMod .. " + b", hl.dsp.submap("Browser"), { description = "Submap Browser" })
+hl.define_submap("Browser", "reset", function()
+	hl.bind("o", hl.dsp.exec_cmd("firefox"), { description = "Open Firefox" })
+
+	hl.bind("y", hl.dsp.exec_cmd("firefox --new-window https://www.youtube.com"), { description = "Youtube" })
+
+	hl.bind("c", hl.dsp.exec_cmd("firefox --new-window https://www.chess.com"), { description = "Chess" })
+
+	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"), { description = "Bookmark Launcher (Window)" })
+
+	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"), { description = "Bookmark Launcher (Tab)" })
+
+	hl.bind("b", hl.dsp.exec_cmd("obang runner wofi -d -W 25% -H 5%"), { description = "Obang Search" })
+
+	hl.bind("SHIFT + b", hl.dsp.exec_cmd("obang browse wofi -d -W 25% -H 20%"), { description = "Obang Menu" })
+end)
+
 --Open Mode (Launch Programs)
 hl.bind(mainMod .. " + o", hl.dsp.submap("Open"), { description = "Submap Open" })
 hl.define_submap("Open", "reset", function()
@@ -443,18 +460,7 @@ hl.define_submap("Open", "reset", function()
 
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 
-	hl.bind("y", hl.dsp.exec_cmd("firefox --new-window https://www.youtube.com"), { description = "Youtube" })
-
-	hl.bind("c", hl.dsp.exec_cmd("firefox --new-window https://www.chess.com"), { description = "Chess" })
-
-	hl.bind("b", hl.dsp.exec_cmd("firefox"), { description = "Firefox" })
-	-- hl.bind("b", hl.dsp.exec_cmd("qutebrowser"), { description = "Qutebrowser" })
-
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"), { description = "Steam" })
-
-	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"), { description = "Bookmark Launcher (Window)" })
-
-	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"), { description = "Bookmark Launcher (Tab)" })
 
 	hl.bind("m", hl.dsp.exec_cmd("exec /storage/Caprine-2.61.0.AppImage"), { description = "Caprine" })
 
