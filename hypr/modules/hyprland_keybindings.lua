@@ -475,6 +475,8 @@ hl.define_submap("Open", "reset", function()
 
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 
+	hl.bind("g", hl.dsp.exec_cmd("wofi_steam_launcher"), { description = "Open Steam Launcher (Wofi)" })
+
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"), { description = "Steam" })
 
 	hl.bind("m", hl.dsp.exec_cmd("exec /storage/Caprine-2.61.0.AppImage"), { description = "Caprine" })
