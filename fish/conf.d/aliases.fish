@@ -14,14 +14,18 @@ alias f="fetch --box -l arch --infinite"
 alias csh="curl cheat.sh"
 alias rqs="ps -o pid,rss,vsz,cmd -C qs"
 
+# My odin programs
 alias otd="otimer -d"
 alias ots="otimer -s"
 
-alias wlc="wl-copy"
-alias wlp="wl-paste"
-
 alias ou="omusic -u"
 alias om="omake"
+
+alias ob="obang"
+
+# Clipboard
+alias wlc="wl-copy"
+alias wlp="wl-paste"
 
 #Music stuff because am lazy ja
 alias fm="$HOME/.config/bash/scripts/fmp3.sh"
