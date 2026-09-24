@@ -538,7 +538,23 @@ hl.define_submap("Notification", function()
 	hl.bind("o", hl.dsp.exec_cmd(scr_openNotif), { description = "Open Notification Log" })
 
 	hl.bind(
-		"c",
+		"d",
+		hl.dsp.exec_cmd([[
+  notify-send -t 3000 -u normal -a nhc "$(date | cut -d' ' -f1,2,3)"
+  ]]),
+		{ description = "Notify - Date" }
+	)
+
+	hl.bind(
+		"w",
+		hl.dsp.exec_cmd([[
+  notify-send -t 3000 -u normal -a nhc "$(curl -s v2d.wttr.in | rg Weather: | cut -d' ' -f3,4,5,6,7 | sed 's/,//g')"
+  ]]),
+		{ description = "Notify - Weather" }
+	)
+
+	hl.bind(
+		"q",
 		hl.dsp.exec_cmd(
 			[[rm /home/drspliff/dev/data/notifications.jsonl; notify-send -a nhc -u normal -t 2500 "cleared notifications log"]]
 		),
