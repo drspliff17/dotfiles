@@ -18,15 +18,41 @@ end, { desc = "Open Snacks Dashboard" })
 
 vim.keymap.set("n", "<leader>xs", "<cmd>source %<CR>", { desc = "Source Current File" })
 
--- Open Last Yank
+-- Open Last Yank v2
 vim.keymap.set("n", "<leader>p", function()
-  local p = vim.fn.expand(vim.trim(vim.fn.getreg("0")))
-  if p == "" or vim.fn.filereadable(p) == 0 and vim.fn.isdirectory(p) == 0 then
-    vim.notify("Invalid path: " .. p, vim.log.levels.WARN)
+  local p = vim.trim(vim.fn.getreg("0"))
+  if p == "" then
     return
   end
+
+  local function exists(path)
+    return vim.fn.filereadable(path) == 1 or vim.fn.isdirectory(path) == 1
+  end
+
+  if not exists(p) then
+    local base = vim.fn.expand("%:p:h")
+    local relative = vim.fs.joinpath(base, p)
+
+    if exists(relative) then
+      p = relative
+    else
+      vim.notify("Invalid path: " .. p, vim.log.levels.WARN)
+      return
+    end
+  end
+
   vim.cmd.edit(vim.fn.fnameescape(p))
 end, { desc = "Open last yanked path" })
+
+-- Open Last Yank
+-- vim.keymap.set("n", "<leader>p", function()
+--   local p = vim.fn.expand(vim.trim(vim.fn.getreg("0")))
+--   if p == "" or vim.fn.filereadable(p) == 0 and vim.fn.isdirectory(p) == 0 then
+--     vim.notify("Invalid path: " .. p, vim.log.levels.WARN)
+--     return
+--   end
+--   vim.cmd.edit(vim.fn.fnameescape(p))
+-- end, { desc = "Open last yanked path" })
 
 -- Lsp
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
