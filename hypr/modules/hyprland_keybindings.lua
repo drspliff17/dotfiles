@@ -70,6 +70,10 @@ hl.bind(
 	{ submap_universal = true, description = "Focus Left" }
 )
 
+hl.bind(mainMod .. " + bracketright", function()
+	hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
+end, { description = "Toggle Maximize" })
+
 hl.bind(
 	mainMod .. " + j",
 	hl.dsp.focus({ direction = "down" }),

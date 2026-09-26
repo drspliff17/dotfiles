@@ -21,6 +21,22 @@
 -- })
 
 hl.window_rule({
+	name = "surpress-maximize-events",
+	match = { class = ".*" },
+	suppress_event = "maximize",
+})
+
+-- hl.window_rule({
+-- 	name = "maximize-firefox-pip",
+-- 	match = {
+-- 		class = "firefox",
+-- 		title = "Picture-in-Picture",
+-- 	},
+-- 	tile = true,
+-- 	maximize = true,
+-- })
+
+hl.window_rule({
 	name = "silece kitty bell",
 	match = { initial_class = "kitty" },
 	suppress_event = "bell",

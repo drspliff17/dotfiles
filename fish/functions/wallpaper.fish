@@ -1,3 +1,3 @@
 function wallpaper
-    grep 'wallpaper =' ~/.config/waypaper/config.ini | cut -d ' ' -f 3 | string sub -s 3
+    awww query -j | jq '.[].[] | .displaying.image' | sort -u
 end

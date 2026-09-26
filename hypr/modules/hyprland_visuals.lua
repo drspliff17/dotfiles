@@ -7,7 +7,6 @@ hl.config({
 		border_size = 2,
 
 		col = {
-			-- active_border = { colors = { "rgba(33ccffee)", "rgba(00ff99ee)" }, angle = 45 },
 			---@diagnostic disable-next-line
 			active_border = color1,
 			---@diagnostic disable-next-line
@@ -37,7 +36,6 @@ hl.config({
 			enabled = true,
 			range = 4,
 			render_power = 3,
-			color = 0xee1a1a1a,
 		},
 
 		blur = {

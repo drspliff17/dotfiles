@@ -1,7 +1,7 @@
 -- Autostart
 hl.on("hyprland.start", function()
 	hl.exec_cmd("hyprsunset")
-	hl.exec_cmd("waypaper --restore")
+	hl.exec_cmd("awww restore")
 	hl.exec_cmd("wal -R")
 	hl.exec_cmd("oshell")
 	hl.exec_cmd("wl-paste --watch clipvault store")

@@ -302,10 +302,12 @@ div[class*="contentHeader"] {
     border: 1px solid color-mix(in srgb, {color2}, transparent 25%) !important;
     border-radius: 6px
 }
+
 .edgeControls_bfe55a .controlIcon_f1ceac:hover {
     color: {color2} !important;
     /* border: 2px solid color-mix(in srgb, {color2}, transparent 35%) !important; */
 }
+
 .edgeControls_bfe55a .controlIcon_f1ceac:hover svg {
     fill: {color2} !important;
     border: 2px solid color-mix(in srgb, {color2}, transparent 45%) !important;
