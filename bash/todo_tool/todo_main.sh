@@ -8,13 +8,13 @@ source "$LIB_NOTIFY" || {
 
 LIB_WOFI="$HOME/.config/bash/lib/wofi_construct.sh"
 source "$LIB_WOFI" || {
-  _notify -a ct -e -u normal "Could not source required lib: $LIB_WOFI"
+  notify -a ct -u normal "Could not source required lib: $LIB_WOFI"
   exit 1
 }
 
 LIB_TODO="$HOME/.config/bash/lib/todo_tool.sh"
 source "$LIB_TODO" || {
-  _notify -a ct -e -u normal "Could not source required lib: $LIB_TODO"
+  notify -a ct -u normal "Could not source required lib: $LIB_TODO"
   exit 1
 }
 
@@ -29,10 +29,10 @@ TARGETS=()
 
 if ! _foundFiles; then
   _init || {
-    _notify -e -a ct "Todo Tool Setup Failed!"
+    notify -a ct "Todo Tool Setup Failed!"
     exit 1
   }
-  _notify -a ct "Todo Tool Setup Complete!"
+  notify -a ct "Todo Tool Setup Complete!"
 fi
 
 while [[ "$#" -gt 0 ]]; do
@@ -83,7 +83,7 @@ while [[ "$#" -gt 0 ]]; do
     c | create | d | delete | r | rollback)
       ;;
     *)
-      _notify -e -a ct "Invalid BACKUP_MODE. Use -h / help for information"
+      notify -a ct "Invalid BACKUP_MODE. Use -h / help for information"
       exit 1
       ;;
     esac
@@ -109,7 +109,11 @@ IMENU)
   ;;
 EDIT)
   for id in "${TARGETS[@]}"; do
-    [[ -f "$ENTRY_DIR/entry_$id.md" ]] && kitty fish -c "n $ENTRY_DIR/entry_$id.md"
+    if [[ -f "$ENTRY_DIR/entry_$id.md" ]]; then
+      kitty fish -c "n $ENTRY_DIR/entry_$id.md"
+    else
+      exit 1
+    fi
     _dbTouchEntry "$id"
   done
   ;;

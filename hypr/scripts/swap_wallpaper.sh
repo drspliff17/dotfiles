@@ -30,7 +30,9 @@ esac
     WALLPAPER="$(/usr/local/bin/theme_selector -o random -f -p)"
   fi
 }
-/usr/bin/waypaper --wallpaper "$WALLPAPER" >/dev/null
+
+# TODO: Build extension
+/usr/bin/awww img -t fade --transition-duration 0.8 "$WALLPAPER" --transition-angle 45
 
 /usr/bin/wal -i "$WALLPAPER" >/dev/null 2>&1
 bash /home/drspliff/.config/hypr/scripts/update_colours.sh

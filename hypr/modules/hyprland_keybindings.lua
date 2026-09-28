@@ -525,6 +525,10 @@ hl.define_submap("Cursor", function()
 
 	hl.bind("d", hl.dsp.exec_cmd("wlrctl pointer scroll 20 0"), { description = "WLRCTL Scroll Down" })
 
+	hl.bind("v", hl.dsp.exec_cmd("wlrctl pointer scroll 0 -20"), { description = "WLRCTL Scroll Left" })
+
+	hl.bind("b", hl.dsp.exec_cmd("wlrctl pointer scroll 0 20"), { description = "WLRCTL Scroll Right" })
+
 	hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/wlkbptr.sh"), { description = "Activate wl-kbptr" })
 
 	hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true, description = "Move Cursor Left" })

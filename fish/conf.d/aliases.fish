@@ -13,6 +13,8 @@ alias ff="fastfetch"
 alias f="fetch --box -l arch --infinite"
 alias csh="curl cheat.sh"
 
+alias key="n ~/.config/hypr/modules/hyprland_keybindings.lua"
+
 # My odin programs
 alias otd="otimer -d"
 alias ots="otimer -s"
