@@ -146,7 +146,7 @@ case "$mode" in
   WOFI_PROMPT="Select Audio Sink" && _construct w_args
   while [[ "$volumeSelected" -eq 1 ]]; do
     streams=$(_getStreams)
-    [[ -z "$streams" ]] && _notify -a ct "No Audio Sinks Detected" && exit 1
+    [[ -z "$streams" ]] && _notify -a nhc "No Audio Sinks Detected" && exit 1
 
     stream_count=$(printf "%s\n" "$streams" | sed '/^\s*$/d' | wc -l)
     if [[ "$stream_count" -eq 1 ]]; then
@@ -160,31 +160,31 @@ case "$mode" in
     sink_clean_name="${sink_display_name%% (*}"
     sink_current_volume="$(_getSinkVolume)"
     if ! _validateSinkInput "$sink_input_id"; then
-      _notify -a ct "Invalid Audio Sink ID" && exit 1
+      _notify -a nhc "Invalid Audio Sink ID" && exit 1
     fi
 
     WOFI_PROMPT="Select Volume ($sink_clean_name ): Currently $sink_current_volume" && _construct w_args
     w_selectedVolume="$(echo -e "$w_volumeOptions" | wofi -d "${w_args[@]}")"
     [[ -z "$w_selectedVolume" ]] && exit 1
     w_selectedVolume="$(_validateVolume "$w_selectedVolume")" || {
-      _notify -a ct "Invalid Audio Value: 0(%) - 100(%) "
+      _notify -a nhc "Invalid Audio Value: 0(%) - 100(%) "
       exit 1
     }
     volumeSelected=0
   done
-  pactl set-sink-input-volume "$sink_input_id" "$w_selectedVolume" && _notify -a ct "Volume set $sink_display_name ==> $w_selectedVolume" && exit 0
+  pactl set-sink-input-volume "$sink_input_id" "$w_selectedVolume" && _notify -a nhc "Volume set $sink_display_name ==> $w_selectedVolume" && exit 0
   ;;
 
 # Set Volume for all Audio Sinks
 "all_player")
   sinks_count=$(pactl list sink-inputs | grep -c "Sink Input #")
-  [[ "$sinks_count" -eq 0 ]] && _notify -a ct "No Audio Sinks Detected" && exit 1
+  [[ "$sinks_count" -eq 0 ]] && _notify -a nhc "No Audio Sinks Detected" && exit 1
 
   WOFI_PROMPT="Select Volume For All (Or Enter Value 0-100)" && _construct w_args
   w_selectedVolume="$(echo -e "$w_volumeOptions" | wofi -d "${w_args[@]}")"
   [[ -z "$w_selectedVolume" ]] && exit 1
   w_selectedVolume="$(_validateVolume "$w_selectedVolume")" || {
-    _notify -a ct "Invalid Audio Value: 0(%) - 100(%) "
+    _notify -a nhc "Invalid Audio Value: 0(%) - 100(%) "
     exit 1
   }
 
@@ -210,12 +210,12 @@ case "$mode" in
   w_selectedVolume="$(echo -e "$w_volumeOptions" | wofi -d "${w_args[@]}")"
   [[ -z "$w_selectedVolume" ]] && exit 1
   w_selectedVolume="$(_validateVolume "$w_selectedVolume")" || {
-    _notify -a ct "Invalid Audio Value: 0(%) - 100(%) "
+    _notify -a nhc "Invalid Audio Value: 0(%) - 100(%) "
     exit 1
   }
 
   wpctl set-volume @DEFAULT_AUDIO_SINK@ "$w_selectedVolume"
-  _notify -a ct "System volume set: $w_selectedVolume (was $current_volume)"
+  _notify -a nhc "System volume set: $w_selectedVolume (was $current_volume)"
   exit 0
   ;;
 esac
