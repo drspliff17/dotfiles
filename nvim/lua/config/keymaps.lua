@@ -3,23 +3,12 @@
 -- Add any additional keymaps here
 --
 
-vim.keymap.set("n", "s", "<Nop>")
-
-vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true, nowait = true })
-vim.keymap.set("i", "JJ", "<Esc>", { noremap = true, silent = true, nowait = true })
-vim.keymap.set("i", "fj", "<Esc>", { noremap = true, silent = true, nowait = true })
-vim.keymap.set("i", "FJ", "<Esc>", { noremap = true, silent = true, nowait = true })
-vim.keymap.set("i", "jf", "<Esc>", { noremap = true, silent = true, nowait = true })
-vim.keymap.set("i", "JF", "<Esc>", { noremap = true, silent = true, nowait = true })
-
-vim.keymap.set("n", "<leader>D", function()
-  Snacks.dashboard()
-end, { desc = "Open Snacks Dashboard" })
-
-vim.keymap.set("n", "<leader>xs", "<cmd>source %<CR>", { desc = "Source Current File" })
-
 -- Open Last Yank v3
-vim.keymap.set("n", "<leader>p", function()
+-- If last yank is an absolute path, that exists, it will open it.
+-- Else, it will try the base dir of the active buffer, as a relative path.
+-- Finally, it will try the relative path of nvim's current working dir for a
+-- match with the contents of register 0
+local function OpenLastYank()
   local p = vim.trim(vim.fn.getreg("0"))
   if p == "" then
     return
@@ -63,7 +52,35 @@ vim.keymap.set("n", "<leader>p", function()
   end
 
   vim.notify("Path does not exist: " .. p, vim.log.levels.ERROR, { title = "Open Last Yank" })
-end, { desc = "Open last yanked path" })
+end
+
+vim.keymap.set("n", "s", "<Nop>")
+
+vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true, nowait = true })
+vim.keymap.set("i", "JJ", "<Esc>", { noremap = true, silent = true, nowait = true })
+vim.keymap.set("i", "fj", "<Esc>", { noremap = true, silent = true, nowait = true })
+vim.keymap.set("i", "FJ", "<Esc>", { noremap = true, silent = true, nowait = true })
+vim.keymap.set("i", "jf", "<Esc>", { noremap = true, silent = true, nowait = true })
+vim.keymap.set("i", "JF", "<Esc>", { noremap = true, silent = true, nowait = true })
+
+vim.keymap.set("n", "<leader>D", function()
+  Snacks.dashboard()
+end, { desc = "Open Snacks Dashboard" })
+
+vim.keymap.set("n", "<leader>xs", "<cmd>source %<CR>", { desc = "Source Current File" })
+
+-- Quick-Yank stuff
+vim.keymap.set("n", "<leader>po", OpenLastYank, { desc = "Open last yanked path" })
+
+vim.keymap.set("n", "<leader>pw", function()
+  vim.cmd.normal({ "yiW", bang = true })
+  OpenLastYank()
+end, { desc = "yiW, then OpenLastYank" })
+
+vim.keymap.set("n", "<leader>pq", function()
+  vim.cmd.normal({ "yiq" })
+  OpenLastYank()
+end, { desc = "yiq, then OpenLastYank" })
 
 -- Lsp
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })

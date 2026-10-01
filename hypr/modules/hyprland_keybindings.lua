@@ -785,10 +785,11 @@ hl.define_submap("Misc", function()
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Toggle Mute" })
 
-		hl.bind("d", function()
-			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Toggle Deafen" })
+		-- TODO: Investigate weirdness with this doing weird stuff. ja
+		-- hl.bind("x", function()
+		-- 	hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
+		-- 	hl.dispatch(hl.dsp.submap("reset"))
+		-- end, { description = "Toggle Deafen" })
 
 		hl.bind("a", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))

@@ -4,6 +4,7 @@ wk.add({
   { "<leader>sc", group = "FZF CMD/History", icon = { icon = "󰍉", color = "yellow" } },
   { "<leader>ss", group = "FZF Search", icon = { icon = "󰍉", color = "yellow" } },
   { "<leader>se", group = "FZF Extras", icon = { icon = "󰍉", color = "yellow" } },
+  { "<leader>p", group = "Quick-Yank" },
 })
 
 return {
