@@ -18,7 +18,7 @@ end, { desc = "Open Snacks Dashboard" })
 
 vim.keymap.set("n", "<leader>xs", "<cmd>source %<CR>", { desc = "Source Current File" })
 
--- Open Last Yank v2
+-- Open Last Yank v3
 vim.keymap.set("n", "<leader>p", function()
   local p = vim.trim(vim.fn.getreg("0"))
   if p == "" then
@@ -29,30 +29,41 @@ vim.keymap.set("n", "<leader>p", function()
     return vim.fn.filereadable(path) == 1 or vim.fn.isdirectory(path) == 1
   end
 
-  if not exists(p) then
-    local base = vim.fn.expand("%:p:h")
-    local relative = vim.fs.joinpath(base, p)
+  local function open(path)
+    vim.cmd.edit(vim.fn.fnameescape(path))
+  end
 
-    if exists(relative) then
-      p = relative
-    else
-      vim.notify("Invalid path: " .. p, vim.log.levels.WARN)
+  if p:sub(1, 1) == "~" or p:sub(1, 1) == "$" then
+    p = vim.fs.normalize(p)
+  end
+
+  if vim.fn.isabsolutepath(p) == 1 then
+    if exists(p) then
+      open(p)
+      return
+    end
+    vim.notify("Path does not exist: " .. p, vim.log.levels.ERROR, { title = "Open Last Yank" })
+    return
+  end
+
+  local buffer_name = vim.api.nvim_buf_get_name(0)
+  local buffer_dir = buffer_name ~= "" and vim.fs.dirname(buffer_name) or nil
+  if buffer_dir then
+    local buffer_path = vim.fs.normalize(vim.fs.joinpath(buffer_dir, p))
+    if exists(buffer_path) then
+      open(buffer_path)
       return
     end
   end
 
-  vim.cmd.edit(vim.fn.fnameescape(p))
-end, { desc = "Open last yanked path" })
+  local cwd_path = vim.fs.normalize(vim.fs.joinpath(vim.fn.getcwd(), p))
+  if exists(cwd_path) then
+    open(cwd_path)
+    return
+  end
 
--- Open Last Yank
--- vim.keymap.set("n", "<leader>p", function()
---   local p = vim.fn.expand(vim.trim(vim.fn.getreg("0")))
---   if p == "" or vim.fn.filereadable(p) == 0 and vim.fn.isdirectory(p) == 0 then
---     vim.notify("Invalid path: " .. p, vim.log.levels.WARN)
---     return
---   end
---   vim.cmd.edit(vim.fn.fnameescape(p))
--- end, { desc = "Open last yanked path" })
+  vim.notify("Path does not exist: " .. p, vim.log.levels.ERROR, { title = "Open Last Yank" })
+end, { desc = "Open last yanked path" })
 
 -- Lsp
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
