@@ -92,7 +92,7 @@ _menuFromCache() {
   }' "$cacheFile"
   )"
 
-  [[ -z "$fullpath" ]] && _notify -a ct -u normal -e "Invalid Selection" && exit 1
+  [[ -z "$fullpath" ]] && _notify -a nhc -u normal -e "Invalid Selection" && exit 1
   selectedFile="$fullpath"
   return 0
 }
@@ -144,14 +144,14 @@ artist)
   _menuArtistSelection
   _menuArtistFileSelection
   [[ -z "$selectedArtist" || -z "$selectedFile" ]] && exit 1
-  cmus-remote -f "$musicPath/$selectedArtist/$selectedFile" && _notify -a nhc -t 2000 "🎶 $selectedName"
+  cmus-remote -f "$musicPath/$selectedArtist/$selectedFile" && _notify -a nhc -t 2000 " $selectedName"
   exit 0
   ;;
 
 files)
   _menuFromCache
   [[ -z "$selectedFile" ]] && exit 1
-  cmus-remote -f "$selectedFile" && _notify -a nhc -t 2000 "🎶 $selectedName"
+  cmus-remote -f "$selectedFile" && _notify -a nhc -t 2000 " $selectedName"
   exit 0
   ;;
 
@@ -160,7 +160,7 @@ update)
     cmus-remote -C 'add Music'
     cmus-remote -C 'update-cache'
   fi
-  _notify -a nhc "Starting Cache Update..." && _updateMusicSelectorCache && _notify -a ct "Music Cache Updated: $cacheFile"
+  _notify -a nhc "Starting Cache Update..." && _updateMusicSelectorCache && _notify -a nhc "Music Cache Updated: $cacheFile"
   exit 0
   ;;
 
