@@ -7,20 +7,14 @@ local fileManager = "y"
 local menu = "wofi --show drun --columns 3"
 
 -- My Scripts
-local scr_volumeController = "~/.config/hypr/scripts/wofi_volume_controller.sh"
-local scr_musicSelector = "~/.config/hypr/scripts/wofi_music_selector.sh"
-local scr_commandLauncher = "~/.config/hypr/scripts/wofi_command_launcher.sh"
-local scr_firefoxBookmarks = "~/.config/hypr/scripts/wofi_firefox_bookmarks.sh"
-local scr_browserSearch = "~/.config/hypr/scripts/wofi_browser_search.sh"
-local scr_clipvault = "~/.config/hypr/scripts/wofi_clipvault_selector.sh"
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
 local scr_spdCursor = "~/.config/hypr/scripts/change_cursor_speed.sh"
 local scr_swapWallpaper = "~/.config/hypr/scripts/swap_wallpaper.sh"
 local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
-local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 local scr_openNotif = "~/.config/hypr/scripts/open_notif_log.sh"
+local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 
 -- local function exec_capture(cmd)
 -- 	local handle = io.popen(cmd)
@@ -285,23 +279,23 @@ hl.bind(mainMod .. " + SHIFT + c", hl.dsp.exec_raw("kitty fish -c cursor_swap"),
 -- Wofi Music Selector
 hl.bind(
 	mainMod .. " + F1",
-	hl.dsp.exec_cmd("timeout 60 " .. scr_musicSelector .. " artist"),
+	hl.dsp.exec_cmd("timeout 60 wofi_modes --music-selector artist"),
 	{ description = "Music Selector - Artist" }
 )
 
 hl.bind(
 	mainMod .. " + SHIFT + F1",
-	hl.dsp.exec_cmd("timeout 120 " .. scr_musicSelector .. " files"),
+	hl.dsp.exec_cmd("timeout 120 wofi_modes --music-selector files"),
 	{ description = "Music Selector - Cache File" }
 )
 
 hl.bind(
 	mainMod .. " + CTRL + F1",
-	hl.dsp.exec_cmd(scr_musicSelector .. " update"),
+	hl.dsp.exec_cmd("wofi_modes --music-selector update"),
 	{ description = "Music Selector - Update" }
 )
 
-hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("timeout 120 " .. scr_commandLauncher), { description = "Command Launcher" })
+hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("wofi_modes --command-launcher"), { description = "Command Launcher" })
 hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind menu subkey"), { description = "Hyprbind - Subkey" })
 
 -- -- DEFAULT FN F* Binds
@@ -463,9 +457,13 @@ hl.define_submap("Browser", "reset", function()
 
 	hl.bind("c", hl.dsp.exec_cmd("firefox --new-window https://www.chess.com"), { description = "Chess" })
 
-	hl.bind("f", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " window"), { description = "Bookmark Launcher (Window)" })
+	hl.bind(
+		"f",
+		hl.dsp.exec_cmd("wofi_modes --firefox-bookmarks window"),
+		{ description = "Bookmark Launcher (Window)" }
+	)
 
-	hl.bind("t", hl.dsp.exec_cmd(scr_firefoxBookmarks .. " tab"), { description = "Bookmark Launcher (Tab)" })
+	hl.bind("t", hl.dsp.exec_cmd("wofi_modes --firefox-bookmarks tab"), { description = "Bookmark Launcher (Tab)" })
 
 	hl.bind("b", hl.dsp.exec_cmd("obang runner wofi -d -W 25% -H 5%"), { description = "Obang Search" })
 
@@ -479,7 +477,7 @@ hl.define_submap("Open", "reset", function()
 
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 
-	hl.bind("g", hl.dsp.exec_cmd("wofi_steam_launcher"), { description = "Open Steam Launcher (Wofi)" })
+	hl.bind("g", hl.dsp.exec_cmd("wofi_modes --steam"), { description = "Open Steam Launcher (Wofi)" })
 
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"), { description = "Steam" })
 
@@ -733,12 +731,6 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "BTOP" })
 
-	--Browser Search Script
-	hl.bind("SHIFT + b", function()
-		hl.dispatch(hl.dsp.exec_cmd(scr_browserSearch))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Browser Quick-Search" })
-
 	--FETCH (custom size)
 	hl.bind("f", function()
 		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
@@ -809,17 +801,17 @@ hl.define_submap("Misc", function()
 	hl.bind("c", hl.dsp.submap("Clipboard"), { release = true, description = "Submap Clipboard" })
 	hl.define_submap("Clipboard", function()
 		hl.bind("q", function()
-			hl.dispatch(hl.dsp.exec_cmd(scr_clipvault .. " clear"))
+			hl.dispatch(hl.dsp.exec_cmd("wofi_modes --clipvault clear"))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Clear Clipvault" })
 
 		hl.bind("r", function()
-			hl.dispatch(hl.dsp.exec_cmd("timeout 60 " .. scr_clipvault .. " remove"))
+			hl.dispatch(hl.dsp.exec_cmd("timeout 60 wofi_modes --clipvault remove"))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Wofi Clipvault - Remove" })
 
 		hl.bind("c", function()
-			hl.dispatch(hl.dsp.exec_cmd("timeout 60 " .. scr_clipvault))
+			hl.dispatch(hl.dsp.exec_cmd("timeout 60 wofi_modes --clipvault"))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Open Wofi Clipvault" })
 
@@ -835,17 +827,17 @@ end)
 hl.bind(mainMod .. " + v", hl.dsp.submap("Volume"), { release = true, description = "Submap Volume" })
 hl.define_submap("Volume", function()
 	hl.bind("v", function()
-		hl.dispatch(hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " player"))
+		hl.dispatch(hl.dsp.exec_cmd("timeout 30 wofi_modes --volume-controller player"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Wofi Volume (Player)" })
 
 	hl.bind("SHIFT + v", function()
-		hl.dispatch(hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController))
+		hl.dispatch(hl.dsp.exec_cmd("timeout 30 wofi_modes --volume-controller all"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Wofi Volume (All)" })
 
 	hl.bind("CTRL + v", function()
-		hl.dispatch(hl.dsp.exec_cmd("timeout 30 " .. scr_volumeController .. " system"))
+		hl.dispatch(hl.dsp.exec_cmd("timeout 30 wofi_modes --volume-controller system"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Wofi Volume (System)" })
 

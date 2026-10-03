@@ -26,13 +26,16 @@ alias om="omake"
 
 alias ob="obang"
 
+alias wm="wofi_modes"
+
 # Clipboard
 alias wlc="wl-copy"
 alias wlp="wl-paste"
 
 #Music stuff because am lazy ja
 alias fm="$HOME/.config/bash/scripts/fmp3.sh"
-alias sm="$HOME/.config/bash/scripts/syncPhoneMusic.sh -v"
+# alias sm="$HOME/.config/bash/scripts/syncPhoneMusic.sh -v"
+alias sm="$HOME/.config/bash/scripts/adb-music-sync.sh -v"
 alias rmmp3="$HOME/.config/bash/scripts/fixYoutubeMusic_Duplicates.sh"
 
 # Builtin Shorthands
