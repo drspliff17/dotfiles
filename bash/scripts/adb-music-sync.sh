@@ -8,11 +8,9 @@ DESTINATION="/sdcard/Music/Songs"
 MODE="DRY"
 VERBOSE=0
 DEVICE=""
-BATCH_SIZE=64
-
 declare -A REMOTE_NAMES=()
-
 SELECTED_DIRECTORIES=()
+
 SPECIFIED_DIRECTORIES=()
 
 # Helpers
@@ -26,7 +24,6 @@ _error() {
   exit 1
 }
 
-# Quote one value for the Android device's POSIX shell.
 _quote_remote() {
   local value="$1"
   value=${value//\'/\'\\\'\'}
@@ -69,7 +66,20 @@ _adb_check() {
 
 _adb_mkdir() {
   local path="$1"
-  _adb shell -T "mkdir -p $(_quote_remote "$path")" >/dev/null || _error "Could not create remote directory: $path"
+  local attempt=1
+
+  while ((attempt <= 3)); do
+    if _adb shell "mkdir -p $(_quote_remote "$path")" >/dev/null 2>&1; then
+      return 0
+    fi
+    if _adb shell "test -d $(_quote_remote "$path")" >/dev/null 2>&1; then
+      return 0
+    fi
+    ((attempt == 3)) || sleep 1
+    ((attempt += 1))
+  done
+
+  _error "Could not create remote directory: $path"
 }
 
 _remote_mp3_list() {
@@ -80,9 +90,9 @@ _remote_mp3_list() {
   if [[ "$recursive" == 1 ]]; then
     command="find $(_quote_remote "$path") -type f -name '*.mp3' 2>/dev/null"
   else
-    command="find $(_quote_remote "$path") -maxdepth 1 -type f -name '*.mp3' 2>/dev/null"
+    command="for file in $(_quote_remote "$path")/*.mp3; do [ -f \"\$file\" ] && printf '%s\\n' \"\$file\"; done; exit 0"
   fi
-  _adb shell -T "$command"
+  _adb shell "$command"
 }
 
 _get_remote_names() {
@@ -101,21 +111,68 @@ _get_remote_names() {
   done <<<"$output"
 }
 
-_push_batch() {
+_push_file() {
   local remote_dir="$1"
-  shift
+  local file="$2"
+  local remote_file="$remote_dir/${file##*/}"
+  local local_size remote_size attempt=1
 
-  (($# == 0)) && return
-  _adb push "$@" "$remote_dir/" >/dev/null ||
-    _error "ADB push failed for destination: $remote_dir"
-  _log "Pushed batch of $# file(s) -> $remote_dir"
+  local_size="$(wc -c <"$file" | tr -d '[:space:]')" ||
+    _error "Could not read local file size: $file"
+
+  while ((attempt <= 3)); do
+    if _adb push "$file" "$remote_dir/" >/dev/null; then
+      _log "Pushed ${file##*/} -> $remote_dir"
+      return 0
+    fi
+
+    remote_size="$(
+      _adb shell "wc -c < $(_quote_remote "$remote_file")" 2>/dev/null |
+        tr -d '[:space:]'
+    )"
+    if [[ "$remote_size" == "$local_size" ]]; then
+      echo "[WARNING] ADB lost the copy response, but size verification passed: ${file##*/}" >&2
+      return 0
+    fi
+
+    if ((attempt < 3)); then
+      echo "[WARNING] Push failed; retrying ($attempt/3): ${file##*/}" >&2
+      sleep 1
+    fi
+    ((attempt += 1))
+  done
+
+  _error "ADB push failed and destination size did not match: $file"
+}
+
+_wipe_destination() {
+  local attempt=1 output
+
+  while ((attempt <= 3)); do
+    if output="$(_adb shell "rm -rf $(_quote_remote "$DESTINATION")" 2>&1)"; then
+      return 0
+    fi
+    if _adb shell "test ! -e $(_quote_remote "$DESTINATION")" >/dev/null 2>&1; then
+      echo "[WARNING] ADB reported a wipe error, but the destination is gone; continuing." >&2
+      return 0
+    fi
+
+    if ((attempt < 3)); then
+      echo "[WARNING] Wipe failed; retrying ($attempt/3). ${output}" >&2
+      sleep 1
+    fi
+    ((attempt += 1))
+  done
+
+  [[ -n "$output" ]] && echo "[ADB] $output" >&2
+  _error "Could not wipe destination: $DESTINATION"
 }
 
 _push_missing() {
   local directory="$1"
   local remote_dir="$2"
   local file fname
-  local -a files=() batch=()
+  local -a files=()
   local pushed=0 skipped=0
 
   shopt -s nullglob
@@ -134,18 +191,9 @@ _push_missing() {
       continue
     fi
 
-    batch+=("$file")
-    if ((${#batch[@]} >= BATCH_SIZE)); then
-      _push_batch "$remote_dir" "${batch[@]}"
-      ((pushed += ${#batch[@]}))
-      batch=()
-    fi
+    _push_file "$remote_dir" "$file"
+    ((pushed += 1))
   done
-
-  if ((${#batch[@]})); then
-    _push_batch "$remote_dir" "${batch[@]}"
-    ((pushed += ${#batch[@]}))
-  fi
 
   _log "Directory complete: $pushed pushed, $skipped already present"
 }
@@ -193,7 +241,7 @@ _perform_dry_run() {
     shopt -s nullglob
     files=("$directory"/*.mp3)
 
-    if ! _adb shell -T "test -d $(_quote_remote "$remote_dir")" >/dev/null 2>&1; then
+    if ! _adb shell "test -d $(_quote_remote "$remote_dir")" >/dev/null 2>&1; then
       echo "Missing directory: $remote_dir"
       ((missing_dirs += 1))
       for file in "${files[@]}"; do
@@ -233,16 +281,10 @@ _perform_transfer() {
       shopt -s nullglob
       local -a files=("$directory"/*.mp3)
       _adb_mkdir "$remote_dir"
-      local -a batch=()
       for file in "${files[@]}"; do
         [[ -f "$file" ]] || continue
-        batch+=("$file")
-        if ((${#batch[@]} >= BATCH_SIZE)); then
-          _push_batch "$remote_dir" "${batch[@]}"
-          batch=()
-        fi
+        _push_file "$remote_dir" "$file"
       done
-      ((${#batch[@]})) && _push_batch "$remote_dir" "${batch[@]}"
     else
       _push_missing "$directory" "$remote_dir"
     fi
@@ -260,7 +302,7 @@ _perform_revparse() {
     dname="${directory##*/}"
     remote_dir="$DESTINATION/$dname"
 
-    if ! _adb shell -T "test -d $(_quote_remote "$remote_dir")" >/dev/null 2>&1; then
+    if ! _adb shell "test -d $(_quote_remote "$remote_dir")" >/dev/null 2>&1; then
       _log "Skipping missing remote dir: $remote_dir"
       ((missing_dirs += 1))
       continue
@@ -287,7 +329,7 @@ _perform_revparse() {
       [[ "${local_names["$relpath"]+yes}" == yes ]] && continue
 
       _log "Deleting (revparse): $line"
-      _adb shell -T "rm -f $(_quote_remote "$line")" >/dev/null ||
+      _adb shell "rm -f $(_quote_remote "$line")" >/dev/null ||
         _error "Could not delete remote file: $line"
       ((deleted += 1))
     done <<<"$output"
@@ -361,7 +403,7 @@ Usage: adb-music-sync.sh [OPTIONS]
 
 With no transfer mode, report missing files without changing the device.
 MP3 matching is by filename within each immediate source subdirectory.
-Files are pushed in batches of 64 per directory.
+Files are checked as a group, then pushed one at a time for compatibility.
 HELP
     exit 0
     ;;
@@ -388,7 +430,7 @@ WIPE)
     echo "[ABORTED]"
     exit 1
   }
-  _adb shell -T "rm -rf $(_quote_remote "$DESTINATION")" || _error "Could not wipe destination: $DESTINATION"
+  _wipe_destination
   _adb_mkdir "$DESTINATION"
   _perform_transfer
   ;;
