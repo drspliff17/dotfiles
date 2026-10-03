@@ -198,14 +198,6 @@ hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen(), { description = "
 
 -- Layouts
 hl.bind(mainMod .. " + i", setLayoutSubmap, { description = "Submap Layer" })
-hl.bind(mainMod .. " + SHIFT + i", function()
-	local l = hl.get_config("general.layout")
-	if l == "dwindle" then
-		hl.config({ general = { layout = "monocle" } })
-	else
-		hl.config({ general = { layout = "dwindle" } })
-	end
-end, { description = "Temp Layout Test" })
 
 hl.define_submap("L_Dwindle", function()
 	hl.bind("h", hl.dsp.window.move({ direction = "left" }), { description = "Move Window Left" })
@@ -216,6 +208,16 @@ hl.define_submap("L_Dwindle", function()
 	hl.bind("i", hl.dsp.layout("togglesplit"), { description = "Toggle Split" })
 	hl.bind("s", hl.dsp.layout("swapsplit"), { description = "Swap Split" })
 	hl.bind("p", hl.dsp.layout("movetoroot"), { description = "Move To Root" })
+
+	hl.bind(mainMod .. " + s", function()
+		hl.config({ general = { layout = "scrolling" } })
+		hl.dispatch(hl.dsp.submap("L_Scrolling"))
+	end, { description = "Set Scrolling Layout" })
+
+	hl.bind(mainMod .. " + m", function()
+		hl.config({ general = { layout = "monocle" } })
+		hl.dispatch(hl.dsp.submap("L_Monocle"))
+	end, { description = "Set Monocle Layout" })
 
 	hl.bind("r", hl.dsp.submap("Resize"), { description = "Submap Resize" })
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
@@ -239,6 +241,16 @@ hl.define_submap("L_Scrolling", function()
 
 	hl.bind("SHIFT + f", hl.dsp.layout("fit all"), { description = "Fit All" })
 
+	hl.bind(mainMod .. " + d", function()
+		hl.config({ general = { layout = "dwindle" } })
+		hl.dispatch(hl.dsp.submap("L_Dwindle"))
+	end, { description = "Set Dwindle Layout" })
+
+	hl.bind(mainMod .. " + m", function()
+		hl.config({ general = { layout = "monocle" } })
+		hl.dispatch(hl.dsp.submap("L_Monocle"))
+	end, { description = "Set Monocle Layout" })
+
 	hl.bind("r", hl.dsp.submap("Resize"), { description = "Submap Resize" })
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
@@ -246,6 +258,16 @@ end)
 hl.define_submap("L_Monocle", function()
 	hl.bind("j", hl.dsp.layout("cyclenext"), { description = "Cycle Next Window" })
 	hl.bind("k", hl.dsp.layout("cycleprev"), { description = "Cycle Prev Window" })
+
+	hl.bind(mainMod .. " + d", function()
+		hl.config({ general = { layout = "dwindle" } })
+		hl.dispatch(hl.dsp.submap("L_Dwindle"))
+	end, { description = "Set Dwindle Layout" })
+
+	hl.bind(mainMod .. " + s", function()
+		hl.config({ general = { layout = "scrolling" } })
+		hl.dispatch(hl.dsp.submap("L_Scrolling"))
+	end, { description = "Set Scrolling Layout" })
 
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
