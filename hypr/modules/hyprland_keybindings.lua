@@ -16,6 +16,19 @@ local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 local scr_openNotif = "~/.config/hypr/scripts/open_notif_log.sh"
 local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 
+local function setLayoutSubmap()
+	local l = hl.get_config("general.layout")
+	if l == "dwindle" then
+		hl.dispatch(hl.dsp.submap("L_Dwindle"))
+	elseif l == "scrolling" then
+		hl.dispatch(hl.dsp.submap("L_Scrolling"))
+	elseif l == "monocle" then
+		hl.dispatch(hl.dsp.submap("L_Monocle"))
+	else
+		hl.dispatch(hl.dsp.submap("reset"))
+	end
+end
+
 -- local function exec_capture(cmd)
 -- 	local handle = io.popen(cmd)
 -- 	if not handle then
@@ -181,13 +194,61 @@ end, { description = "Toggle Window Privacy" })
 -- Global Window Binds
 hl.bind(mainMod .. " + SPACE", hl.dsp.window.center(), { description = "Center Floating Window" })
 
-hl.bind(mainMod .. " + i", hl.dsp.layout("togglesplit"), { description = "Dwindle Toggle Split" })
-
-hl.bind(mainMod .. " + SHIFT + s", hl.dsp.layout("movetoroot"), { description = "Dwindle Move To Root" })
-
-hl.bind(mainMod .. " + s", hl.dsp.layout("swapsplit"), { description = "Dwindle Swap Split" })
-
 hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen(), { description = "Toggle Window Fullscreen" })
+
+-- Layouts
+hl.bind(mainMod .. " + i", setLayoutSubmap, { description = "Submap Layer" })
+hl.bind(mainMod .. " + SHIFT + i", function()
+	local l = hl.get_config("general.layout")
+	if l == "dwindle" then
+		hl.config({ general = { layout = "monocle" } })
+	else
+		hl.config({ general = { layout = "dwindle" } })
+	end
+end, { description = "Temp Layout Test" })
+
+hl.define_submap("L_Dwindle", function()
+	hl.bind("h", hl.dsp.window.move({ direction = "left" }), { description = "Move Window Left" })
+	hl.bind("j", hl.dsp.window.move({ direction = "down" }), { description = "Move Window Down" })
+	hl.bind("k", hl.dsp.window.move({ direction = "up" }), { description = "Move Window Up" })
+	hl.bind("l", hl.dsp.window.move({ direction = "right" }), { description = "Move Window Right" })
+
+	hl.bind("i", hl.dsp.layout("togglesplit"), { description = "Toggle Split" })
+	hl.bind("s", hl.dsp.layout("swapsplit"), { description = "Swap Split" })
+	hl.bind("p", hl.dsp.layout("movetoroot"), { description = "Move To Root" })
+
+	hl.bind("r", hl.dsp.submap("Resize"), { description = "Submap Resize" })
+	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+end)
+
+hl.define_submap("L_Scrolling", function()
+	hl.bind("h", hl.dsp.window.move({ direction = "left" }), { description = "Move Window Left" })
+	hl.bind("j", hl.dsp.window.move({ direction = "down" }), { description = "Move Window Down" })
+	hl.bind("k", hl.dsp.window.move({ direction = "up" }), { description = "Move Window Up" })
+	hl.bind("l", hl.dsp.window.move({ direction = "right" }), { description = "Move Window Right" })
+
+	hl.bind("SHIFT + h", hl.dsp.layout("focus left"), { description = "Focus Left" })
+	hl.bind("SHIFT + l", hl.dsp.layout("focus right"), { description = "Focus Right" })
+
+	hl.bind("n", hl.dsp.layout("swapcol l"), { description = "SwapCol Left" })
+	hl.bind("m", hl.dsp.layout("swapcol r"), { description = "SwapCol Right" })
+
+	hl.bind("c", hl.dsp.layout("consume"), { description = "Consume Window" })
+	hl.bind("e", hl.dsp.layout("expel"), { description = "Expel Window" })
+	hl.bind("p", hl.dsp.layout("promote"), { description = "Promote Window" })
+
+	hl.bind("SHIFT + f", hl.dsp.layout("fit all"), { description = "Fit All" })
+
+	hl.bind("r", hl.dsp.submap("Resize"), { description = "Submap Resize" })
+	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+end)
+
+hl.define_submap("L_Monocle", function()
+	hl.bind("j", hl.dsp.layout("cyclenext"), { description = "Cycle Next Window" })
+	hl.bind("k", hl.dsp.layout("cycleprev"), { description = "Cycle Prev Window" })
+
+	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+end)
 
 -- Special Workspaces
 hl.bind(mainMod .. " + SHIFT + m", function()
@@ -386,7 +447,7 @@ hl.define_submap("Resize", function()
 	)
 
 	hl.bind("m", hl.dsp.submap("MoveFloat"), { description = "Submap MoveFloat" })
-
+	hl.bind("i", setLayoutSubmap, { description = "Submap Layout" })
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
@@ -552,6 +613,11 @@ hl.define_submap("Notification", function()
   ]]),
 		{ description = "Notify - Date" }
 	)
+
+	hl.bind("l", function()
+		local l = hl.get_config("general.layout")
+		hl.dispatch(hl.dsp.exec_cmd([[ notify-send -t 3000 -u normal -a nhc "Layout = ]] .. l .. [["]]))
+	end)
 
 	hl.bind(
 		"w",
@@ -760,7 +826,7 @@ hl.define_submap("Misc", function()
 	-- Emoji Picker
 	hl.bind("e", function()
 		hl.dispatch(hl.dsp.submap("reset"))
-		hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/wofi_emoji_picker.sh -c"))
+		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --emoji-picker copy"))
 	end, { description = "Emoji Picker" })
 
 	-- OTV
