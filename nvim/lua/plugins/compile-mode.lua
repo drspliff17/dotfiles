@@ -1,171 +1,192 @@
 return {
   "ej-shafran/compile-mode.nvim",
   version = "^5.0.0",
-  -- you can just use the latest version:
-  -- branch = "latest",
-  -- or the most up-to-date updates:
-  -- branch = "nightly",
+
   dependencies = {
     "nvim-lua/plenary.nvim",
   },
+
   config = function()
     ---@module "compile-mode"
     ---@type CompileModeOpts
     vim.g.compile_mode = {
-      -- The string to show in the compile prompt as a default.
-      -- For an empty prompt, you can use:
-      -- default_command = "",
-      -- To use different defaults based on filetype, you can use a table:
-      -- default_command = {
-      --   python = "python %",
-      --   lua = "lua %",
-      --   javascript = "bun %",
-      --   typescript = "bun %",
-      --   c = "cc -o %:r % && ./%:r",
-      --   cpp = "cc -std=c++23 -o %:r % && ./%:r",
-      --   java = "javac % && java %:r",
-      --   go = "go run %",
-      -- },
-      -- A function which returns the default command string is also supported:
-      -- default_command = function()
-      --   local filetype = vim.bo.filetype
-      --   if filetype == "python" then
-      --     return "python %"
-      --   else
-      --     return "make -k "
-      --   end
-      -- end,
-      -- :h compile-mode.default_command
-
       default_command = function()
         local ft = vim.bo.filetype
+
         if ft == "odin" then
-          return "odin build"
+          if vim.fn.isdirectory("src") == 1 then
+            return "odin build src"
+          end
+          return "odin build ."
         end
+
         return ""
       end,
 
-      -- default_command = {
-      --   odin = "odin build",
-      -- },
-
       -- Control how ANSI escape sequences are handled in compilation output.
-      -- :h compile-mode.ansi_color
       ansi_color = {
         kind = "filter",
-        -- Baleia options to pass to baleia.setup() when kind is "render".
-        -- Use `{}` for baleia's defaults, or a table of baleia options.
-        -- :h compile-mode.ansi_color
-        -- baleia_options = {},
       },
 
-      -- Expand commands, like `:!` (e.g. `:Compile echo %`)
-      -- :h compile-mode.bang_expansion
+      -- Expand commands like :!
       bang_expansion = false,
 
-      -- Configure additional entering/leaving directory regexes.
-      -- :h compile-mode.directory_change_matchers
+      -- Additional entering/leaving directory regexes.
       directory_change_matchers = {},
 
-      -- Configure additional error regexes.
-      -- :h compile-mode-errors
+      -- Additional error regexes.
       error_regexp_table = {},
 
-      -- List of filename regexes to ignore errors from.
-      -- :h compile-mode.error_ignore_file_list
+      -- Filename regexes to ignore errors from.
       error_ignore_file_list = {},
 
-      -- The minimum error level to jump to.
-      -- :h compile-mode.error_threshold
+      -- Minimum error level to jump to.
       error_threshold = require("compile-mode").level.WARNING,
 
       -- Automatically jump to the first error.
-      -- :h compile-mode.auto_jump_to_first_error
       auto_jump_to_first_error = false,
 
-      -- How long to highlight an error's location when jumping to it.
-      -- :h compile-mode.error_locus_highlight
+      -- How long to highlight an error location.
       error_locus_highlight = 500,
 
-      -- Use Neovim diagnostics instead of opening the compilation buffer.
-      -- :h compile-mode.use_diagnostics
+      -- Use diagnostics instead of opening compilation buffer.
       use_diagnostics = false,
 
-      -- Default to calling `:Compile` for `:Recompile`
-      -- when there's no previous command.
-      -- :h compile-mode.recompile_no_fail
+      -- :Recompile falls back to :Compile if there is no previous command.
       recompile_no_fail = true,
 
       -- Ask to save unsaved buffers before compiling.
-      -- :h compile-mode.ask_about_save
       ask_about_save = true,
 
-      -- Ask to interrupt already running commands.
-      -- :h compile-mode.ask_to_interrupt
+      -- Ask before interrupting an already-running command.
       ask_to_interrupt = true,
 
-      -- The name for the compilation buffer.
-      -- :h compile-mode.buffer_name
+      -- Compilation buffer name.
       buffer_name = "*compilation*",
 
-      -- The format for the time information
-      -- at the top of the compilation buffer
-      -- :h compile-mode.time_format
+      -- Time format shown in compilation buffer.
       time_format = "%a %b %e %H:%M:%S",
 
-      -- Maximum number of lines allowed in the compilation buffer.
-      -- :h compile-mode.max_lines
+      -- Maximum number of lines in compilation buffer.
       max_lines = 20,
 
-      -- List of regexes to hide from the output.
-      -- :h compile-mode.hidden_output
+      -- Regexes to hide from compilation output.
       hidden_output = {},
 
-      -- A table of environment variables to pass to commands.
-      -- :h compile-mode.environment
+      -- Environment passed to commands.
       environment = nil,
 
-      -- Clear all environment variables for each command.
-      -- :h compile-mode.clear_environment
+      -- Clear environment before running.
       clear_environment = false,
 
-      -- Fix compilation for plugins like `nvim-cmp`.
-      -- :h compile-mode.input_word_completion
+      -- Completion support.
       input_word_completion = true,
 
-      -- Hide the compliation buffer.
-      -- :h compile-mode.hidden_buffer
+      -- Hide compilation buffer from buffer list.
       hidden_buffer = true,
 
-      -- Automatically focus the compilation buffer.
-      -- :h compile-mode.focus_compilation_buffer
+      -- Focus compilation buffer after starting.
       focus_compilation_buffer = true,
 
-      -- Automatically move the cursor to the end of the compilation buffer.
-      -- :h compile-mode.auto_scroll
+      -- Keep compilation buffer scrolled to the end.
       auto_scroll = true,
 
-      -- Jump back past the end/beginning of the errors
-      -- with `:NextError`/`:PrevError`
-      -- :h compile-mode.use_circular_error_navigation
+      -- Wrap NextError / PrevError around.
       use_circular_error_navigation = false,
 
-      -- Print debug information.
-      -- :h compile-mode.debug
+      -- Debug logging.
       debug = false,
 
-      -- Use a pseudo terminal for command execution.
-      -- :h compile-mode.use_pseudo_terminal
+      -- Run command using a PTY.
       use_pseudo_terminal = true,
 
-      -- Control how OSC sequences are handled (hyperlinks, titles, etc.)
-      -- The default `handlers` is empty; when `kind` is `"render"`, built-in
-      -- handlers for OSC 0/1/2/8/9 are injected automatically.
-      -- :h compile-mode.ansi_osc
+      -- OSC handling.
       ansi_osc = {
         kind = "render",
         handlers = {},
       },
     }
+
+    -- Compilation window size
+    local compile_ui_group = vim.api.nvim_create_augroup("compile_mode_ui", { clear = true })
+
+    local function resize_compile_window(buf)
+      vim.schedule(function()
+        for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+          if vim.api.nvim_win_is_valid(win) then
+            -- Compilation window = ~20% of editor height.
+            local height = math.max(6, math.floor(vim.o.lines * 0.20))
+
+            vim.api.nvim_win_set_height(win, height)
+
+            -- Prevent Neovim from growing this split automatically.
+            vim.wo[win].winfixheight = true
+          end
+        end
+      end)
+    end
+
+    -- First time compile-mode creates the compilation buffer.
+    vim.api.nvim_create_autocmd("FileType", {
+      group = compile_ui_group,
+      pattern = "compilation",
+
+      callback = function(ev)
+        if vim.b[ev.buf].compilation_main_buffer then
+          resize_compile_window(ev.buf)
+        end
+      end,
+    })
+
+    -- Handle reopening an existing compilation buffer.
+    vim.api.nvim_create_autocmd("BufWinEnter", {
+      group = compile_ui_group,
+
+      callback = function(ev)
+        if vim.b[ev.buf].compilation_main_buffer then
+          resize_compile_window(ev.buf)
+        end
+      end,
+    })
+
+    -- Compile-command input
+    local async = require("plenary.async")
+    local compile_utils = require("compile-mode.utils")
+    local Snacks = require("snacks")
+
+    local original_compile_input = compile_utils.input
+    local bottom_compile_input = async.wrap(function(opts, callback)
+      Snacks.input(
+        vim.tbl_deep_extend("force", opts, {
+          icon = "",
+          icon_pos = false,
+          prompt_pos = "left",
+          expand = false,
+          win = {
+            style = "input",
+            position = "bottom",
+            height = 1,
+            width = 0,
+            border = "top",
+
+            keys = {
+              ctrl_q = {
+                "<C-q>",
+                "cancel",
+                mode = { "i", "n" },
+              },
+            },
+          },
+        }),
+        callback
+      )
+    end, 2)
+
+    compile_utils.input = function(opts)
+      if opts.prompt == "Compile command: " then
+        return bottom_compile_input(opts)
+      end
+      return original_compile_input(opts)
+    end
   end,
 }

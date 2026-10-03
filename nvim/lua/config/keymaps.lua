@@ -69,7 +69,7 @@ end, { desc = "Open Snacks Dashboard" })
 
 vim.keymap.set("n", "<leader>xs", "<cmd>source %<CR>", { desc = "Source Current File" })
 
--- Quick-Yank stuff
+-- Quick-Yank and compile mode stuff
 vim.keymap.set("n", "<leader>po", OpenLastYank, { desc = "Open last yanked path" })
 
 vim.keymap.set("n", "<leader>pw", function()
@@ -81,6 +81,10 @@ vim.keymap.set("n", "<leader>pq", function()
   vim.cmd.normal({ "yiq" })
   OpenLastYank()
 end, { desc = "yiq, then OpenLastYank" })
+
+vim.keymap.set("n", "<leader>pc", "<cmd>Compile<CR>", { desc = "Compile Mode" })
+
+vim.keymap.set("n", "<leader>pr", "<cmd>Recompile<CR>", { desc = "Recompile Mode" })
 
 -- Lsp
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
