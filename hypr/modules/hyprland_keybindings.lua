@@ -14,7 +14,7 @@ local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 local scr_openNotif = "~/.config/hypr/scripts/open_notif_log.sh"
-local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
+-- local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 
 -- Sets Submap to current layout's respective map
 local function setLayoutSubmap()
@@ -579,7 +579,7 @@ hl.define_submap("Open", "reset", function()
 
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
 
-	hl.bind("g", hl.dsp.exec_cmd("wofi_modes --steam"), { description = "Open Steam Launcher (Wofi)" })
+	hl.bind("g", hl.dsp.exec_cmd("wofi_modes --launcher"), { description = "Open Steam Launcher (Wofi)" })
 
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"), { description = "Steam" })
 
@@ -955,13 +955,13 @@ end)
 hl.bind(mainMod .. " + d", hl.dsp.submap("Window"), { description = "Submap Window" })
 hl.define_submap("Window", function()
 	hl.bind("SPACE", function()
-		hl.dispatch(hl.dsp.exec_cmd(scr_window .. " -r"))
+		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --hyprland-manager --retain"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Wofi Menu" })
 
 	hl.bind("e", function()
 		hl.dispatch(hl.dsp.submap("reset"))
-		hl.dispatch(hl.dsp.exec_cmd(scr_window .. " goto"))
+		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --hyprland-manager goto"))
 	end, { description = "Goto Client" })
 
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })

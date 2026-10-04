@@ -28,7 +28,7 @@ pywal-discord -t mywal
 pgrep btop && kill -USR2 $(pgrep btop)
 
 # My programs
-pgrep omusic && kill -USR1 $(pgrep omusic)
+# pgrep omusic && kill -USR1 $(pgrep omusic)
 pgrep dcalc && kill -USR1 $(pgrep dcalc)
 pgrep ds_pet && kill -USR1 $(pgrep ds_pet)
 pgrep oofi && kill -USR1 $(pgrep oofi)
