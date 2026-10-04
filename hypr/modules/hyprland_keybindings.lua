@@ -951,18 +951,23 @@ hl.define_submap("Volume", function()
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
--- Window Mode
-hl.bind(mainMod .. " + d", hl.dsp.submap("Window"), { description = "Submap Window" })
-hl.define_submap("Window", function()
+-- Wofi_Modes --hyprland-manager Mode
+hl.bind(mainMod .. " + d", hl.dsp.submap("Hyprland Manager"), { description = "Submap Hyprland Manager" })
+hl.define_submap("Hyprland Manager", function()
 	hl.bind("SPACE", function()
 		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --hyprland-manager --retain"))
 		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Wofi Menu" })
+	end, { description = "Wofi Menu (Retain)" })
 
 	hl.bind("e", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --hyprland-manager goto"))
 	end, { description = "Goto Client" })
+
+	hl.bind("m", function()
+		hl.dispatch(hl.dsp.submap("reset"))
+		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --hyprland-manager move"))
+	end)
 
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
