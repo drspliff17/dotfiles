@@ -14,7 +14,6 @@ local scr_themeSelector = "~/.config/hypr/scripts/theme_selector.sh"
 local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 local scr_openNotif = "~/.config/hypr/scripts/open_notif_log.sh"
--- local scr_window = "~/.config/hypr/scripts/wofi_window_menu.sh"
 
 -- Sets Submap to current layout's respective map
 local function setLayoutSubmap()
@@ -84,15 +83,15 @@ hl.bind(
 -- Universal Binds
 hl.bind(mainMod .. " + escape", hl.dsp.submap("reset"), { submap_universal = true, description = "Submap Escape Key" })
 
+hl.bind(mainMod .. " + bracketright", function()
+	hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
+end, { description = "Toggle Maximize" })
+
 hl.bind(
 	mainMod .. " + h",
 	hl.dsp.focus({ direction = "left" }),
 	{ submap_universal = true, description = "Focus Left" }
 )
-
-hl.bind(mainMod .. " + bracketright", function()
-	hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
-end, { description = "Toggle Maximize" })
 
 hl.bind(
 	mainMod .. " + j",
@@ -105,7 +104,7 @@ hl.bind(mainMod .. " + k", hl.dsp.focus({ direction = "up" }), { submap_universa
 hl.bind(
 	mainMod .. " + l",
 	hl.dsp.focus({ direction = "right" }),
-	{ submap_universal = true, description = "Focus Down" }
+	{ submap_universal = true, description = "Focus Right" }
 )
 
 hl.bind(
@@ -250,11 +249,17 @@ hl.define_submap("L_Scrolling", function()
 	hl.bind("n", hl.dsp.layout("swapcol l"), { description = "SwapCol Left" })
 	hl.bind("m", hl.dsp.layout("swapcol r"), { description = "SwapCol Right" })
 
+	hl.bind("SHIFT + c", hl.dsp.layout("center"), { description = "Center Focused Column" })
 	hl.bind("c", hl.dsp.layout("consume"), { description = "Consume Window" })
 	hl.bind("e", hl.dsp.layout("expel"), { description = "Expel Window" })
 	hl.bind("p", hl.dsp.layout("promote"), { description = "Promote Window" })
 
-	hl.bind("SHIFT + f", hl.dsp.layout("fit all"), { description = "Fit All" })
+	hl.bind("f", hl.dsp.layout("colresize 1"), { description = "Set Colsize 1" })
+	hl.bind("w", hl.dsp.layout("colresize 0.75"), { description = "Set Colsize 0.75" })
+	hl.bind("SHIFT + f", hl.dsp.layout("colresize 0.5"), { description = "Set Colsize 0.5" })
+	hl.bind("q", hl.dsp.layout("colresize 0.25"), { description = "Set Colsize 0.25" })
+
+	hl.bind("CTRL + f", hl.dsp.layout("fit all"), { description = "Fit All" })
 
 	hl.bind(mainMod .. " + d", function()
 		hl.config({ general = { layout = "dwindle" } })
@@ -951,7 +956,7 @@ hl.define_submap("Volume", function()
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
--- Wofi_Modes --hyprland-manager Mode
+-- Wofi_Modes --hyprland-manager Mode (Old Window Mode)
 hl.bind(mainMod .. " + d", hl.dsp.submap("Hyprland Manager"), { description = "Submap Hyprland Manager" })
 hl.define_submap("Hyprland Manager", function()
 	hl.bind("SPACE", function()
@@ -959,7 +964,7 @@ hl.define_submap("Hyprland Manager", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Wofi Menu (Retain)" })
 
-	hl.bind("e", function()
+	hl.bind("g", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --hyprland-manager goto"))
 	end, { description = "Goto Client" })
