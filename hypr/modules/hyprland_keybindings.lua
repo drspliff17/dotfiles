@@ -58,22 +58,18 @@ hl.bind(
 	{ description = "Log out of Hyprland" }
 )
 
-hl.bind("CTRL + RETURN", hl.dsp.exec_cmd("kitty fish -c n"), { description = "Neovim" })
-
 hl.bind(
 	mainMod .. " + SHIFT + RETURN",
 	hl.dsp.exec_cmd(terminal, { float = true, size = "1000 400" }, { description = "Floating Terminal" })
 )
 
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal), { description = "Tiled Terminal" })
-
+hl.bind("CTRL + RETURN", hl.dsp.exec_cmd("kitty fish -c n"), { description = "Neovim" })
 hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("hyprlock"), { description = "Hyprlock" })
 
 -- Screenshots
 hl.bind("PRINT", hl.dsp.exec_cmd(scr_screenshot .. " slurp"), { description = "Screenshot (Slurp)" })
-
 hl.bind("SHIFT + PRINT", hl.dsp.exec_cmd(scr_screenshot .. " main"), { description = "Screenshot (Main)" })
-
 hl.bind(
 	mainMod .. " + PRINT",
 	hl.dsp.exec_cmd(scr_screenshot .. " global"),
@@ -127,7 +123,6 @@ hl.bind(
 
 hl.bind(mainMod .. " + c", function()
 	local w = hl.get_active_window()
-
 	if w ~= nil and w.class == "wofi" then
 		hl.dispatch(hl.dsp.window.signal({
 			window = w,
@@ -180,11 +175,6 @@ hl.bind(mainMod .. " + p", hl.dsp.window.pin(), { submap_universal = true, descr
 
 -- Toggle window screen share prop + manage window private tag
 hl.bind(mainMod .. " + SHIFT + p", function()
-	local w = hl.get_active_window()
-	if not w then
-		return
-	end
-	local wt = w.tags
 	local function hasPrivate(tags)
 		for _, t in ipairs(tags) do
 			if t == "private" then
@@ -193,6 +183,12 @@ hl.bind(mainMod .. " + SHIFT + p", function()
 		end
 		return false
 	end
+
+	local w = hl.get_active_window()
+	if not w then
+		return
+	end
+	local wt = w.tags
 
 	if hasPrivate(wt) then
 		hl.dispatch(hl.dsp.window.tag({ tag = "-private" }))
@@ -205,8 +201,136 @@ end, { description = "Toggle Window Privacy" })
 
 -- Global Window Binds
 hl.bind(mainMod .. " + SPACE", hl.dsp.window.center(), { description = "Center Floating Window" })
-
 hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen(), { description = "Toggle Window Fullscreen" })
+
+-- Special Workspaces
+hl.bind(mainMod .. " + SHIFT + m", function()
+	local ws = hl.get_workspaces()
+	for _, w in ipairs(ws) do
+		if w.name == "special:music" then
+			hl.dispatch(hl.dsp.workspace.toggle_special("music"))
+			return
+		end
+	end
+end, { description = "Special Workspace: Music" })
+
+-- Launch Discord, and toggle it's special workspace
+hl.bind(mainMod .. " + SHIFT + d", function()
+	local ws = hl.get_workspaces()
+	for _, w in ipairs(ws) do
+		if w.name == "special:discord" then
+			hl.dispatch(hl.dsp.workspace.toggle_special("discord"))
+			return
+		end
+	end
+	hl.exec_cmd("vesktop")
+end, { description = "Special Workspace: Discord" })
+
+-- Launch aerc, and toggle it's special workspace
+hl.bind(mainMod .. " + SHIFT + a", function()
+	local ws = hl.get_workspaces()
+	for _, w in ipairs(ws) do
+		if w.name == "special:email" then
+			hl.dispatch(hl.dsp.workspace.toggle_special("email"))
+			return
+		end
+	end
+	hl.exec_cmd("aerc")
+	hl.exec_cmd("kitty --class aerc fish -c aerc")
+end, { description = "Special Workspace: Email" })
+
+-- Swap Workspace Between Two Monitors
+hl.bind(mainMod .. " + CTRL + s", function()
+	local m = hl.get_active_monitor().id
+	if m == 0 then
+		hl.dispatch(hl.dsp.workspace.swap_monitors({ monitor1 = m, monitor2 = "1" }))
+	else
+		hl.dispatch(hl.dsp.workspace.swap_monitors({ monitor1 = m, monitor2 = "0" }))
+	end
+end, { description = "Swap Monitor Workspaces" })
+
+-- Focus Windows / Workspaces
+for i = 1, 10 do
+	local key = i % 10 -- 10 maps to key 0
+	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }), { description = "Focus Workspace " .. i })
+	hl.bind(
+		mainMod .. " + SHIFT + " .. key,
+		hl.dsp.window.move({ workspace = i }),
+		{ description = "Move Window To Workspace " .. i }
+	)
+	hl.bind(
+		mainMod .. " + SHIFT + CTRL + " .. key,
+		hl.dsp.exec_cmd("~/.config/hypr/scripts/move_all_to_workspace.sh " .. key),
+		{ description = "Move All Windows On Workspace To Workspace " .. i }
+	)
+end
+
+-- Move Windows (Tiled)
+hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.move({ direction = "left" }), { description = "Move Tiled Left" })
+hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }), { description = "Move Tiled Down" })
+hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }), { description = "Move Tiled Up" })
+hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }), { description = "Move Tiled Right" })
+
+-- Resize window with mouse
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Move Window With Mouse" })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize Window With Mouse" })
+
+-- Wofi Music Selector
+hl.bind(
+	mainMod .. " + F1",
+	hl.dsp.exec_cmd("timeout 60 wofi_modes --music-selector artist"),
+	{ description = "Music Selector - Artist" }
+)
+
+hl.bind(
+	mainMod .. " + SHIFT + F1",
+	hl.dsp.exec_cmd("timeout 120 wofi_modes --music-selector files"),
+	{ description = "Music Selector - Cache File" }
+)
+
+hl.bind(
+	mainMod .. " + CTRL + F1",
+	hl.dsp.exec_cmd("wofi_modes --music-selector update"),
+	{ description = "Music Selector - Update" }
+)
+
+hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("wofi_modes --command-launcher"), { description = "Command Launcher" })
+hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind menu subkey"), { description = "Hyprbind - Subkey" })
+
+-- -- DEFAULT FN F* Binds
+hl.bind(
+	"XF86AudioRaiseVolume",
+	hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
+	{ repeating = true, locked = true, description = "Volume +5%" }
+)
+
+hl.bind(
+	"XF86AudioLowerVolume",
+	hl.dsp.exec_cmd("wpctl set-volume 1 @DEFAULT_AUDIO_SINK@ 5%-"),
+	{ repeating = true, locked = true, description = "Volume -5%" }
+)
+
+hl.bind(
+	"XF86AudioMute",
+	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
+	{ locked = true, description = "Toggle Audio Mute" }
+)
+
+hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true, description = "Play Next" })
+hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/Pause" })
+hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/Pause" })
+hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true, description = "Play Previous" })
+
+hl.bind(
+	"XF86MonBrightnessUp",
+	hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),
+	{ repeating = true, description = "Monitor Brightness +5%" }
+)
+hl.bind(
+	"XF86MonBrightnessDown",
+	hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),
+	{ repeating = true, description = "Monitor Brightness -5%" }
+)
 
 -- Layouts
 hl.bind(mainMod .. " + i", setLayoutSubmap, { description = "Submap Layer" })
@@ -295,150 +419,6 @@ hl.define_submap("L_Monocle", function()
 
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
-
--- Special Workspaces
-hl.bind(mainMod .. " + SHIFT + m", function()
-	local ws = hl.get_workspaces()
-	for _, w in ipairs(ws) do
-		if w.name == "special:music" then
-			hl.dispatch(hl.dsp.workspace.toggle_special("music"))
-			return
-		end
-	end
-end, { description = "Special Workspace: Music" })
-
-hl.bind(mainMod .. " + SHIFT + g", function()
-	local ws = hl.get_workspaces()
-	for _, w in ipairs(ws) do
-		if w.name == "special:steam" then
-			hl.dispatch(hl.dsp.workspace.toggle_special("steam"))
-			return
-		end
-	end
-end, { description = "Special Workspace: Steam" })
-
--- Launch Discord, and toggle it's special workspace
-hl.bind(mainMod .. " + SHIFT + d", function()
-	local ws = hl.get_workspaces()
-	for _, w in ipairs(ws) do
-		if w.name == "special:discord" then
-			hl.dispatch(hl.dsp.workspace.toggle_special("discord"))
-			return
-		end
-	end
-	-- hl.exec_cmd("/opt/Discord/discord")
-	hl.exec_cmd("vesktop")
-end, { description = "Special Workspace: Discord" })
-
--- Launch aerc, and toggle it's special workspace
-hl.bind(mainMod .. " + SHIFT + a", function()
-	local ws = hl.get_workspaces()
-	for _, w in ipairs(ws) do
-		if w.name == "special:email" then
-			hl.dispatch(hl.dsp.workspace.toggle_special("email"))
-			return
-		end
-	end
-	hl.exec_cmd("aerc")
-	hl.exec_cmd("kitty --class aerc fish -c aerc")
-end, { description = "Special Workspace: Email" })
-
--- Swap Workspace Between Two Monitors
-hl.bind(mainMod .. " + CTRL + s", function()
-	local m = hl.get_active_monitor().id
-	if m == 0 then
-		hl.dispatch(hl.dsp.workspace.swap_monitors({ monitor1 = m, monitor2 = "1" }))
-	else
-		hl.dispatch(hl.dsp.workspace.swap_monitors({ monitor1 = m, monitor2 = "0" }))
-	end
-end, { description = "Swap Monitor Workspaces" })
-
--- Focus Windows / Workspaces
-for i = 1, 10 do
-	local key = i % 10 -- 10 maps to key 0
-	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }), { description = "Focus Workspace " .. i })
-	hl.bind(
-		mainMod .. " + SHIFT + " .. key,
-		hl.dsp.window.move({ workspace = i }),
-		{ description = "Move Window To Workspace " .. i }
-	)
-	hl.bind(
-		mainMod .. " + SHIFT + CTRL + " .. key,
-		hl.dsp.exec_cmd("~/.config/hypr/scripts/move_all_to_workspace.sh " .. key),
-		{ description = "Move All Windows On Workspace To Workspace " .. i }
-	)
-end
-
--- Move Windows (Tiled)
-hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.move({ direction = "left" }), { description = "Move Tiled Left" })
-hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.move({ direction = "down" }), { description = "Move Tiled Down" })
-hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.move({ direction = "up" }), { description = "Move Tiled Up" })
-hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.move({ direction = "right" }), { description = "Move Tiled Right" })
-
--- Resize window with mouse
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Move Window With Mouse" })
-hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize Window With Mouse" })
-
--- My Scripts
-hl.bind(mainMod .. " + SHIFT + c", hl.dsp.exec_raw("kitty fish -c cursor_swap"), { description = "Cursor Swap" })
--- hl.bind(mainMod .. " + z", hl.dsp.exec_cmd(scr_toggleProgram .. " " .. status))
-
--- Wofi Music Selector
-hl.bind(
-	mainMod .. " + F1",
-	hl.dsp.exec_cmd("timeout 60 wofi_modes --music-selector artist"),
-	{ description = "Music Selector - Artist" }
-)
-
-hl.bind(
-	mainMod .. " + SHIFT + F1",
-	hl.dsp.exec_cmd("timeout 120 wofi_modes --music-selector files"),
-	{ description = "Music Selector - Cache File" }
-)
-
-hl.bind(
-	mainMod .. " + CTRL + F1",
-	hl.dsp.exec_cmd("wofi_modes --music-selector update"),
-	{ description = "Music Selector - Update" }
-)
-
-hl.bind(mainMod .. " + x", hl.dsp.exec_cmd("wofi_modes --command-launcher"), { description = "Command Launcher" })
-hl.bind(mainMod .. " + SHIFT + b", hl.dsp.exec_cmd("hyprbind menu subkey"), { description = "Hyprbind - Subkey" })
-
--- -- DEFAULT FN F* Binds
-hl.bind(
-	"XF86AudioRaiseVolume",
-	hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
-	{ repeating = true, locked = true, description = "Volume +5%" }
-)
-
-hl.bind(
-	"XF86AudioLowerVolume",
-	hl.dsp.exec_cmd("wpctl set-volume 1 @DEFAULT_AUDIO_SINK@ 5%-"),
-	{ repeating = true, locked = true, description = "Volume -5%" }
-)
-
-hl.bind(
-	"XF86AudioMute",
-	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
-	{ locked = true, description = "Toggle Audio Mute" }
-)
-
-hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true, description = "Play Next" })
-hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/Pause" })
-hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/Pause" })
-hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true, description = "Play Previous" })
-
-hl.bind(
-	"XF86MonBrightnessUp",
-	hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),
-	{ repeating = true, description = "Monitor Brightness +5%" }
-)
-hl.bind(
-	"XF86MonBrightnessDown",
-	hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),
-	{ repeating = true, description = "Monitor Brightness -5%" }
-)
 
 -- Resize Mode (Active Window)
 
@@ -559,9 +539,7 @@ end)
 hl.bind(mainMod .. " + b", hl.dsp.submap("Browser"), { description = "Submap Browser" })
 hl.define_submap("Browser", "reset", function()
 	hl.bind("o", hl.dsp.exec_cmd("firefox"), { description = "Open Firefox" })
-
 	hl.bind("y", hl.dsp.exec_cmd("firefox --new-window https://www.youtube.com"), { description = "Youtube" })
-
 	hl.bind("c", hl.dsp.exec_cmd("firefox --new-window https://www.chess.com"), { description = "Chess" })
 
 	hl.bind(
@@ -571,9 +549,7 @@ hl.define_submap("Browser", "reset", function()
 	)
 
 	hl.bind("t", hl.dsp.exec_cmd("wofi_modes --firefox-bookmarks tab"), { description = "Bookmark Launcher (Tab)" })
-
 	hl.bind("b", hl.dsp.exec_cmd("obang runner wofi -d -W 25% -H 5%"), { description = "Obang Search" })
-
 	hl.bind("SHIFT + b", hl.dsp.exec_cmd("obang browse wofi -d -W 25% -H 20%"), { description = "Obang Menu" })
 end)
 
@@ -581,15 +557,10 @@ end)
 hl.bind(mainMod .. " + o", hl.dsp.submap("Open"), { description = "Submap Open" })
 hl.define_submap("Open", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(menu), { description = "Wofi (Run)" })
-
-	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c " .. fileManager), { description = "Yazi" })
-
+	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c y"), { description = "Yazi" })
 	hl.bind("g", hl.dsp.exec_cmd("wofi_modes --launcher"), { description = "Open Steam Launcher (Wofi)" })
-
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"), { description = "Steam" })
-
 	hl.bind("m", hl.dsp.exec_cmd("exec /storage/Caprine-2.61.0.AppImage"), { description = "Caprine" })
-
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
@@ -597,9 +568,7 @@ end)
 hl.bind(mainMod .. " + g", hl.dsp.submap("Cursor"), { description = "Submap Cursor" })
 hl.define_submap("Cursor", function()
 	hl.bind("1", hl.dsp.exec_cmd(scr_spdCursor .. " -s 5"), { description = "Set Speed 5" })
-
 	hl.bind("2", hl.dsp.exec_cmd(scr_spdCursor .. " -s 10"), { description = "Set Speed 10" })
-
 	hl.bind("3", hl.dsp.exec_cmd(scr_spdCursor .. " -s 20"), { description = "Set Speed 20" })
 
 	hl.bind(
@@ -621,27 +590,16 @@ hl.define_submap("Cursor", function()
 	)
 
 	hl.bind("CTRL + j", hl.dsp.exec_cmd("wlrctl pointer click left"), { description = "WLRCTL Left Click" })
-
 	hl.bind("CTRL + k", hl.dsp.exec_cmd("wlrctl pointer click right"), { description = "WLRCTL Right Click" })
-
 	hl.bind("CTRL + m", hl.dsp.exec_cmd("wlrctl pointer click middle"), { description = "WLRCTL Middle Click" })
-
 	hl.bind("u", hl.dsp.exec_cmd("wlrctl pointer scroll -20 0"), { description = "WLRCTL Scroll Up" })
-
 	hl.bind("d", hl.dsp.exec_cmd("wlrctl pointer scroll 20 0"), { description = "WLRCTL Scroll Down" })
-
 	hl.bind("v", hl.dsp.exec_cmd("wlrctl pointer scroll 0 -20"), { description = "WLRCTL Scroll Left" })
-
 	hl.bind("b", hl.dsp.exec_cmd("wlrctl pointer scroll 0 20"), { description = "WLRCTL Scroll Right" })
-
 	hl.bind("f", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/wlkbptr.sh"), { description = "Activate wl-kbptr" })
-
 	hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true, description = "Move Cursor Left" })
-
 	hl.bind("j", hl.dsp.exec_cmd(scr_moveCursor .. " 0 1"), { repeating = true, description = "Move Cursor Down" })
-
 	hl.bind("k", hl.dsp.exec_cmd(scr_moveCursor .. " 0 -1"), { repeating = true, description = "Move Cursor Up" })
-
 	hl.bind("l", hl.dsp.exec_cmd(scr_moveCursor .. " 1 0"), { repeating = true, description = "Move Cursor Right" })
 
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
@@ -688,7 +646,6 @@ end)
 hl.bind(mainMod .. " + t", hl.dsp.submap("Todo"), { description = "Submap Todo" })
 hl.define_submap("Todo", "reset", function()
 	hl.bind("SPACE", hl.dsp.exec_cmd(scr_todo .. " -i"), { description = "Edit Todo" })
-
 	hl.bind("t", hl.dsp.exec_cmd(scr_todo .. " -m"), { description = "Open Todo Menu" })
 
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
@@ -756,13 +713,9 @@ hl.define_submap("Wallpaper", function()
 	hl.bind("f", hl.dsp.submap("Fav Wallpaper"), { description = "Submap Fav Wallpaper" })
 	hl.define_submap("Fav Wallpaper", "reset", function()
 		hl.bind("w", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f"), { description = "Theme Selector (All)" })
-
 		hl.bind("a", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f add"), { description = "Add To Favourites" })
-
 		hl.bind("r", hl.dsp.exec_cmd(scr_themeSelector .. " -p -g -f rm"), { description = "Remove From Favourites" })
-
 		hl.bind("c", hl.dsp.exec_cmd(scr_themeSelector .. " clear fav"), { description = "Clear All Favourites" })
-
 		hl.bind("q", hl.dsp.exec_cmd(scr_swapWallpaper .. " -f"), { description = "Set Random Favourite Wallpaper" })
 
 		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
@@ -801,11 +754,8 @@ hl.define_submap("Zoom", function()
 	end, { repeating = true, description = "Decrease Cursor Zoom" })
 
 	hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true, description = "Move Cursor Left" })
-
 	hl.bind("j", hl.dsp.exec_cmd(scr_moveCursor .. " 0 1"), { repeating = true, description = "Move Cursor Down" })
-
 	hl.bind("k", hl.dsp.exec_cmd(scr_moveCursor .. " 0 -1"), { repeating = true, description = "Move Cursor Up" })
-
 	hl.bind("l", hl.dsp.exec_cmd(scr_moveCursor .. " 1 0"), { repeating = true, description = "Move Cursor Right" })
 
 	hl.bind("r", function()

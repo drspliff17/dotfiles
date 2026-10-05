@@ -1,3 +1,4 @@
+-- Save / Load layout state. Mode can be either start, or stop - in reference the hyprland.x event
 local function handleLayout(mode)
 	local function validLayout(layout)
 		return type(layout) == "string" and layout:match("^[%w_-]+$") ~= nil
@@ -41,7 +42,6 @@ local function handleLayout(mode)
 	end
 end
 
--- Autostart
 hl.on("hyprland.start", function()
 	handleLayout("start")
 
@@ -57,11 +57,10 @@ hl.on("hyprland.shutdown", function()
 	handleLayout("stop")
 end)
 
--- Wofi, refocus captured monitor on exit
 hl.on("window.close", function(win)
+	-- Wofi, refocus captured monitor on exit
 	if win.class == "wofi" then
 		local path = os.getenv("HOME") .. "/.config/wofi/state/monitor_prelaunch"
-
 		local f = io.open(path, "r")
 		if not f then
 			return
@@ -69,15 +68,13 @@ hl.on("window.close", function(win)
 
 		local monitor = f:read("*all"):gsub("[\n\r]", "")
 		f:close()
-
 		os.remove(path)
-
 		hl.dispatch(hl.dsp.focus({ monitor = monitor }))
 	end
 end)
 
--- Hide Discord when it initially opens
 hl.on("window.open", function(win)
+	-- Hide Discord when it initially opens
 	if win.initial_class == "discord" then
 		local w = hl.get_active_special_workspace()
 		if w == nil then
