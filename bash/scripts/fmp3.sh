@@ -2,6 +2,10 @@
 
 # Script port of my fixMP3_Meta.sh function
 
+#NOTE:
+# lazy option for debug_dump because im lazy
+REM=0
+
 shopt -s nullglob
 
 # HELP
@@ -135,14 +139,20 @@ while [[ $# -gt 0 ]]; do
 
   -ta | --target-album)
     mode="target_album"
-    shift
     specifiedAlbum="$1"
-    shift
+    shift 2
     ;;
 
   -da | --dump-all)
     mode="dump_all"
     shift
+    ;;
+
+  -dd | --debug-dump)
+    mode="debug_dump"
+    specifiedAlbum="$2"
+    shift 2
+    [[ "$1" == "-r" ]] && REM=1 && shift
     ;;
 
   -la | --list-album)
@@ -214,7 +224,6 @@ target_album)
     cur="$(_retrieveFileDataD3 "$f" "album")"
     [[ "$cur" = "$specifiedAlbum" ]] && {
       echo "[TEST] Would be changing $f"
-      # _changeFileDataD3 "$f"
     }
   done
   ;;
@@ -224,6 +233,19 @@ dump_all)
     echo "=== $f ==="
     eyeD3 "$f"
   done
+  ;;
+
+debug_dump)
+  [[ -z "$specifiedAlbum" ]] && echo "[ERROR] Must specify album tag" >&2 && exit 1
+  for f in *.mp3; do
+    cur="$(_retrieveFileDataD3 "$f" "album")"
+    if [[ "$REM" -eq 1 ]]; then
+      [[ -f "$f" ]] && rm "$f" && echo "[REMOVED] ./$f"
+    else
+      [[ "$cur" = "$specifiedAlbum" ]] && echo "$f"
+    fi
+  done
+  exit
   ;;
 
 esac
