@@ -18,3 +18,4 @@ end
 set -x EDITOR "fish -c n"
 
 zoxide init fish | source
+bind \cj '__zoxide_zi; commandline -f repaint'

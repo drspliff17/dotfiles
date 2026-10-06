@@ -2,9 +2,6 @@
 -- Example binds, see https://wiki.hypr.land/Configuring/Binds/ for more
 
 local mainMod = "SUPER"
-local terminal = "kitty"
-local fileManager = "y"
-local menu = "wofi --show drun --columns 3"
 
 -- My Scripts
 local scr_moveCursor = "~/.config/hypr/scripts/move_cursor.sh"
@@ -60,10 +57,10 @@ hl.bind(
 
 hl.bind(
 	mainMod .. " + SHIFT + RETURN",
-	hl.dsp.exec_cmd(terminal, { float = true, size = "1000 400" }, { description = "Floating Terminal" })
+	hl.dsp.exec_cmd("kitty", { float = true, size = "1000 400" }, { description = "Floating Terminal" })
 )
 
-hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal), { description = "Tiled Terminal" })
+hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("kitty"), { description = "Tiled Terminal" })
 hl.bind("CTRL + RETURN", hl.dsp.exec_cmd("kitty fish -c n"), { description = "Neovim" })
 hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("hyprlock"), { description = "Hyprlock" })
 
@@ -529,7 +526,6 @@ hl.define_submap("MoveFloat", function()
 	)
 
 	hl.bind(" + c", hl.dsp.window.center(), { description = "Center Window" })
-
 	hl.bind(" + r", hl.dsp.submap("Resize"), { description = "Submap Resize" })
 
 	hl.bind(" + SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
@@ -556,7 +552,7 @@ end)
 --Open Mode (Launch Programs)
 hl.bind(mainMod .. " + o", hl.dsp.submap("Open"), { description = "Submap Open" })
 hl.define_submap("Open", "reset", function()
-	hl.bind("SPACE", hl.dsp.exec_cmd(menu), { description = "Wofi (Run)" })
+	hl.bind("SPACE", hl.dsp.exec_cmd("wofi --show drun --columns 3"), { description = "Wofi (Run)" })
 	hl.bind("e", hl.dsp.exec_cmd("kitty fish -c y"), { description = "Yazi" })
 	hl.bind("g", hl.dsp.exec_cmd("wofi_modes --launcher"), { description = "Open Steam Launcher (Wofi)" })
 	hl.bind("s", hl.dsp.exec_cmd("steam -dev"), { description = "Steam" })
@@ -840,10 +836,10 @@ hl.define_submap("Misc", function()
 		end, { description = "Toggle Mute" })
 
 		-- TODO: Investigate weirdness with this doing weird stuff. ja
-		-- hl.bind("x", function()
-		-- 	hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
-		-- 	hl.dispatch(hl.dsp.submap("reset"))
-		-- end, { description = "Toggle Deafen" })
+		hl.bind("x", function()
+			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Toggle Deafen" })
 
 		hl.bind("a", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))
