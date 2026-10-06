@@ -24,6 +24,36 @@ _error() {
   exit 1
 }
 
+_usage() {
+  cat <<'HELP'
+Usage: sm [MODE] [OPTIONS]
+
+Modes:
+  (default)             Preview directories and MP3 files missing from the phone
+  -q, --quick           Push MP3 files that are missing from the phone
+  -w, --wipe            Delete the destination, then push the source tree
+  -s, --specific DIR…   Push missing MP3s from the specified source directories
+  -r, --revparse [DIR…] Remove phone files absent from the PC; defaults to the full tree
+  -c, --count           Count MP3 files and list phone-only paths at the default locations
+
+Options:
+  -f, --from DIR        Use DIR as the PC source (default: ~/Music/Songs)
+  -t, --to DEVICE_PATH  Use DEVICE_PATH on the phone (default: /sdcard/Music/Songs)
+  -v, --verbose         Print skipped, pushed, and deleted files
+  -h, --help            Show this help and exit
+
+DIR arguments may be source-relative names or absolute paths. With -r, omit DIR
+to compare the entire source tree against the phone destination.
+
+Examples:
+  sm
+  sm --quick
+  sm --specific "Artist One" "Artist Two"
+  sm --revparse "Artist One"
+  sm --wipe
+HELP
+}
+
 adb_check() {
   adb get-state >/dev/null 2>&1 || {
     echo "[ERROR] No ADB device connected" >&2
@@ -221,7 +251,6 @@ _performTransfer() {
 
     if [[ "$MODE" == "DRY" ]]; then
       echo "[Transfer Info] Missing Directories: $dmissing | Missing Files: $fmissing"
-      [[ ! -t 1 && $(command -v notify-send 2>/dev/null) ]] && notify-send -u low -t 2000 -a center-text "[Transfer Info] Missing Directories: $dmissing | Missing Files: $fmissing"
     fi
     ;;
 
@@ -239,8 +268,7 @@ _performTransfer() {
       return 1
     }
 
-    # DESTINATION stays absent so ADB creates that exact path for the source
-    # directory, instead of nesting the source directory inside it
+    # DESTINATION stays absent so ADB creates that exact path for the source directory, instead of nesting the source directory inside it
     adb push "$SOURCE_PATH" "$DESTINATION" || {
       echo "[ERROR] ADB directory push failed: $SOURCE_PATH -> $DESTINATION" >&2
       return 1
@@ -331,6 +359,10 @@ while [[ $# -gt 0 ]]; do
     wc -l "$pc" "$phone"
     comm -13 "$pc" "$phone"
     rm "$pc" "$phone"
+    exit 0
+    ;;
+  -h | --help)
+    _usage
     exit 0
     ;;
   -*)
