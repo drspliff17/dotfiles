@@ -12,32 +12,6 @@ local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 local scr_openNotif = "~/.config/hypr/scripts/open_notif_log.sh"
 
--- Sets Submap to current layout's respective map
-local function setLayoutSubmap()
-	local l = hl.get_config("general.layout")
-	if l == "dwindle" then
-		hl.dispatch(hl.dsp.submap("L_Dwindle"))
-	elseif l == "scrolling" then
-		hl.dispatch(hl.dsp.submap("L_Scrolling"))
-	elseif l == "monocle" then
-		hl.dispatch(hl.dsp.submap("L_Monocle"))
-	else
-		hl.dispatch(hl.dsp.submap("reset"))
-	end
-end
-
--- Write current layout to state file (Happens hl.on(hyprland.shutdown), loaded hl.on(hyprland.start))
-local function saveLayout()
-	local path = os.getenv("HOME") .. "/.config/hypr/layout_saved_state"
-	local layout = hl.get_config("general.layout")
-	local f = io.open(path, "w")
-
-	if f and type(layout) == "string" then
-		f:write(layout, "\n")
-		f:close()
-	end
-end
-
 -- local function exec_capture(cmd)
 -- 	local handle = io.popen(cmd)
 -- 	if not handle then
@@ -330,7 +304,7 @@ hl.bind(
 )
 
 -- Layouts
-hl.bind(mainMod .. " + i", setLayoutSubmap, { description = "Submap Layer" })
+hl.bind(mainMod .. " + i", Set_Layout_Submap, { description = "Submap Layer" })
 
 hl.define_submap("L_Dwindle", function()
 	hl.bind("h", hl.dsp.window.move({ direction = "left" }), { description = "Move Window Left" })
@@ -344,13 +318,13 @@ hl.define_submap("L_Dwindle", function()
 
 	hl.bind(mainMod .. " + s", function()
 		hl.config({ general = { layout = "scrolling" } })
-		saveLayout()
+		Save_Layout_State()
 		hl.dispatch(hl.dsp.submap("L_Scrolling"))
 	end, { description = "Set Scrolling Layout" })
 
 	hl.bind(mainMod .. " + m", function()
 		hl.config({ general = { layout = "monocle" } })
-		saveLayout()
+		Save_Layout_State()
 		hl.dispatch(hl.dsp.submap("L_Monocle"))
 	end, { description = "Set Monocle Layout" })
 
@@ -384,13 +358,13 @@ hl.define_submap("L_Scrolling", function()
 
 	hl.bind(mainMod .. " + d", function()
 		hl.config({ general = { layout = "dwindle" } })
-		saveLayout()
+		Save_Layout_State()
 		hl.dispatch(hl.dsp.submap("L_Dwindle"))
 	end, { description = "Set Dwindle Layout" })
 
 	hl.bind(mainMod .. " + m", function()
 		hl.config({ general = { layout = "monocle" } })
-		saveLayout()
+		Save_Layout_State()
 		hl.dispatch(hl.dsp.submap("L_Monocle"))
 	end, { description = "Set Monocle Layout" })
 
@@ -404,13 +378,13 @@ hl.define_submap("L_Monocle", function()
 
 	hl.bind(mainMod .. " + d", function()
 		hl.config({ general = { layout = "dwindle" } })
-		saveLayout()
+		Save_Layout_State()
 		hl.dispatch(hl.dsp.submap("L_Dwindle"))
 	end, { description = "Set Dwindle Layout" })
 
 	hl.bind(mainMod .. " + s", function()
 		hl.config({ general = { layout = "scrolling" } })
-		saveLayout()
+		Save_Layout_State()
 		hl.dispatch(hl.dsp.submap("L_Scrolling"))
 	end, { description = "Set Scrolling Layout" })
 
@@ -470,7 +444,7 @@ hl.define_submap("Resize", function()
 	)
 
 	hl.bind("m", hl.dsp.submap("MoveFloat"), { description = "Submap MoveFloat" })
-	hl.bind("i", setLayoutSubmap, { description = "Submap Layout" })
+	hl.bind("i", Set_Layout_Submap, { description = "Submap Layout" })
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 

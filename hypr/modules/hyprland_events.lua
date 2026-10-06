@@ -1,42 +1,11 @@
--- Save / Load layout state. Mode can be either start, or stop - in reference the hyprland.x event
+require("modules.hypr_functions")
+
+-- Save / Load layout state. Mode can be either start, or stop - in respect of the hyprland.x event
 local function handleLayout(mode)
-	local function validLayout(layout)
-		return type(layout) == "string" and layout:match("^[%w_-]+$") ~= nil
-	end
-
-	local home = os.getenv("HOME")
-	if not home then
-		return
-	end
-
-	local path = home .. "/.config/hypr/layout_saved_state"
-
 	if mode == "start" then
-		local f = io.open(path, "r")
-		if not f then
-			return
-		end
-
-		local layout = f:read("*l")
-		f:close()
-
-		if validLayout(layout) then
-			hl.config({ general = { layout = layout } })
-		end
+		Load_Layout_State()
 	elseif mode == "stop" then
-		local layout = hl.get_config("general.layout")
-		if not validLayout(layout) then
-			return
-		end
-
-		local f = io.open(path .. ".tmp", "w")
-		if not f then
-			return
-		end
-
-		f:write(layout, "\n")
-		f:close()
-		os.rename(path .. ".tmp", path)
+		Save_Layout_State()
 	else
 		return
 	end

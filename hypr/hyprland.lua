@@ -1,3 +1,4 @@
+require("modules.hypr_functions")
 require("modules.hyprland_colors")
 require("modules.hyprland_events")
 require("modules.hyprland_env")
