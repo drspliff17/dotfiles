@@ -583,7 +583,7 @@ hl.define_submap("Notification", function()
 	hl.bind(
 		"d",
 		hl.dsp.exec_cmd([[
-  notify-send -t 3000 -u normal -a nhc "$(date | cut -d' ' -f1,2,3)"
+  notify-send -t 3000 -u normal -a nhc "$(date | cut -d' ' -f1,2,3,4)"
   ]]),
 		{ description = "Notify - Date" }
 	)
@@ -608,6 +608,15 @@ hl.define_submap("Notification", function()
 		),
 		{ description = "Clear Notification Log" }
 	)
+
+	hl.bind("c", function()
+		local r = hl.get_config("cursor.invisible")
+		local v = "False"
+		if not r then
+			v = "True"
+		end
+		hl.dispatch(hl.dsp.exec_cmd([[notify-send -t 3000 -u normal -a nhc "Cursor Render = ]] .. v .. [["]]))
+	end, { description = "Notify - Cursor Render" })
 
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
@@ -769,11 +778,18 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Open Fetch (with custom float size)" })
 
-	-- Cmatrix
+	-- Toggle Cursor Rendering
 	hl.bind("SHIFT + c", function()
-		hl.dispatch(hl.dsp.exec_cmd("kitty --class cmatrix fish -c cmatrix"))
+		local ci = hl.get_config("cursor.invisible")
+		hl.config({ cursor = { invisible = not ci } })
 		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "CMatrix" })
+	end, { description = "Toggle Cursor Rendering" })
+
+	-- -- Cmatrix
+	-- hl.bind("SHIFT + c", function()
+	-- 	hl.dispatch(hl.dsp.exec_cmd("kitty --class cmatrix fish -c cmatrix"))
+	-- 	hl.dispatch(hl.dsp.submap("reset"))
+	-- end, { description = "CMatrix" })
 
 	-- Colour Picker
 	hl.bind("p", function()
