@@ -26,6 +26,19 @@ hl.window_rule({
 	suppress_event = "maximize",
 })
 
+hl.window_rule({
+	name = "no-animations-by-default",
+	match = { class = ".*" },
+	no_anim = true,
+})
+
+hl.window_rule({
+	name = "animate-wofi",
+	match = { class = "wofi" },
+	no_anim = false,
+	animation = "fade",
+})
+
 -- hl.window_rule({
 -- 	name = "maximize-firefox-pip",
 -- 	match = {
@@ -133,6 +146,7 @@ hl.window_rule({
 		class = "wofi",
 	},
 	monitor = "0",
+	animation = "popin",
 })
 
 hl.window_rule({
