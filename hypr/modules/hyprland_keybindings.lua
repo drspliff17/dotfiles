@@ -591,13 +591,13 @@ hl.define_submap("Notification", function()
 	hl.bind("l", function()
 		local l = hl.get_config("general.layout")
 		hl.dispatch(hl.dsp.exec_cmd([[ notify-send -t 3000 -u normal -a nhc "Layout = ]] .. l .. [["]]))
-	end)
+	end, { description = "Notify - Layout" })
 
 	hl.bind(
 		"w",
-		hl.dsp.exec_cmd([[
-  notify-send -t 3000 -u normal -a nhc "$(curl -s v2d.wttr.in | rg Weather: | cut -d' ' -f3,4,5,6,7 | sed 's/,//g')"
-  ]]),
+		hl.dsp.exec_cmd(
+			[[notify-send -t 3000 -u normal -a nhc "$(curl -s v2d.wttr.in | rg Weather: | cut -d' ' -f3,4,5,6,7 | sed 's/,//g')"]]
+		),
 		{ description = "Notify - Weather" }
 	)
 
@@ -785,12 +785,6 @@ hl.define_submap("Misc", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Toggle Cursor Rendering" })
 
-	-- -- Cmatrix
-	-- hl.bind("SHIFT + c", function()
-	-- 	hl.dispatch(hl.dsp.exec_cmd("kitty --class cmatrix fish -c cmatrix"))
-	-- 	hl.dispatch(hl.dsp.submap("reset"))
-	-- end, { description = "CMatrix" })
-
 	-- Colour Picker
 	hl.bind("p", function()
 		hl.dispatch(
@@ -826,10 +820,10 @@ hl.define_submap("Misc", function()
 		end, { description = "Toggle Mute" })
 
 		-- TODO: Investigate weirdness with this doing weird stuff. ja
-		hl.bind("x", function()
-			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Toggle Deafen" })
+		-- hl.bind("x", function()
+		-- 	hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
+		-- 	hl.dispatch(hl.dsp.submap("reset"))
+		-- end, { description = "Toggle Deafen" })
 
 		hl.bind("a", function()
 			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))
