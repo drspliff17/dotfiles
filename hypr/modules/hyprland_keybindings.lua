@@ -609,6 +609,13 @@ hl.define_submap("Notification", function()
 		{ description = "Clear Notification Log" }
 	)
 
+	hl.bind(
+		"m",
+		hl.dsp.exec_cmd([[
+  pgrep oplayer && notify-send -a nhc -u normal -t 3000 " $(oplayer --command status | cut -d'|' -f1,2,3)"
+  ]])
+	)
+
 	hl.bind("c", function()
 		local r = hl.get_config("cursor.invisible")
 		local v = "False"

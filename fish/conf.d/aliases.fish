@@ -11,7 +11,9 @@ alias nas="n ~/.config/fish/conf.d/aliases.fish"
 alias ssd="df -h | head -n 1; df -h | rg home; df -h | rg storage"
 alias ff="fastfetch"
 alias f="fetch --box -l arch --infinite"
-alias csh="curl cheat.sh"
+
+alias wp="wallpaper"
+alias wpa="~/.config/bash/scripts/add_fav_wallpaper_entries.sh"
 
 alias key="n ~/.config/hypr/modules/hyprland_keybindings.lua"
 
@@ -33,8 +35,6 @@ alias wlc="wl-copy"
 alias wlp="wl-paste"
 
 #Music stuff because am lazy ja
-alias fm="$HOME/.config/bash/scripts/fmp3.sh"
-# alias sm="$HOME/.config/bash/scripts/syncPhoneMusic.sh -v"
 alias sm="$HOME/.config/bash/scripts/adb-music-sync.sh"
 alias rmmp3="$HOME/.config/bash/scripts/fixYoutubeMusic_Duplicates.sh"
 
