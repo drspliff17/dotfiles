@@ -1,0 +1,14 @@
+{
+  "listen_port": 8765,
+  "cache_dir": "",
+  "max_loaded_indexes": 4,
+  "sites": [
+    {
+      "id": "hyprland",
+      "type": "hextra",
+      "base_url": "https://wiki.hypr.land/",
+      "allow_versions": true,
+      "cache_ttl_hours": 24
+    }
+  ]
+}

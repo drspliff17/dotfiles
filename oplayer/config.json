@@ -1,0 +1,6 @@
+{
+  "default_volume": 0.05,
+  "default_speed": 1.0,
+  "default_mode": "shuffle",
+  "default_directory": "~/Music/Songs"
+}

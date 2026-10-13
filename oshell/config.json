@@ -1,0 +1,17 @@
+{
+  "excluded_notification_log_appnames": [
+    "nhc",
+    "nohistory",
+    "nh-center-text",
+    "ts",
+    "theme_selector"
+  ],
+  "notification_log_path": "/home/drspliff/dev/data/notifications.jsonl",
+  "notification_max_width": 450,
+  "pywal_cache_path": "/home/drspliff/.cache/wal/colors-rgb",
+  "font_filepath": "/home/drspliff/.local/share/fonts/CodexMono-Hermes.ttf",
+  "font_size": 14,
+  "allow_notification_logging": true,
+  "fullscreen_output_switching": true,
+  "allow_infinite_marquee": true
+}
