@@ -1,0 +1,1 @@
+/home/drspliff/.config/fish/completions/oplayer.fish
