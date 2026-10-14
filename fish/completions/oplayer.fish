@@ -52,6 +52,8 @@ function __oplayer_context
                     set state none
                 case 'loop' 'l'
                     set state loop
+                case 'count' 'ct'
+                    set state none
                 case 'status' 'stat'
                     set state none
                 case 'reload-config' 'rc'
@@ -145,6 +147,8 @@ complete -c oplayer -n 'test (__oplayer_context) = command' -a 'seek' -d 'Seek b
 complete -c oplayer -n 'test (__oplayer_context) = command' -a 'sk' -d 'Seek by signed seconds, including fractions'
 complete -c oplayer -n 'test (__oplayer_context) = command' -a 'loop' -d 'Set none, track or playlist repeat'
 complete -c oplayer -n 'test (__oplayer_context) = command' -a 'l' -d 'Set none, track or playlist repeat'
+complete -c oplayer -n 'test (__oplayer_context) = command' -a 'count' -d 'Show loaded queue and library track counts'
+complete -c oplayer -n 'test (__oplayer_context) = command' -a 'ct' -d 'Show loaded queue and library track counts'
 complete -c oplayer -n 'test (__oplayer_context) = command' -a 'status' -d 'Show playback status'
 complete -c oplayer -n 'test (__oplayer_context) = command' -a 'stat' -d 'Show playback status'
 complete -c oplayer -n 'test (__oplayer_context) = command' -a 'reload-config' -d 'Reload configuration'

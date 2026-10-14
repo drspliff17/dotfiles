@@ -175,15 +175,15 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.window.center(), { description = "Center F
 hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen(), { description = "Toggle Window Fullscreen" })
 
 -- Special Workspaces
-hl.bind(mainMod .. " + SHIFT + m", function()
-	local ws = hl.get_workspaces()
-	for _, w in ipairs(ws) do
-		if w.name == "special:music" then
-			hl.dispatch(hl.dsp.workspace.toggle_special("music"))
-			return
-		end
-	end
-end, { description = "Special Workspace: Music" })
+-- hl.bind(mainMod .. " + SHIFT + m", function()
+-- 	local ws = hl.get_workspaces()
+-- 	for _, w in ipairs(ws) do
+-- 		if w.name == "special:music" then
+-- 			hl.dispatch(hl.dsp.workspace.toggle_special("music"))
+-- 			return
+-- 		end
+-- 	end
+-- end, { description = "Special Workspace: Music" })
 
 -- Launch Discord, and toggle it's special workspace
 hl.bind(mainMod .. " + SHIFT + d", function()
@@ -388,6 +388,14 @@ hl.define_submap("L_Monocle", function()
 		hl.dispatch(hl.dsp.submap("L_Scrolling"))
 	end, { description = "Set Scrolling Layout" })
 
+	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+end)
+
+--TODO: Implement a new module into wofi_modes / expand music_selector, need a wrapper for oplayer commands
+-- Can have QOL such as normalized % instead of the float value required for the actual cmd call
+-- Music Mode
+hl.bind(mainMod .. " + SHIFT + m", hl.dsp.submap("Music"), { description = "Submap Music" })
+hl.define_submap("Music", function()
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
