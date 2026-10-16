@@ -396,11 +396,12 @@ end)
 -- Music Mode
 hl.bind(mainMod .. " + SHIFT + m", hl.dsp.submap("Music"), { description = "Submap Music" })
 hl.define_submap("Music", function()
+	-- NOTE: Menu loop broken, spams notifications until cpu says im sad bye
+	-- hl.bind("c", hl.dsp.exec_cmd("wofi_modes --music-selector menu"), { description = "Music Selector - Menu" })
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
 -- Resize Mode (Active Window)
-
 hl.bind(mainMod .. " + r", hl.dsp.submap("Resize"), { description = "Submap Resize" })
 hl.define_submap("Resize", function()
 	hl.bind(
