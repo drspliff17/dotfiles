@@ -565,59 +565,6 @@ hl.define_submap("Cursor", function()
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
--- Notification Mode
-hl.bind(mainMod .. " + n", hl.dsp.submap("Notification"), { description = "Submap Notification" })
-hl.define_submap("Notification", function()
-	hl.bind("o", hl.dsp.exec_cmd(scr_openNotif), { description = "Open Notification Log" })
-
-	hl.bind(
-		"d",
-		hl.dsp.exec_cmd([[
-  notify-send -t 3000 -u normal -a nhc "$(date | cut -d' ' -f1,2,3,4)"
-  ]]),
-		{ description = "Notify - Date" }
-	)
-
-	hl.bind("l", function()
-		local l = hl.get_config("general.layout")
-		hl.dispatch(hl.dsp.exec_cmd([[ notify-send -t 3000 -u normal -a nhc "Layout = ]] .. l .. [["]]))
-	end, { description = "Notify - Layout" })
-
-	hl.bind(
-		"w",
-		hl.dsp.exec_cmd(
-			[[notify-send -t 3000 -u normal -a nhc "$(curl -s v2d.wttr.in | rg Weather: | cut -d' ' -f3,4,5,6,7 | sed 's/,//g')"]]
-		),
-		{ description = "Notify - Weather" }
-	)
-
-	hl.bind(
-		"q",
-		hl.dsp.exec_cmd(
-			[[rm /home/drspliff/dev/data/notifications.jsonl; notify-send -a nhc -u normal -t 2500 "cleared notifications log"]]
-		),
-		{ description = "Clear Notification Log" }
-	)
-
-	hl.bind(
-		"m",
-		hl.dsp.exec_cmd([[
-  pgrep oplayer && notify-send -a nhc -u normal -t 3000 " $(oplayer --command status | cut -d'|' -f1,2,3)"
-  ]])
-	)
-
-	hl.bind("c", function()
-		local r = hl.get_config("cursor.invisible")
-		local v = "False"
-		if not r then
-			v = "True"
-		end
-		hl.dispatch(hl.dsp.exec_cmd([[notify-send -t 3000 -u normal -a nhc "Cursor Render = ]] .. v .. [["]]))
-	end, { description = "Notify - Cursor Render" })
-
-	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
-end)
-
 -- Wallpaper
 hl.bind(mainMod .. " + w", hl.dsp.submap("Wallpaper"), { description = "Submap Wallpaper" })
 hl.define_submap("Wallpaper", function()
@@ -715,6 +662,60 @@ hl.define_submap("Leader", function()
 		-- hl.bind("c", hl.dsp.exec_cmd("wofi_modes --music-selector menu"), { description = "Music Selector - Menu" })
 		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
 		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	end)
+
+	-- Notification Mode
+	hl.bind("n", hl.dsp.submap("Notification"), { description = "Submap Notification" })
+	hl.define_submap("Notification", function()
+		hl.bind("o", hl.dsp.exec_cmd(scr_openNotif), { description = "Open Notification Log" })
+
+		hl.bind(
+			"d",
+			hl.dsp.exec_cmd([[
+  notify-send -t 3000 -u normal -a nhc "$(date | cut -d' ' -f1,2,3,4)"
+  ]]),
+			{ description = "Notify - Date" }
+		)
+
+		hl.bind("l", function()
+			local l = hl.get_config("general.layout")
+			hl.dispatch(hl.dsp.exec_cmd([[ notify-send -t 3000 -u normal -a nhc "Layout = ]] .. l .. [["]]))
+		end, { description = "Notify - Layout" })
+
+		hl.bind(
+			"w",
+			hl.dsp.exec_cmd(
+				[[notify-send -t 3000 -u normal -a nhc "$(curl -s v2d.wttr.in | rg Weather: | cut -d' ' -f3,4,5,6,7 | sed 's/,//g')"]]
+			),
+			{ description = "Notify - Weather" }
+		)
+
+		hl.bind(
+			"q",
+			hl.dsp.exec_cmd(
+				[[rm /home/drspliff/dev/data/notifications.jsonl; notify-send -a nhc -u normal -t 2500 "cleared notifications log"]]
+			),
+			{ description = "Clear Notification Log" }
+		)
+
+		hl.bind(
+			"m",
+			hl.dsp.exec_cmd([[
+  pgrep oplayer && notify-send -a nhc -u normal -t 3000 " $(oplayer --command status | cut -d'|' -f1,2,3)"
+  ]])
+		)
+
+		hl.bind("c", function()
+			local r = hl.get_config("cursor.invisible")
+			local v = "False"
+			if not r then
+				v = "True"
+			end
+			hl.dispatch(hl.dsp.exec_cmd([[notify-send -t 3000 -u normal -a nhc "Cursor Render = ]] .. v .. [["]]))
+		end, { description = "Notify - Cursor Render" })
+
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 	end)
 
 	-- Todo Mode
