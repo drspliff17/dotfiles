@@ -171,19 +171,10 @@ hl.bind(mainMod .. " + SHIFT + p", function()
 end, { description = "Toggle Window Privacy" })
 
 -- Global Window Binds
-hl.bind(mainMod .. " + SPACE", hl.dsp.window.center(), { description = "Center Floating Window" })
+hl.bind(mainMod .. " + SHIFT + c", hl.dsp.window.center(), { description = "Center Floating Window" })
 hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.fullscreen(), { description = "Toggle Window Fullscreen" })
 
 -- Special Workspaces
--- hl.bind(mainMod .. " + SHIFT + m", function()
--- 	local ws = hl.get_workspaces()
--- 	for _, w in ipairs(ws) do
--- 		if w.name == "special:music" then
--- 			hl.dispatch(hl.dsp.workspace.toggle_special("music"))
--- 			return
--- 		end
--- 	end
--- end, { description = "Special Workspace: Music" })
 
 -- Launch Discord, and toggle it's special workspace
 hl.bind(mainMod .. " + SHIFT + d", function()
@@ -388,16 +379,6 @@ hl.define_submap("L_Monocle", function()
 		hl.dispatch(hl.dsp.submap("L_Scrolling"))
 	end, { description = "Set Scrolling Layout" })
 
-	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
-end)
-
---TODO: Implement a new module into wofi_modes / expand music_selector, need a wrapper for oplayer commands
--- Can have QOL such as normalized % instead of the float value required for the actual cmd call
--- Music Mode
-hl.bind(mainMod .. " + SHIFT + m", hl.dsp.submap("Music"), { description = "Submap Music" })
-hl.define_submap("Music", function()
-	-- NOTE: Menu loop broken, spams notifications until cpu says im sad bye
-	-- hl.bind("c", hl.dsp.exec_cmd("wofi_modes --music-selector menu"), { description = "Music Selector - Menu" })
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
@@ -637,45 +618,6 @@ hl.define_submap("Notification", function()
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
--- Todo Mode
-hl.bind(mainMod .. " + t", hl.dsp.submap("Todo"), { description = "Submap Todo" })
-hl.define_submap("Todo", "reset", function()
-	hl.bind("SPACE", hl.dsp.exec_cmd(scr_todo .. " -i"), { description = "Edit Todo" })
-	hl.bind("t", hl.dsp.exec_cmd(scr_todo .. " -m"), { description = "Open Todo Menu" })
-
-	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
-end)
-
--- Oshell Mode
-hl.bind(mainMod .. " + q", hl.dsp.submap("oshell"), { description = "Submap Oshell" })
-hl.define_submap("oshell", function()
-	hl.bind("h", function()
-		hl.dispatch(hl.dsp.exec_cmd("oshell monitor hide"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Hide oshell" })
-
-	hl.bind("1", function()
-		hl.dispatch(hl.dsp.exec_cmd("oshell monitor 1"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Preferred monitor" })
-
-	hl.bind("2", function()
-		hl.dispatch(hl.dsp.exec_cmd("oshell monitor 2"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Inverted monitor" })
-
-	hl.bind("3", function()
-		hl.dispatch(hl.dsp.exec_cmd("oshell monitor all"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "All Monitors" })
-
-	hl.bind("r", function()
-		hl.dispatch(hl.dsp.exec_cmd("pkill -USR2 oshell"))
-		hl.dispatch(hl.dsp.exec_cmd("notify-send -a nh-center-text -t 1200 'oshell config reloaded'"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Reload Config" })
-end)
-
 -- Wallpaper
 hl.bind(mainMod .. " + w", hl.dsp.submap("Wallpaper"), { description = "Submap Wallpaper" })
 hl.define_submap("Wallpaper", function()
@@ -719,170 +661,8 @@ hl.define_submap("Wallpaper", function()
 	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
 
--- Cursor Zoom
-hl.bind(mainMod .. " + z", hl.dsp.submap("Zoom"), { description = "Submap Zoom" })
-hl.define_submap("Zoom", function()
-	---@param offset number
-	---@return nil
-	local function zoom(offset)
-		local MAX_ZOOM = 5
-		local MIN_ZOOM = 1
-		local ZOOM_TOGGLE_FACTOR = 1.5
-		local current = hl.get_config("cursor.zoom_factor")
-		if offset ~= nil then
-			current = current + offset
-		elseif current ~= MIN_ZOOM then
-			current = MIN_ZOOM
-		else
-			current = ZOOM_TOGGLE_FACTOR
-		end
-		current = math.max(MIN_ZOOM, math.min(MAX_ZOOM, current))
-		hl.config({ cursor = { zoom_factor = current } })
-	end
-
-	hl.bind("i", function()
-		zoom(0.5)
-	end, { repeating = true, description = "Increase Cursor Zoom" })
-
-	hl.bind("o", function()
-		zoom(-0.5)
-	end, { repeating = true, description = "Decrease Cursor Zoom" })
-
-	hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true, description = "Move Cursor Left" })
-	hl.bind("j", hl.dsp.exec_cmd(scr_moveCursor .. " 0 1"), { repeating = true, description = "Move Cursor Down" })
-	hl.bind("k", hl.dsp.exec_cmd(scr_moveCursor .. " 0 -1"), { repeating = true, description = "Move Cursor Up" })
-	hl.bind("l", hl.dsp.exec_cmd(scr_moveCursor .. " 1 0"), { repeating = true, description = "Move Cursor Right" })
-
-	hl.bind("r", function()
-		hl.config({ cursor = { zoom_factor = 1 } })
-	end, { description = "Reset Cursor Zoom" })
-
-	-- hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
-
-	hl.bind("SPACE", function()
-		hl.config({ cursor = { zoom_factor = 1 } })
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Reset Cursor And Submap" })
-	--
-end)
-
--- Misc
-hl.bind(mainMod .. " + u", hl.dsp.submap("Misc"), { description = "Submap Misc" })
-hl.define_submap("Misc", function()
-	-- Rice Mode
-	hl.bind("r", function()
-		hl.dispatch(hl.dsp.exec_cmd("kitty cmatrix"))
-		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Open Rice" })
-
-	--HTOP
-	hl.bind("h", function()
-		hl.dispatch(hl.dsp.exec_cmd("kitty htop"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "HTOP" })
-
-	--BTOP
-	hl.bind("b", function()
-		hl.dispatch(hl.dsp.exec_cmd("kitty btop"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "BTOP" })
-
-	--FETCH (custom size)
-	hl.bind("f", function()
-		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Open Fetch (with custom float size)" })
-
-	-- Toggle Cursor Rendering
-	hl.bind("SHIFT + c", function()
-		local ci = hl.get_config("cursor.invisible")
-		hl.config({ cursor = { invisible = not ci } })
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Toggle Cursor Rendering" })
-
-	-- Colour Picker
-	hl.bind("p", function()
-		hl.dispatch(
-			hl.dsp.exec_cmd('hyprpicker | wl-copy && notify-send -u low -t 2000 -a center-text "Copied: $(wl-paste)" ')
-		)
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Hyprpicker" })
-
-	-- Calculator
-	hl.bind("m", function()
-		hl.dispatch(hl.dsp.submap("reset"))
-		hl.dispatch(hl.dsp.exec_cmd("dcalc"))
-	end, { description = "Calculator" })
-
-	-- Emoji Picker
-	hl.bind("e", function()
-		hl.dispatch(hl.dsp.submap("reset"))
-		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --emoji-picker copy"))
-	end, { description = "Emoji Picker" })
-
-	-- OTV
-	hl.bind("w", function()
-		hl.dispatch(hl.dsp.submap("reset"))
-		hl.dispatch(hl.dsp.exec_cmd("otv -g"))
-	end)
-
-	-- Discord Mode
-	hl.bind("d", hl.dsp.submap("Discord"), { description = "Submap Discord" })
-	hl.define_submap("Discord", function()
-		hl.bind("m", function()
-			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "M", window = "class:^(vesktop)$" }))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Toggle Mute" })
-
-		-- TODO: Investigate weirdness with this doing weird stuff. ja
-		-- hl.bind("x", function()
-		-- 	hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
-		-- 	hl.dispatch(hl.dsp.submap("reset"))
-		-- end, { description = "Toggle Deafen" })
-
-		hl.bind("a", function()
-			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Accept Incoming Call" })
-
-		hl.bind("d", function()
-			hl.dispatch(hl.dsp.send_shortcut({ mods = "", key = "Escape", window = "class:^(vesktop)$" }))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Decline Incoming Call" })
-
-		hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
-		--
-	end)
-
-	-- Clipboard mode
-	hl.bind("c", hl.dsp.submap("Clipboard"), { release = true, description = "Submap Clipboard" })
-	hl.define_submap("Clipboard", function()
-		hl.bind("q", function()
-			hl.dispatch(hl.dsp.exec_cmd("wofi_modes --clipvault clear"))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Clear Clipvault" })
-
-		hl.bind("r", function()
-			hl.dispatch(hl.dsp.exec_cmd("timeout 60 wofi_modes --clipvault remove"))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Wofi Clipvault - Remove" })
-
-		hl.bind("c", function()
-			hl.dispatch(hl.dsp.exec_cmd("timeout 60 wofi_modes --clipvault"))
-			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Open Wofi Clipvault" })
-
-		hl.bind("u", hl.dsp.submap("Misc"), { description = "Submap Misc" })
-
-		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
-	end)
-
-	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
-end)
-
 -- Volume mode
-hl.bind(mainMod .. " + v", hl.dsp.submap("Volume"), { release = true, description = "Submap Volume" })
+hl.bind(mainMod .. " + v", hl.dsp.submap("Volume"), { description = "Submap Volume" })
 hl.define_submap("Volume", function()
 	hl.bind("v", function()
 		hl.dispatch(hl.dsp.exec_cmd("timeout 30 wofi_modes --volume-controller player"))
@@ -921,4 +701,225 @@ hl.define_submap("Hyprland Manager", function()
 	end)
 
 	hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
+end)
+
+-- Leader Mode
+hl.bind(mainMod .. " + SPACE", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+hl.define_submap("Leader", function()
+	-- Music Mode
+	hl.bind("m", hl.dsp.submap("Music"), { description = "Submap Music" })
+	hl.define_submap("Music", function()
+		--TODO: Implement a new module into wofi_modes / expand music_selector, need a wrapper for oplayer commands
+		-- Can have QOL such as normalized % instead of the float value required for the actual cmd call
+		-- NOTE: Menu loop broken, spams notifications until cpu says im sad bye
+		-- hl.bind("c", hl.dsp.exec_cmd("wofi_modes --music-selector menu"), { description = "Music Selector - Menu" })
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	end)
+
+	-- Todo Mode
+	hl.bind("t", hl.dsp.submap("Todo"), { description = "Submap Todo" })
+	hl.define_submap("Todo", "reset", function()
+		hl.bind("SPACE", hl.dsp.exec_cmd(scr_todo .. " -i"), { description = "Edit Todo" })
+		hl.bind("t", hl.dsp.exec_cmd(scr_todo .. " -m"), { description = "Open Todo Menu" })
+
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	end)
+
+	-- Oshell Mode
+	hl.bind("q", hl.dsp.submap("oshell"), { description = "Submap Oshell" })
+	hl.define_submap("oshell", function()
+		hl.bind("h", function()
+			hl.dispatch(hl.dsp.exec_cmd("oshell monitor hide"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Hide oshell" })
+
+		hl.bind("1", function()
+			hl.dispatch(hl.dsp.exec_cmd("oshell monitor 1"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Preferred monitor" })
+
+		hl.bind("2", function()
+			hl.dispatch(hl.dsp.exec_cmd("oshell monitor 2"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Inverted monitor" })
+
+		hl.bind("3", function()
+			hl.dispatch(hl.dsp.exec_cmd("oshell monitor all"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "All Monitors" })
+
+		hl.bind("r", function()
+			hl.dispatch(hl.dsp.exec_cmd("pkill -USR2 oshell"))
+			hl.dispatch(hl.dsp.exec_cmd("notify-send -a nh-center-text -t 1200 'oshell config reloaded'"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Reload Config" })
+
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	end)
+
+	-- Cursor Zoom
+	hl.bind("z", hl.dsp.submap("Zoom"), { description = "Submap Zoom" })
+	hl.define_submap("Zoom", function()
+		---@param offset number
+		---@return nil
+		local function zoom(offset)
+			local MAX_ZOOM = 5
+			local MIN_ZOOM = 1
+			local ZOOM_TOGGLE_FACTOR = 1.5
+			local current = hl.get_config("cursor.zoom_factor")
+			if offset ~= nil then
+				current = current + offset
+			elseif current ~= MIN_ZOOM then
+				current = MIN_ZOOM
+			else
+				current = ZOOM_TOGGLE_FACTOR
+			end
+			current = math.max(MIN_ZOOM, math.min(MAX_ZOOM, current))
+			hl.config({ cursor = { zoom_factor = current } })
+		end
+
+		hl.bind("i", function()
+			zoom(0.5)
+		end, { repeating = true, description = "Increase Cursor Zoom" })
+
+		hl.bind("o", function()
+			zoom(-0.5)
+		end, { repeating = true, description = "Decrease Cursor Zoom" })
+
+		hl.bind("h", hl.dsp.exec_cmd(scr_moveCursor .. " -1 0"), { repeating = true, description = "Move Cursor Left" })
+		hl.bind("j", hl.dsp.exec_cmd(scr_moveCursor .. " 0 1"), { repeating = true, description = "Move Cursor Down" })
+		hl.bind("k", hl.dsp.exec_cmd(scr_moveCursor .. " 0 -1"), { repeating = true, description = "Move Cursor Up" })
+		hl.bind("l", hl.dsp.exec_cmd(scr_moveCursor .. " 1 0"), { repeating = true, description = "Move Cursor Right" })
+
+		hl.bind("r", function()
+			hl.config({ cursor = { zoom_factor = 1 } })
+		end, { description = "Reset Cursor Zoom" })
+
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("SPACE", function()
+			hl.config({ cursor = { zoom_factor = 1 } })
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Reset Cursor And Submap" })
+	end)
+
+	-- Misc
+	hl.bind("u", hl.dsp.submap("Misc"), { description = "Submap Misc" })
+	hl.define_submap("Misc", function()
+		-- Rice Mode
+		hl.bind("r", function()
+			hl.dispatch(hl.dsp.exec_cmd("kitty cmatrix"))
+			hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Open Rice" })
+
+		--HTOP
+		hl.bind("h", function()
+			hl.dispatch(hl.dsp.exec_cmd("kitty htop"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "HTOP" })
+
+		--BTOP
+		hl.bind("b", function()
+			hl.dispatch(hl.dsp.exec_cmd("kitty btop"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "BTOP" })
+
+		-- Toggle Cursor Rendering
+		hl.bind(mainMod .. " + c", function()
+			local ci = hl.get_config("cursor.invisible")
+			hl.config({ cursor = { invisible = not ci } })
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Toggle Cursor Rendering" })
+
+		-- Calculator
+		hl.bind("m", function()
+			hl.dispatch(hl.dsp.submap("reset"))
+			hl.dispatch(hl.dsp.exec_cmd("dcalc"))
+		end, { description = "Calculator" })
+
+		-- OTV
+		hl.bind("w", function()
+			hl.dispatch(hl.dsp.submap("reset"))
+			hl.dispatch(hl.dsp.exec_cmd("otv -g"))
+		end)
+
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	end)
+
+	--FETCH (custom size)
+	hl.bind("f", function()
+		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Open Fetch (with custom float size)" })
+
+	-- Colour Picker
+	hl.bind("p", function()
+		hl.dispatch(
+			hl.dsp.exec_cmd('hyprpicker | wl-copy && notify-send -u low -t 2000 -a center-text "Copied: $(wl-paste)" ')
+		)
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Hyprpicker" })
+
+	-- Emoji Picker
+	hl.bind("e", function()
+		hl.dispatch(hl.dsp.submap("reset"))
+		hl.dispatch(hl.dsp.exec_cmd("wofi_modes --emoji-picker copy"))
+	end, { description = "Emoji Picker" })
+
+	-- Discord Mode
+	hl.bind("d", hl.dsp.submap("Discord"), { description = "Submap Discord" })
+	hl.define_submap("Discord", function()
+		hl.bind("m", function()
+			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "M", window = "class:^(vesktop)$" }))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Toggle Mute" })
+
+		-- TODO: Investigate weirdness with this doing weird stuff. ja
+		-- hl.bind("x", function()
+		-- 	hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL + SHIFT", key = "D", window = "class:^(vesktop)$" }))
+		-- 	hl.dispatch(hl.dsp.submap("reset"))
+		-- end, { description = "Toggle Deafen" })
+
+		hl.bind("a", function()
+			hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "RETURN", window = "class:^(vesktop)$" }))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Accept Incoming Call" })
+
+		hl.bind("d", function()
+			hl.dispatch(hl.dsp.send_shortcut({ mods = "", key = "Escape", window = "class:^(vesktop)$" }))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Decline Incoming Call" })
+
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("catchall", hl.dsp.submap("reset"), { description = "Submap Reset" })
+		--
+	end)
+
+	-- Clipboard mode
+	hl.bind("c", hl.dsp.submap("Clipboard"), { release = true, description = "Submap Clipboard" })
+	hl.define_submap("Clipboard", function()
+		hl.bind("q", function()
+			hl.dispatch(hl.dsp.exec_cmd("wofi_modes --clipvault clear"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Clear Clipvault" })
+
+		hl.bind("r", function()
+			hl.dispatch(hl.dsp.exec_cmd("timeout 60 wofi_modes --clipvault remove"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Wofi Clipvault - Remove" })
+
+		hl.bind("c", function()
+			hl.dispatch(hl.dsp.exec_cmd("timeout 60 wofi_modes --clipvault"))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Open Wofi Clipvault" })
+
+		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
+		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
+	end)
+
+	hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 end)
