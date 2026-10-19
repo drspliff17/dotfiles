@@ -72,6 +72,7 @@ hl.animation({ leaf = "border", enabled = false })
 hl.animation({ leaf = "windows", enabled = false })
 hl.animation({ leaf = "windowsIn", enabled = false })
 hl.animation({ leaf = "windowsOut", enabled = false })
+
 hl.animation({ leaf = "fadeIn", enabled = true, speed = 3, spring = "easy" })
 hl.animation({ leaf = "fadeOut", enabled = false })
 hl.animation({ leaf = "fade", enabled = false })

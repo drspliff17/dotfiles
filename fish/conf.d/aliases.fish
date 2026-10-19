@@ -21,6 +21,8 @@ alias key="n ~/.config/hypr/modules/hyprland_keybindings.lua"
 alias otd="otimer -d"
 alias ots="otimer -s"
 
+alias olog="cat ~/.config/omusic/omusic.log | less"
+
 #TEST: mini editor thing i was making, then forgot about lmao
 alias oe="oe --keymap /home/drspliff/dev/Odin/oe/keybindings.conf"
 
