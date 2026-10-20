@@ -664,6 +664,13 @@ hl.define_submap("Leader", function()
 		hl.bind("n", hl.dsp.exec_cmd("oplayer -c next"), { description = "Oplayer - Play Next" })
 		hl.bind("z", hl.dsp.exec_cmd("oplayer -c prev"), { description = "Oplayer - Play Prev" })
 
+		hl.bind("h", hl.dsp.exec_cmd("oplayer -c sk -10"), { description = "Oplayer - Seek -10s" })
+		hl.bind("l", hl.dsp.exec_cmd("oplayer -c sk +10"), { description = "Oplayer - Seek +10s" })
+		hl.bind("SHIFT + h", hl.dsp.exec_cmd("oplayer -c sk -5"), { description = "Oplayer - Seek -5s" })
+		hl.bind("SHIFT + l", hl.dsp.exec_cmd("oplayer -c sk +5"), { description = "Oplayer - Seek +5s" })
+		hl.bind("CTRL + h", hl.dsp.exec_cmd("oplayer -c sk -1"), { description = "Oplayer - Seek -1s" })
+		hl.bind("CTRL + l", hl.dsp.exec_cmd("oplayer -c sk +1"), { description = "Oplayer - Seek +1s" })
+
 		hl.bind("p", function()
 			local pid = exec_capture("pgrep oplayer")
 			if pid == "" then
