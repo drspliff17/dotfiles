@@ -12,15 +12,15 @@ local scr_todo = "~/.config/bash/todo_tool/todo_main.sh"
 local scr_screenshot = "~/.config/hypr/scripts/grim_screenshot.sh"
 local scr_openNotif = "~/.config/hypr/scripts/open_notif_log.sh"
 
--- local function exec_capture(cmd)
--- 	local handle = io.popen(cmd)
--- 	if not handle then
--- 		return nil
--- 	end
--- 	local out = handle:read("*a")
--- 	handle:close()
--- 	return (out:gsub("%s+$", ""))
--- end
+local function exec_capture(cmd)
+	local handle = io.popen(cmd)
+	if not handle then
+		return nil
+	end
+	local out = handle:read("*a")
+	handle:close()
+	return (out:gsub("%s+$", ""))
+end
 
 -- Core Binds
 hl.bind(
@@ -658,8 +658,37 @@ hl.define_submap("Leader", function()
 	hl.define_submap("Music", function()
 		--TODO: Implement a new module into wofi_modes / expand music_selector, need a wrapper for oplayer commands
 		-- Can have QOL such as normalized % instead of the float value required for the actual cmd call
-		-- NOTE: Menu loop broken, spams notifications until cpu says im sad bye
+		-- NOTE: Menu loop broken, spams notifications until cpu says im sad bye. I forgot to break to loop lmao, cba to fix
 		-- hl.bind("c", hl.dsp.exec_cmd("wofi_modes --music-selector menu"), { description = "Music Selector - Menu" })
+
+		hl.bind("n", hl.dsp.exec_cmd("oplayer -c next"), { description = "Oplayer - Play Next" })
+		hl.bind("z", hl.dsp.exec_cmd("oplayer -c prev"), { description = "Oplayer - Play Prev" })
+
+		hl.bind("p", function()
+			local pid = exec_capture("pgrep oplayer")
+			if pid == "" then
+				hl.dispatch(hl.dsp.exec_cmd("oplayer -m s"))
+				hl.dispatch(hl.dsp.submap("reset"))
+			else
+				local s = exec_capture("oplayer -c stat | cut -d'|' -f1 | sed 's/ //g'")
+				if s == "Playing" then
+					hl.dispatch(hl.dsp.exec_cmd("oplayer -c pause"))
+				elseif s == "Paused" then
+					hl.dispatch(hl.dsp.exec_cmd("oplayer -c play"))
+				end
+			end
+		end, { description = "Oplayer - Toggle Playback" })
+
+		hl.bind("q", function()
+			local pid = exec_capture("pgrep oplayer")
+			if pid == "" then
+				hl.dispatch(hl.dsp.exec_cmd("notify-send -t 2300 -a nhc 'Oplayer is not running'"))
+			else
+				hl.dispatch(hl.dsp.exec_cmd("oplayer -c q"))
+			end
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Oplayer - Quit" })
+
 		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
 		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
 	end)
@@ -809,12 +838,22 @@ hl.define_submap("Leader", function()
 	-- Misc
 	hl.bind("u", hl.dsp.submap("Misc"), { description = "Submap Misc" })
 	hl.define_submap("Misc", function()
-		-- Rice Mode
-		hl.bind("r", function()
-			hl.dispatch(hl.dsp.exec_cmd("kitty cmatrix"))
-			hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
+		-- Colour Picker
+		hl.bind("p", function()
+			hl.dispatch(
+				hl.dsp.exec_cmd(
+					'hyprpicker | wl-copy && notify-send -u low -t 2000 -a center-text "Copied: $(wl-paste)" '
+				)
+			)
 			hl.dispatch(hl.dsp.submap("reset"))
-		end, { description = "Open Rice" })
+		end, { description = "Hyprpicker" })
+
+		-- -- Rice Mode
+		-- hl.bind("r", function()
+		-- 	hl.dispatch(hl.dsp.exec_cmd("kitty cmatrix"))
+		-- 	hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
+		-- 	hl.dispatch(hl.dsp.submap("reset"))
+		-- end, { description = "Open Rice" })
 
 		--HTOP
 		hl.bind("h", function()
@@ -856,14 +895,6 @@ hl.define_submap("Leader", function()
 		hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Open Fetch (with custom float size)" })
-
-	-- Colour Picker
-	hl.bind("p", function()
-		hl.dispatch(
-			hl.dsp.exec_cmd('hyprpicker | wl-copy && notify-send -u low -t 2000 -a center-text "Copied: $(wl-paste)" ')
-		)
-		hl.dispatch(hl.dsp.submap("reset"))
-	end, { description = "Hyprpicker" })
 
 	-- Emoji Picker
 	hl.bind("e", function()
