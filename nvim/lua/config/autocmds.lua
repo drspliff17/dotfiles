@@ -76,3 +76,113 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
     vim.cmd("startinsert")
   end,
 })
+
+-- Responsive Terminal Placement on Resize
+local resize_pending = false
+vim.api.nvim_create_autocmd({ "VimResized", "WinResized", "TabEnter" }, {
+  group = vim.api.nvim_create_augroup("ResponsiveTerminals", { clear = true }),
+  callback = function()
+    if resize_pending then
+      return
+    end
+    resize_pending = true
+
+    vim.schedule(function()
+      resize_pending = false
+
+      local current_win = vim.api.nvim_get_current_win()
+      local focused_term
+
+      for _, term in ipairs(Snacks.terminal.list()) do
+        local source = term.opts.win
+
+        if
+          term:win_valid()
+          and term.opts.relative == "win"
+          and source
+          and vim.api.nvim_win_is_valid(source)
+          and vim.api.nvim_win_get_tabpage(term.win) == vim.api.nvim_get_current_tabpage()
+          and (term.opts.position == "right" or term.opts.position == "bottom")
+        then
+          local width = vim.api.nvim_win_get_width(source)
+          if term.opts.position == "right" then
+            width = width + vim.api.nvim_win_get_width(term.win) + 1
+          end
+
+          local wide = width >= 160
+          local position = wide and "right" or "bottom"
+
+          if term.opts.position ~= position then
+            if term.win == current_win then
+              focused_term = term
+            end
+
+            term:hide()
+            term.opts.position = position
+            term.opts.width = wide and 75 or 0
+            term.opts.height = wide and 0 or 15
+            term:show()
+          end
+        end
+      end
+
+      if focused_term and focused_term:win_valid() then
+        vim.api.nvim_set_current_win(focused_term.win)
+      elseif vim.api.nvim_win_is_valid(current_win) then
+        vim.api.nvim_set_current_win(current_win)
+      end
+    end)
+  end,
+})
+
+-- Responsive Terminal Placement on New Window
+local moving_terminal = false
+vim.api.nvim_create_autocmd("WinNew", {
+  group = vim.api.nvim_create_augroup("TerminalFollowNewSplit", { clear = true }),
+  callback = function()
+    if moving_terminal then
+      return
+    end
+
+    local new_win = vim.api.nvim_get_current_win()
+    vim.schedule(function()
+      if not vim.api.nvim_win_is_valid(new_win) then
+        return
+      end
+
+      local buf = vim.api.nvim_win_get_buf(new_win)
+      if
+        vim.bo[buf].buftype ~= ""
+        or vim.api.nvim_win_get_config(new_win).relative ~= ""
+        or vim.api.nvim_get_current_win() ~= new_win
+      then
+        return
+      end
+
+      for _, term in ipairs(Snacks.terminal.list()) do
+        if
+          term:win_valid()
+          and term.opts.relative == "win"
+          and term.opts.win ~= new_win
+          and vim.api.nvim_win_get_tabpage(term.win) == vim.api.nvim_win_get_tabpage(new_win)
+          and (term.opts.position == "right" or term.opts.position == "bottom")
+        then
+          moving_terminal = true
+          term:hide()
+
+          local wide = vim.api.nvim_win_get_width(new_win) >= 160
+          term.opts.win = new_win
+          term.opts.position = wide and "right" or "bottom"
+          term.opts.width = wide and 75 or 0
+          term.opts.height = wide and 0 or 15
+
+          term:show()
+
+          vim.api.nvim_set_current_win(new_win)
+          moving_terminal = false
+          break
+        end
+      end
+    end)
+  end,
+})

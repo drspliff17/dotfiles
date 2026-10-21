@@ -54,6 +54,36 @@ local function OpenLastYank()
   vim.notify("Path does not exist: " .. p, vim.log.levels.ERROR, { title = "Open Last Yank" })
 end
 
+-- Toggle terminal, using vim columns to decide placement
+local function toggle_terminal(cwd)
+  local term = Snacks.terminal.get(nil, { cwd = cwd, create = false })
+
+  if term and term:win_valid() then
+    term:hide()
+    return
+  end
+
+  local source = vim.api.nvim_get_current_win()
+  local wide = vim.api.nvim_win_get_width(source) >= 160
+  local win = {
+    position = wide and "right" or "bottom",
+    width = wide and 75 or 0,
+    height = wide and 0 or 15,
+    relative = "win",
+    win = source,
+    stack = false,
+  }
+
+  if term then
+    for key, value in pairs(win) do
+      term.opts[key] = value
+    end
+    term:show()
+  else
+    Snacks.terminal(nil, { cwd = cwd, win = win })
+  end
+end
+
 vim.keymap.set("n", "s", "<Nop>")
 
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true, nowait = true })
@@ -110,22 +140,18 @@ vim.keymap.set("n", "<A-l>", "<cmd>BufferLineMoveNext<CR>", { desc = "Move Buffe
 vim.keymap.set("t", "<C-q>", [[<C-\><C-n>]], { noremap = true })
 
 -- Opening Terminal Buffers
-vim.keymap.set({ "n", "t" }, "<c-/>", function()
-  Snacks.terminal(nil, { cwd = vim.fn.getcwd() })
-  vim.cmd("wincmd L")
-  vim.cmd("vertical resize 75")
-end, { desc = "Terminal (CWD)" })
+for _, key in ipairs({ "<c-/>", "<c-_>" }) do
+  vim.keymap.set({ "n", "t" }, key, function()
+    toggle_terminal(vim.fn.getcwd())
+  end, { desc = "Terminal (CWD)" })
+end
 
 vim.keymap.set("n", "<leader>ft", function()
-  Snacks.terminal(nil, { cwd = LazyVim.root() })
-  vim.cmd("wincmd L")
-  vim.cmd("vertical resize 75")
+  toggle_terminal(LazyVim.root())
 end, { desc = "Terminal (Root)" })
 
 vim.keymap.set("n", "<leader>fT", function()
-  Snacks.terminal(nil, { cwd = vim.env.HOME })
-  vim.cmd("wincmd L")
-  vim.cmd("vertical resize 75")
+  toggle_terminal(vim.env.HOME)
 end, { desc = "Terminal (Home)" })
 
 -- Command mode cancel
