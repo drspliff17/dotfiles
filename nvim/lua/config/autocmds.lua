@@ -78,6 +78,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 })
 
 -- Responsive Terminal Placement on Resize
+-- TODO: Figure out why it doesnt behave when i close a split
 local resize_pending = false
 vim.api.nvim_create_autocmd({ "VimResized", "WinResized", "TabEnter" }, {
   group = vim.api.nvim_create_augroup("ResponsiveTerminals", { clear = true }),
@@ -184,5 +185,18 @@ vim.api.nvim_create_autocmd("WinNew", {
         end
       end
     end)
+  end,
+})
+
+-- Allow dd to delete hovered entry from quick-fix
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "qf",
+  callback = function()
+    vim.keymap.set("n", "dd", function()
+      local qf_list = vim.fn.getqflist()
+      local current_line = vim.fn.line(".")
+      table.remove(qf_list, current_line)
+      vim.fn.setqflist(qf_list, "r")
+    end, { buffer = true, silent = true })
   end,
 })

@@ -20,6 +20,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("wal -R")
 	hl.exec_cmd("oshell")
 	hl.exec_cmd("wl-paste --watch clipvault store")
+	hl.exec_cmd("systemctl --user start hyprpolkitagent.service")
 end)
 
 hl.on("hyprland.shutdown", function()

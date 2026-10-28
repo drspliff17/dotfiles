@@ -68,7 +68,7 @@ return {
       time_format = "%a %b %e %H:%M:%S",
 
       -- Maximum number of lines in compilation buffer.
-      max_lines = 20,
+      max_lines = 2000,
 
       -- Regexes to hide from compilation output.
       hidden_output = {},

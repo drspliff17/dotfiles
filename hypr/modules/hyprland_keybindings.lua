@@ -145,7 +145,7 @@ hl.bind(mainMod .. " + p", hl.dsp.window.pin(), { submap_universal = true, descr
 --
 
 -- Toggle window screen share prop + manage window private tag
-hl.bind(mainMod .. " + SHIFT + p", function()
+hl.bind(mainMod .. " + CTRL + p", function()
 	local function hasPrivate(tags)
 		for _, t in ipairs(tags) do
 			if t == "private" then
@@ -855,12 +855,16 @@ hl.define_submap("Leader", function()
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Hyprpicker" })
 
-		-- -- Rice Mode
-		-- hl.bind("r", function()
-		-- 	hl.dispatch(hl.dsp.exec_cmd("kitty cmatrix"))
-		-- 	hl.dispatch(hl.dsp.exec_cmd("kitty --class fetch fish -c f"))
-		-- 	hl.dispatch(hl.dsp.submap("reset"))
-		-- end, { description = "Open Rice" })
+		-- Keysclicks
+		hl.bind("k", function()
+			local pgrep = exec_capture("pgrep keysclicks")
+			if pgrep == "" then
+				hl.dispatch(hl.dsp.exec_cmd("keysclicks --no-window"))
+			else
+				hl.dispatch(hl.dsp.exec_cmd("pkill -x keysclicks"))
+			end
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Toggle Keysclicks Running" })
 
 		--HTOP
 		hl.bind("h", function()

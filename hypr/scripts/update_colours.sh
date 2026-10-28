@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+systemctl --user stop hyprpolkitagent.service
+systemctl --user start hyprpolkitagent.service
+
 # Kitty Sockets (specifically needed for tab bar pywal update)
 for paw in /tmp/kitty-*; do
   [[ -S "$paw" ]] || continue
@@ -18,6 +21,8 @@ for sock in /tmp/nvim-*; do
   fi
 done
 
+python3 /home/drspliff/dev/python/matugen_steam_update.py
+
 # Firefox
 pywalfox update
 
@@ -30,8 +35,8 @@ pgrep btop && kill -USR2 $(pgrep btop)
 # My programs
 
 # pgrep src.bin && kill -USR1 $(pgrep src.bin)
-
-pgrep oludo && kill -USR1 $(pgrep oludo)
+#
+# pgrep oludo && kill -USR1 $(pgrep oludo)
 pgrep dcalc && kill -USR1 $(pgrep dcalc)
 pgrep ds_pet && kill -USR1 $(pgrep ds_pet)
 pgrep oofi && kill -USR1 $(pgrep oofi)
@@ -41,4 +46,4 @@ pgrep otv_gui && kill -USR1 $(pgrep otv_gui)
 pgrep oshell && kill -USR1 $(pgrep oshell)
 
 # Cmus
-exec ~/.config/bash/scripts/cmus_update_colours.sh
+# exec ~/.config/bash/scripts/cmus_update_colours.sh
