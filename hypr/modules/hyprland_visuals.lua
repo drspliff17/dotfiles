@@ -47,7 +47,16 @@ hl.config({
 			ignore_opacity = true,
 			new_optimizations = true,
 			xray = false,
-			variant = "kawase",
+			variant = "prism",
+
+			drops = {
+				speed = 10,
+			},
+
+			glass = {
+				refraction = 15,
+				size = 70,
+			},
 
 			haze = {
 				intensity = 0.2,
