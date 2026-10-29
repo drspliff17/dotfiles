@@ -47,6 +47,19 @@ hl.config({
 			ignore_opacity = true,
 			new_optimizations = true,
 			xray = false,
+			variant = "kawase",
+
+			haze = {
+				intensity = 0.2,
+				iridescence = 0.9,
+			},
+
+			acrylic = {
+				aberration = 0.02,
+				bulb = 100,
+				clarity = 0.2,
+				refraction = 48,
+			},
 
 			vibrancy = 0.1696,
 		},
