@@ -318,6 +318,17 @@ div[class*="contentHeader"] {
   display: none !important;
 }
 
+/* Hide the "Looking for something to do?" activity suggestion */
+div[class*="row_"]:has(
+    > div[class*="tile_"][class*="noVerticalMargin_"][class*="noHorizontalMargin_"]
+) {
+    display: none !important;
+}
+
+/* Fallback: hide the matching tile itself */
+div[class*="tile_"][class*="noVerticalMargin_"][class*="noHorizontalMargin_"] {
+    display: none !important;
+}
 
 .fullRegionDropdownButton_f1ceac.disconnect_f1ceac {
   background-color: {color2} !important;
