@@ -178,6 +178,14 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "Sulfur",
+	match = {
+		initial_title = "Sulfur",
+	},
+	confine_pointer = true,
+})
+
+hl.window_rule({
 	name = "VS",
 	match = {
 		initial_class = "Vintage Story",

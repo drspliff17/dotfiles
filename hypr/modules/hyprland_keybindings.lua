@@ -31,7 +31,8 @@ hl.bind(
 
 hl.bind(
 	mainMod .. " + SHIFT + RETURN",
-	hl.dsp.exec_cmd("kitty", { float = true, size = "1000 400", description = "Floating Terminal" })
+	hl.dsp.exec_cmd("kitty", { float = true, size = "1000 400" }),
+	{ description = "Floating Terminal" }
 )
 
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("kitty"), { description = "Tiled Terminal" })

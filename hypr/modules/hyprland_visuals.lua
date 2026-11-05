@@ -34,6 +34,13 @@ hl.config({
 		dim_inactive = true,
 		dim_strength = 0.05,
 
+		glow = {
+			enabled = true,
+			color = color3,
+			color_inactive = "0x00000000",
+			range = 15,
+		},
+
 		shadow = {
 			enabled = true,
 			range = 4,
@@ -47,6 +54,7 @@ hl.config({
 			ignore_opacity = true,
 			new_optimizations = true,
 			xray = false,
+			-- variant = "prism",
 			variant = "prism",
 
 			drops = {
