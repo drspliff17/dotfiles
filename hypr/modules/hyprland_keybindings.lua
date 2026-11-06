@@ -704,7 +704,10 @@ hl.define_submap("Leader", function()
 	-- Notification Mode
 	hl.bind("n", hl.dsp.submap("Notification"), { description = "Submap Notification" })
 	hl.define_submap("Notification", function()
-		hl.bind("o", hl.dsp.exec_cmd(scr_openNotif), { description = "Open Notification Log" })
+		hl.bind("o", function()
+			hl.dispatch(hl.dsp.exec_cmd(scr_openNotif))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Open Notification Log" })
 
 		hl.bind(
 			"d",
