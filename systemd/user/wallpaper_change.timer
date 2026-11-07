@@ -3,7 +3,7 @@ Description="Run waypaper at set interval"
 
 [Timer]
 OnBootSec=30min
-OnUnitActiveSec=30min
+OnUnitActiveSec=2min
 Persistent=false
 
 [Install]
