@@ -594,6 +594,21 @@ hl.define_submap("Wallpaper", function()
 		hl.dispatch(hl.dsp.submap("reset"))
 	end, { description = "Update Theme Selector" })
 
+	hl.bind("r", function()
+		local v = exec_capture("systemctl --user is-active wallpaper_change.timer")
+		if v == "inactive" then
+			hl.dispatch(hl.dsp.exec_cmd("systemctl --user enable wallpaper_change.timer"))
+			hl.dispatch(hl.dsp.exec_cmd("systemctl --user start wallpaper_change.timer"))
+			hl.dispatch(hl.dsp.exec_cmd([[notify-send -t 2000 -u normal "Enabled Wallpaper Change"]]))
+		else
+			hl.dispatch(hl.dsp.exec_cmd("systemctl --user disable wallpaper_change.timer"))
+			hl.dispatch(hl.dsp.exec_cmd("systemctl --user stop wallpaper_change.timer"))
+			hl.dispatch(hl.dsp.exec_cmd([[notify-send -t 2000 -u normal "Disabled Wallpaper Change"]]))
+		end
+
+		hl.dispatch(hl.dsp.submap("reset"))
+	end, { description = "Toggle Wallpaper Change Service" })
+
 	-- Fav Wallpapers
 	hl.bind("f", hl.dsp.submap("Fav Wallpaper"), { description = "Submap Fav Wallpaper" })
 	hl.define_submap("Fav Wallpaper", "reset", function()
