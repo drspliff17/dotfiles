@@ -64,6 +64,14 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "lock-cursor-gamescope",
+	match = {
+		class = "gamescope",
+	},
+	confine_pointer = true,
+})
+
+hl.window_rule({
 	name = "lock-cursor-avorion",
 	match = {
 		class = "steam_app_445220",
