@@ -757,8 +757,20 @@ hl.define_submap("Leader", function()
 			"m",
 			hl.dsp.exec_cmd([[
   pgrep oplayer && notify-send -a nhc -u normal -t 3000 " $(oplayer --command status | cut -d'|' -f1,2,3)"
-  ]])
+  ]]),
+			{ description = "Notify - OPlayer Status" }
 		)
+
+		hl.bind("z", function()
+			hl.dispatch(hl.dsp.exec_cmd([[
+                FILE="/home/drspliff/dev/data/notifications.jsonl"
+                [ -s "$FILE" ] && notify-send -a nhc -t 3000 \
+                    "$(tail -n 1 "$FILE" | jq -r '.timestamp')" \
+                    "$(tail -n 1 "$FILE" | jq -r '[.summary, .body] | map(select(. != null and . != "")) | join(" - ")')"
+            ]]))
+
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Pop last notification" })
 
 		hl.bind("c", function()
 			local r = hl.get_config("cursor.invisible")
@@ -978,6 +990,15 @@ hl.define_submap("Leader", function()
 			hl.dispatch(hl.dsp.exec_cmd("timeout 60 wofi_modes --clipvault"))
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Open Wofi Clipvault" })
+
+		hl.bind("z", function()
+			hl.dispatch(
+				hl.dsp.exec_cmd(
+					[[ test -n "$(clipvault list)" && clipvault get --index 0 | wl-copy && notify-send -a nhc -t 3000 'Copied Clipvault IDX 0']]
+				)
+			)
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Copy latest clipvault entry" })
 
 		hl.bind("RETURN", hl.dsp.submap("Leader"), { description = "Submap Leader" })
 		hl.bind("SPACE", hl.dsp.submap("reset"), { description = "Submap Reset" })
