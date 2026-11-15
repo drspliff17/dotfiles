@@ -737,13 +737,14 @@ hl.define_submap("Leader", function()
 			hl.dispatch(hl.dsp.exec_cmd([[ notify-send -t 3000 -u normal -a nhc "Layout = ]] .. l .. [["]]))
 		end, { description = "Notify - Layout" })
 
-		hl.bind(
-			"w",
-			hl.dsp.exec_cmd(
-				[[notify-send -t 3000 -u normal -a nhc "$(curl -s v2d.wttr.in | rg Weather: | cut -d' ' -f3,4,5,6,7 | sed 's/,//g')"]]
-			),
-			{ description = "Notify - Weather" }
-		)
+		hl.bind("w", function()
+			hl.dispatch(
+				hl.dsp.exec_cmd(
+					[[notify-send -t 3000 -u normal -a nhc "$(curl -s v2d.wttr.in | rg Weather: | cut -d' ' -f3,4,5,6,7 | sed 's/,//g')"]]
+				)
+			)
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Notify - Weather" })
 
 		hl.bind(
 			"q",
