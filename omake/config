@@ -1,0 +1,5 @@
+keys[0].name = target
+keys[0].value = src
+
+template_dirs[0] = /home/drspliff/.config/omake/templates
+enable_warnings = true
