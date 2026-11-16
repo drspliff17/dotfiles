@@ -746,13 +746,14 @@ hl.define_submap("Leader", function()
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Notify - Weather" })
 
-		hl.bind(
-			"q",
-			hl.dsp.exec_cmd(
-				[[rm /home/drspliff/dev/data/notifications.jsonl; notify-send -a nhc -u normal -t 2500 "cleared notifications log"]]
-			),
-			{ description = "Clear Notification Log" }
-		)
+		hl.bind("q", function()
+			hl.dispatch(
+				hl.dsp.exec_cmd(
+					[[rm /home/drspliff/dev/data/notifications.jsonl; notify-send -a nhc -u normal -t 2500 "cleared notifications log"]]
+				)
+			)
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Clear Notification Log" })
 
 		hl.bind(
 			"m",
