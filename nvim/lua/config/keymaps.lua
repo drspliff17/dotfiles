@@ -54,6 +54,36 @@ local function OpenLastYank()
   vim.notify("Path does not exist: " .. p, vim.log.levels.ERROR, { title = "Open Last Yank" })
 end
 
+-- Goto Definition inside a new split (vertical by default), notify if no def location is found
+local function goto_def_in_split(split)
+  local params = vim.lsp.util.make_position_params(0, "utf-8")
+
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients == 0 then
+    vim.notify("No LSP client attached", vim.log.levels.WARN)
+    return
+  end
+
+  vim.lsp.buf_request_all(0, "textDocument/definition", params, function(results)
+    local locations = {}
+
+    for _, result in pairs(results) do
+      if result.result then
+        local items = vim.islist(result.result) and result.result or { result.result }
+        vim.list_extend(locations, items)
+      end
+    end
+
+    if #locations == 0 then
+      vim.notify("No definition found", vim.log.levels.INFO)
+      return
+    end
+
+    vim.cmd(split == "split" and "split" or "vsplit")
+    vim.lsp.util.show_document(locations[1], "utf-8", { focus = true })
+  end)
+end
+
 -- Toggle terminal, using vim columns to decide placement
 local function toggle_terminal(cwd)
   local term = Snacks.terminal.get(nil, { cwd = cwd, create = false })
@@ -115,6 +145,15 @@ end, { desc = "yiq, then OpenLastYank" })
 vim.keymap.set("n", "<leader>pc", "<cmd>Compile<CR>", { desc = "Compile Mode" })
 
 vim.keymap.set("n", "<leader>pr", "<cmd>Recompile<CR>", { desc = "Recompile Mode" })
+
+-- goto_def_in_split
+vim.keymap.set("n", "<leader>pg", function()
+  goto_def_in_split("vsplit")
+end, { desc = "Goto-Definition (VSplit)" })
+
+vim.keymap.set("n", "<leader>ph", function()
+  goto_def_in_split("split")
+end, { desc = "Goto-Definition (HSplit)" })
 
 -- Lsp
 vim.keymap.set("n", "<leader>sL", "<cmd>LspInfo<CR>", { desc = "Open vim.lsp" })
