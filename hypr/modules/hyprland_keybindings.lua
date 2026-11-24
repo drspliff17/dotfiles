@@ -724,17 +724,17 @@ hl.define_submap("Leader", function()
 			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Open Notification Log" })
 
-		hl.bind(
-			"d",
-			hl.dsp.exec_cmd([[
+		hl.bind("d", function()
+			hl.dispatch(hl.dsp.exec_cmd([[
   notify-send -t 3000 -u normal -a nhc "$(date | cut -d' ' -f1,2,3,4)"
-  ]]),
-			{ description = "Notify - Date" }
-		)
+  ]]))
+			hl.dispatch(hl.dsp.submap("reset"))
+		end, { description = "Notify - Date" })
 
 		hl.bind("l", function()
 			local l = hl.get_config("general.layout")
 			hl.dispatch(hl.dsp.exec_cmd([[ notify-send -t 3000 -u normal -a nhc "Layout = ]] .. l .. [["]]))
+			hl.dispatch(hl.dsp.submap("reset"))
 		end, { description = "Notify - Layout" })
 
 		hl.bind("w", function()

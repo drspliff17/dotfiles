@@ -1,6 +1,10 @@
 # Other
 alias cream="WEBKIT_DISABLE_DMABUF_RENDERER=1 exec /storage/Creamlinux_1.7.1_amd64.AppImage"
 
+alias album="fmp3 -g -l . | cut -d'-' -f4 | sort -u"
+
+alias stationeers="z /home/drspliff/.local/share/Steam/steamapps/compatdata/2715014769/pfx/drive_c/users/steamuser/Documents/My Games/Stationeers/scripts"
+
 alias pacs="sudo pacman -Syu"
 alias nvim="n"
 alias sw="sw >/dev/null"
@@ -8,7 +12,9 @@ alias b="bash -lc"
 alias nfrc="n ~/.config/fish/config.fish"
 alias nbrc="n ~/.bashrc"
 alias nas="n ~/.config/fish/conf.d/aliases.fish"
-alias ssd="df -h | head -n 1; df -h | rg home; df -h | rg storage"
+alias ssd="df -h | head -n 1
+ df -h | rg home
+ df -h | rg storage"
 alias ff="fastfetch"
 alias f="fetch --box -l arch --infinite"
 
@@ -26,10 +32,14 @@ alias olog="cat ~/.config/omusic/omusic.log | less"
 #TEST: mini editor thing i was making, then forgot about lmao
 alias oe="oe --keymap /home/drspliff/dev/Odin/oe/keybindings.conf"
 
+alias otv="otv_d"
+
 alias ou="omusic -u"
 alias om="omake"
 
 alias op="oplayer"
+alias opp="oplayer -m s &
+ disown $(pgrep oplayer)"
 
 alias ob="obang"
 
@@ -55,6 +65,7 @@ alias sof="source ~/.config/fish/config.fish"
 alias sob="source ~/.bashrc"
 alias hl="rg --passthru"
 alias ls='ls -F --color=auto --show-control-chars'
+alias l='la'
 alias bat="bat --color=always"
 
 # Git / GH
